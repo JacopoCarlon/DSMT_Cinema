@@ -14,9 +14,9 @@
 %% CRUD operations API
 -export([
   add_cinema/4, get_cinema/1, find_cinema_by_name/1,
-  add_customer/2, get_customer/1, add_booking_to_customer/3, remove_booking/3,
-  add_show/6, get_show/1, get_cinema_shows/1]
-).
+  add_customer/2, get_customer/1, update_customer_bookings/2, get_customer_bookings/1,
+  add_show/6, get_show/1, get_cinema_shows/1, update_show_bookings/2
+]).
 
 %%%% TABLES
 -record(cinema,  {cinemaId,
@@ -35,10 +35,9 @@
                 cinemaId,
                 date,
                 maxSeats,
-                bookings = []}). %% list of {CustomerUsername, NumOfSeats} tuples
+                pid,
+                bookings = []}). %% definitive map of (CustomerUsername, NumOfSeats) pairs
 
-%%%% utility record
--record(booking, {customer, numOfSeats}).
 
 %% @doc Create Mnesia database
 %% disc_copies means that records are stored also on disk
@@ -63,38 +62,6 @@ stop_database() ->
   application:stop(mnesia).
 
 
-%%%%%%%%%%%%%%% Utilities
-booking_tuple(CustomerUsername, NumOfSeats) ->
-  #booking(
-    customer    = CustomerUsername,
-    numOfSeats  = NumOfSeats
-  ).
-
-cinema_tuple(CinemaId, Password, Name, Address) ->
-  #cinema(
-    cinemaId  = CinemaId,
-    password  = Password,
-    name      = Name,
-    address   = Address
-  ).
-
-customer_tuple(Username, Password, Bookings) ->
-  #customer(
-    username = Username,
-    password = Password,
-    bookings = Bookings
-  ).
-
-show_tuple(ShowId, Name, CinemaId, Date, MaxSeats, Bookings) ->
-  #show(
-    showId    = ShowId,
-    name      = Name,
-    cinemaId  = CinemaId,
-    date      = Date,
-    maxSeats  = MaxSeats,
-    bookings  = Bookings
-  ).
-
 %%%%%%%%%%%%%%% CRUD operations
 
 %% CINEMA
@@ -108,7 +75,7 @@ add_cinema(CinemaId, Password, Name, Address) ->
         io:format("[DATABASE] Check returned ~p~n", [CheckResult]),
         case CheckResult==[] of
           true  ->  io:format("[DATABASE] ID available. Trying write~n"),
-                    mnesia:write(cinema_tuple(CinemaId, Password, Name, Address, []));
+                    mnesia:write(cinema:new(CinemaId, Password, Name, Address));
           false ->  io:format("[DATABASE] Cinema with same ID already exists~n"),
                     false
         end
@@ -148,7 +115,7 @@ add_customer(Username, Password) ->
         io:format("[DATABASE] Check returned ~p~n", [CheckResult]),
         case CheckResult==[] of
           true  ->  io:format("[DATABASE] Username available. Trying write~n"),
-            mnesia:write(customer_tuple(Username, Password, []));
+            mnesia:write(customer:new(Username, Password, []));
           false ->  io:format("[DATABASE] Customer with same Username already exists~n"),
             false
         end
@@ -157,9 +124,10 @@ add_customer(Username, Password) ->
   io:format("[DATABASE] Final result of add customer is ~p~n", [Result]),
   Result.
 
+
 get_customer(Username) ->
   F = fun() ->
-    io:format("[DATABASE] Searching for customer \"~s\"~n", [Username]),
+    io:format("[DATABASE] Searching for Customer ~s~n", [Username]),
     Match = #customer{username='$1', _=''},
     Guard = [{'==', '$1', Username}],
     Result = ['$_'], %% return all fields
@@ -168,61 +136,41 @@ get_customer(Username) ->
   mnesia:transaction(F).
 
 
-add_booking_to_customer(Username, ShowId, NumOfSeats) ->
+get_customer_bookings(Username) ->
   F = fun() ->
-    io:format("[DATABASE] Adding new boooking of ~i seats for Show ~s to Customer ~s~n", NumOfSeats, ShowId, Username),
+    io:format("[DATABASE] Searching list of shows booked by Customer ~s~n", [Username]),
     [Customer] = mnesia:read(customer, Username),
-    case lists:keytake(ShowId, #booking.showId, Customer#customer.bookings) of
-      {value, OldBooking, _List} ->
-        NewBooking = booking_tuple(ShowId, NumOfSeats + OldBooking#booking.numOfSeats);
-      false ->
-        NewBooking = booking_tuple(ShowId, NumOfSeats)
-    end,
-    NewList = lists:keystore(
-      ShowId,                       % value of the key
-      #booking.showId,              % position of the key
-      Customer#customer.bookings,   % old tuple list
-      NewBooking                    % new tuple
-    ),
-    mnesia:write(Customer#customer{bookings = NewList})
+    lists:map(
+      fun(ShowId) ->
+          [Show] = mnesia:read(show, ShowId),
+          CurrentTime = erlang:monotonic_time(second),
+          if Show#show.date < CurrentTime -> %% old show
+            %% return {old, ShowId, ShowName, Date, BookedSeats}
+            {old_show, ShowId, Show#show.name, Show#show.date, maps:get(Username, Show#show.bookings)};
+          else ->
+            %% return {new, ShowId, ShowName, Date, Pid}
+            {new, ShowId, Show#show.name, Show#show.date, Show#show.pid}
+          end
+      end,
+      Customer#customer.bookings
+    )
+  end,
+  mnesia:transaction(F).
+
+
+update_customer_bookings(Username, ShowIdList) ->
+  F = fun() ->
+    io:format("[DATABASE] Updating list of shows booked by Customer ~s~n", Username),
+    [Customer] = mnesia:wread(customer, Username),
+    mnesia:write(Customer#customer{bookings = ShowIdList})
   end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of add booking to customer is ~p~n", [Result]),
   Result.
 
-remove_booking(Username, ShowId, NumOfSeats) ->
-  F = fun() ->
-    io:format("[DATABASE] Removing ~i booked seats of Show ~s from Customer ~s~n", NumOfSeats, ShowId, Username),
-    [Customer] = mnesia:read(customer, Username),
-    case lists:keytake(ShowId, #booking.showId, Customer#customer.bookings) of
-      {value, OldBooking, _List} ->
-        NewSeats = OldBooking#booking.numOfSeats - NumOfSeats,
-        case (NewSeats > 0) of
-          true ->
-            NewList = lists:keystore(
-              ShowId,                         % value of the key
-              #booking.showId,                % position of the key
-              Customer#customer.bookings,     % old tuple list
-              booking_tuple(ShowId, NewSeats) % new tuple
-            );
-          false ->
-            NewList = lists:keydelete(
-              ShowId,                         % value of the key
-              #booking.showId,                % position of the key
-              Customer#customer.bookings      % old tuple list
-            )
-        end,
-        mnesia:write(Customer#customer{bookings = NewList});
-      false ->
-        io:format("[DATABASE] Searched booking does not exists ~n")
-    end
-  end,
-  Result = mnesia:transaction(F),
-  io:format("[DATABASE] Final result of remove booking from customer is ~p~n", [Result]),
-  Result.
 
 %% SHOW
-add_show(ShowId, Name, CinemaId, CinemaName, Date, MaxSeats) ->
+add_show(ShowId, Name, CinemaId, Date, MaxSeats, Pid) ->
   F = fun() ->
         io:format("[DATABASE] Checking if Show ID ~s already exists~n", [ShowId]),
         Match = #show{showId='$1', _='_'},
@@ -233,7 +181,7 @@ add_show(ShowId, Name, CinemaId, CinemaName, Date, MaxSeats) ->
         case CheckResult==[] of
           true  ->
             io:format("[DATABASE] Show ID available. Trying write~n"),
-            mnesia:write(show_tuple(ShowId, Name, CinemaName, Date, MaxSeats));
+            mnesia:write(show:new(ShowId, Name, CinemaId, Date, MaxSeats, Pid, maps:new()));
           false ->
             io:format("[DATABASE] Show with same ID already exists~n"),
             false
@@ -256,9 +204,19 @@ get_show(ShowId) ->
 get_cinema_shows(CinemaId) ->
   F = fun() ->
     io:format("[DATABASE] Searching for shows in Cinema \"~s\"~n", [CinemaId]),
-    Match = #show{showId='$1', name='$2', date='$3', cinemaId='$4', _=''},
+    Match = #show{showId='$1', name='$2', date='$3', cinemaId='$4', pid='$5', _=''},
     Guard = [{'==', '$4', CinemaId}],
-    Result = ['$1', '$2', '$3'], %% return list of {ID, name, date}
+    Result = ['$1', '$2', '$3', '$5'], %% return list of {ID, name, date, pid}
     mnesia:select(show, [{Match, Guard, Result}])
       end,
   mnesia:transaction(F).
+
+update_show_bookings(ShowId, BookingMap) ->
+  F = fun() ->
+    io:format("[DATABASE] Updating list of bookers of show ~s~n", ShowId),
+    [Show] = mnesia:wread(show, ShowId),
+    mnesia:write(Show#show{bookings = BookingMap})
+  end,
+  Result = mnesia:transaction(F),
+  io:format("[DATABASE] Final result of add booking to customer is ~p~n", [Result]),
+  Result.
