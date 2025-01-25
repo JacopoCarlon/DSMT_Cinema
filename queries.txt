@@ -1,0 +1,47 @@
+
+view cinema -> see list of shows for cinema
+    find_cinema_by_name("String") -> lista di cinema con quel nome (location, nomeCinema)
+    get_cinema_shows(cinemaID) -> showID, show_name, timestamp
+
+
+viewShow
+    get_show_data(showID, userName) -> showID, show_name, timestamp, num_occupati, num_massimo, posti_bookati_da_utente
+
+
+bookSeats
+    send_booking(showID, userName, nuovo_numero_booking_da_utente )
+
+
+
+userPage
+    get_customer_data(userName) -> userName, userBookings (lista di : showID, nomeShow cinemaShow dataShow numPostPrenotati )
+        ... delete booking == send_booking(showID, userName, 0 )
+    logout
+
+
+
+registerNewSomething
+    registerNewCustomer ( username, password ) -> booleanResult, erroMsg
+    registerNewCinema ( cinemaName, cinemaPassword, address ) -> booleanResult, erroMsg
+
+
+loginExistingSomething
+    loginExistingCustomer (username, password ) -> booleanResult, erroMsg
+    loginExistingCinema (username, password ) -> booleanResult, erroMsg
+
+
+cinemaPersonalPage
+    "" get_cinema_shows(cinemaID) -> showID, show_name, timestamp
+    deleteShowFromCinema(cinemaID, showID) -> booleanResult, erroMsg
+    createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> booleanResult, showID, erroMsg
+
+
+
+
+
+
+
+
+
+
+
