@@ -10,6 +10,7 @@
 -author("nickrick3").
 
 -export([init_show_handler/5]).
+-include("macros.hrl").
 
 
 init_show_handler(ShowId, ShowName, CinemaName, Date, MaxNumOfSeats) ->
@@ -46,15 +47,15 @@ show_loop(ShowInfo, BookingMap, ViewingCustomers, ChangedBookings) ->
         {Client, new_viewer, MessageMap} ->
             io:format(" [SHOW HANDLER] Received new_viewer message~n"),
             NewViewingCustomers = sets:add_element(maps:get("username",MessageMap)),
-            ToSend = {ok, ShowInfo},
-            Client ! {self(), ToSend},
+            Client ! {self(), {ok, ShowInfo}},
+            ?J_LISTENER ! {self(), update_show_state, ShowInfo, NewViewingCustomers, false},
             show_loop(ShowInfo, BookingMap, NewViewingCustomers, ChangedBookings);
 
         {Client, del_viewer, MessageMap} ->
             io:format(" [SHOW HANDLER] Received del_viewer message~n"),
             NewViewingCustomers = sets:del_element(maps:get("username",MessageMap)),
-            ToSend = {ok, ShowInfo},
-            Client ! {self(), ToSend},
+            Client ! {self(), {ok, ShowInfo}},
+            ?J_LISTENER ! {self(), update_show_state, ShowInfo, NewViewingCustomers, false},
             show_loop(ShowInfo, BookingMap, NewViewingCustomers, ChangedBookings);
         
         {Client, update_booking, MessageMap} ->
@@ -65,11 +66,15 @@ show_loop(ShowInfo, BookingMap, ViewingCustomers, ChangedBookings) ->
             {Success, NewAvailableSeats, NewBookingMap} = 
                 do_new_booking(Username, RequestedSeats, maps:get(avail_seats, ShowInfo), BookingMap),
             NewShowInfo = maps:put(avail_seats, NewAvailableSeats, ShowInfo),
-            ToSend = {ok, NewShowInfo},
-            Client ! {self(), ToSend},
+            case Success of
+                false -> Client ! {self(), {false}};
+                true ->
+                    Client ! {self(), {ok, NewShowInfo}},
+                    ?J_LISTENER ! {self(), update_show_state, NewShowInfo, ViewingCustomers, false}
+            end,    
             show_loop(NewShowInfo, NewBookingMap, ViewingCustomers, ChangedBookings or Success);
         
-        {Sender, restore_backup, BookingBackup} when is_map(BookingBackup) ->
+        {Sender, restore_backup, BookingBackup} ->
             case Sender == whereis(main_server_endpoint) of
                 false -> 
                     io:format("[SHOW HANDLER] Restore request ignored...~n"),
@@ -94,6 +99,7 @@ show_loop(ShowInfo, BookingMap, ViewingCustomers, ChangedBookings) ->
                 false -> io:format("[SHOW HANDLER] Kill request ignored...~n");
                 true ->
                     do_backup(maps:get(show_id, ShowInfo), BookingMap, ChangedBookings),
+                    ?J_LISTENER ! {self(), update_show_state, ShowInfo, ViewingCustomers, true},
                     io:format(" [SHOW HANDLER] Suicide: ~p killed...~n", [self()])
             end;
         

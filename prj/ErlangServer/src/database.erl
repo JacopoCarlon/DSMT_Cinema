@@ -15,7 +15,7 @@
 -export([
   add_cinema/4, get_cinema/1, find_cinema_by_name/1,
   add_customer/2, get_customer/1, get_customer_bookings/2,
-  add_show/6, get_show/1, get_cinema_shows/1, update_show_bookings/2
+  add_show/6, get_show/1, get_cinema_shows/1, update_show_bookings/2, update_show_pid/2
 ]).
 
 %%%% TABLES
@@ -209,7 +209,7 @@ get_cinema_shows(CinemaId) ->
     Guard = [{'==', '$4', CinemaId}],
     Result = ['$1', '$2', '$3', '$5'], %% return list of {ID, name, date, pid}
     mnesia:select(show, [{Match, Guard, Result}])
-      end,
+  end,
   mnesia:transaction(F).
 
 update_show_bookings(ShowId, NewBookingMap) ->
@@ -239,6 +239,18 @@ update_show_bookings(ShowId, NewBookingMap) ->
     ),
 
     mnesia:write(Show#show{bookings = NewBookingMap})
+  end,
+  Result = mnesia:transaction(F),
+  io:format("[DATABASE] Final result of update bookings is ~p~n", [Result]),
+  Result.
+
+%% update pid and return BoolingMap
+update_show_pid(ShowId, NewPid) ->
+  F = fun() ->
+    io:format("[DATABASE] Updating pid of show ~s~n", ShowId),
+    [Show] = mnesia:wread(show, ShowId),
+    mnesia:write(Show#show{pid = NewPid}),
+    Show#show.bookings
   end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of add booking to customer is ~p~n", [Result]),
