@@ -25,18 +25,33 @@
     <div class="card-body">
       <form method="POST" action="<%=request.getContextPath()%>/RegistrationServlet">
         <div class="mb-3">
-          <label for="username" class="form-label">Username</label>
-          <input type="text" class="form-control" name="username" id="username" placeholder="Pippo1234" pattern="^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$" required>
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" name="username" id="username" placeholder="Pippo1234" pattern="^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Username</label>
+            <input type="text" class="form-control" name="password" id="password" placeholder="EnterPassword.1234" required>
         </div><div class="mb-3">
-        <label for="password" class="form-label">Username</label>
-        <input type="text" class="form-control" name="password" id="password" placeholder="EnterPassword.1234" required>
-      </div><div class="mb-3">
-        <label for="confirmPassword" class="form-label">Username</label>
-        <input type="text" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="EnterPassword.1234" required>
-      </div>
+            <label for="confirmPassword" class="form-label">Username</label>
+            <input type="text" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="EnterPassword.1234" required>
+        </div>
+        <%
+            String registrationStatus = (String) request.getSession().getAttribute("registrationStatus");
+            if(registrationStatus != null && registrationStatus.equals("error")) {
+        %>
+            <div class="alert alert-danger" role="alert">
+            There was an unexpected error, please retry later.
+            </div>
+        <%
+            }
+        %>
+        <div>
+            <input type="checkbox" id="is_cinema" name="is_cinema" />
+            <label for="is_cinema">Are you a cinema (do not lie)</label>
+        </div>
         <input value="MAGIC" type="hidden">
-        <button id="regButton" type="submit" class="btn btn-primary">
-          Do Register !
+        <button id="regButton" type="submit" class="btn btn-primary" >
+            Do Register !
         </button>
       </form>
       <div>

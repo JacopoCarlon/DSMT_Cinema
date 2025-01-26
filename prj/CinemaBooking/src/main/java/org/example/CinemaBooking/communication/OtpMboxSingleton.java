@@ -20,7 +20,6 @@ public class OtpMboxSingleton {
     public static OtpMbox getInstance(HttpSession session) {
         if(otpNode == null){
             try {
-                //TODO: find an appropriate name for the "client" Erlang node
                 String nodeName = InetAddress.getLocalHost().getHostName();
                 otpNode = new OtpNode(nodeName + "@localhost", cookie);
             } catch(Exception e){
