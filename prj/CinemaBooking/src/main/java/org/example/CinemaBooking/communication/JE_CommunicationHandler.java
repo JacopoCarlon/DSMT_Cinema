@@ -139,18 +139,6 @@ public class JE_CommunicationHandler {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     // --- main utility functions ---
 
     // -----------------------------------------------------------------------------------------------
@@ -170,12 +158,13 @@ public class JE_CommunicationHandler {
         System.out.println("Sent request " + request + " at server " + serverRegisteredPID);
     }
 
-    public void sendToPid(HttpSession session, OtpErlangPid auctionHandlerPID, OtpErlangObject... values){
+    // need somebody to tell me the showHandlerPID
+    public void sendToPid(HttpSession session, OtpErlangPid showHandlerPID, OtpErlangObject... values){
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
         System.out.println("Created mbox with name: " + otpMbox.getName());
         OtpErlangTuple request = send_setup(otpMbox, session, values);
-        otpMbox.send(auctionHandlerPID, request);
-        System.out.println("Sent request " + request + " at server " + auctionHandlerPID.toString());
+        otpMbox.send(showHandlerPID, request);
+        System.out.println("Sent request " + request + " at server " + showHandlerPID.toString());
     }
 
 
