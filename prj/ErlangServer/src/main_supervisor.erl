@@ -25,15 +25,25 @@ init(_Args) ->
   %% Strategy one_for_one: if one child process crashes, only that child process is restarted
   %% Supervisor crashes with all its children if more than 'intensity' children
   %% crash in a 'period' (expressed in seconds)
-  SupFlags = #{strategy => one_for_one,
+  SupFlags = #{
+    strategy => one_for_one,
     intensity => 1,
-    period => 5},
+    period => 5
+  },
 
-  MainServerChild = #{id => main_server,
+  MainServerChild = #{
+    id => main_server,
     start => {main_server, start_server, []},
-    restart => permanent},
+    restart => permanent
+  },
+  
+  ShowMonitorChild = #{
+    id => show_monitor,
+    start => {show_monitor, start_show_monitor, []},
+    restart => permanent
+  },
 
-  Children = [MainServerChild],
+  Children = [MainServerChild, ShowMonitorChild],
 
   %% Returns specification to 'supervisor' module
   {ok, {SupFlags, Children}}.

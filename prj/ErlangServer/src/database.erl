@@ -141,21 +141,24 @@ get_customer_bookings(Username, OldShows) ->
     [Show] = mnesia:read(show, ShowId),
     CurrentTime = erlang:monotonic_time(second),
     
-    if Show#show.date < CurrentTime -> %% old show
-      if OldShows == true ->
-        %% return {ShowId, ShowName, Date, BookedSeats}
-        {true, {ShowId, Show#show.name, Show#show.date, maps:get(Username, Show#show.bookings)}};
-      else ->
-        false
-      end;
+    case Show#show.date < CurrentTime of 
+      true -> %% old show
+        case OldShows of
+          false ->
+            false;
+          true ->
+            %% return {ShowId, ShowName, Date, BookedSeats}
+            {true, {ShowId, Show#show.name, Show#show.date, maps:get(Username, Show#show.bookings)}}
+        end;
 
-    else ->
-      if OldShows == true ->
-        false;
-      else ->
-        %% return {ShowId, ShowName, Date, Pid}
-        {true, {ShowId, Show#show.name, Show#show.date, Show#show.pid}}
-      end
+      false ->
+        case OldShows of 
+          false ->
+            %% return {ShowId, ShowName, Date, Pid}
+            {true, {ShowId, Show#show.name, Show#show.date, Show#show.pid}};
+          true ->
+            false
+        end
     end
   end,
 

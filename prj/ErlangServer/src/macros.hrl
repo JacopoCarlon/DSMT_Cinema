@@ -1,1 +1,1 @@
--define(J_LISTENER, {mbox, listener@localhost})
+-define(J_LISTENER, {mbox, listener@localhost}).
