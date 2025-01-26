@@ -33,11 +33,11 @@ public class Customer {
         return this.userBookingList;
     }
 
-    public void changeBookingsForShow(String trgShowName, String cinemaName, Date showDate, long newSeatsCount){
+    public void changeBookingsForShow(String trgShowName, String cinemaName, String showDate, long newSeatsCount){
         for (Booking booking : userBookingList) {
             if (Objects.equals(booking.showName, trgShowName)
                     && Objects.equals(booking.cinemaName, cinemaName)
-                    && booking.showDate == showDate){
+                    && Objects.equals(booking.showDate, showDate)){
                 if (newSeatsCount==0){
                     userBookingList.remove(booking);
                 }else{
@@ -48,8 +48,8 @@ public class Customer {
         }
     }
 
-    public boolean addNewBookingForShow(String trgShowName, String cinemaName, Date showDate , long newSeatsCount){
-        return userBookingList.add(new Booking(username, trgShowName, cinemaName, showDate, newSeatsCount));
+    public boolean addNewBookingForShow(String trgShowName, String showID,  String cinemaName, String showDate , long newSeatsCount){
+        return userBookingList.add(new Booking(username, showID, trgShowName, cinemaName, showDate, newSeatsCount));
     }
 
 
@@ -60,10 +60,19 @@ public class Customer {
                 ", userBookings=" + this.userBookingList.toString() + "}\n";
     }
 
-    public OtpErlangMap toOtpErlangMap() {
+    public OtpErlangMap toOtpErlangMapNoShows() {
         return new OtpErlangMap(
                 new OtpErlangObject[]{new OtpErlangAtom("username"), new OtpErlangString("password")},
                 new OtpErlangObject[]{new OtpErlangAtom(username), new OtpErlangString(password)}
         );
     }
+
+    public OtpErlangMap customerNameToOtpErlangMap(){
+        return new OtpErlangMap(
+                new OtpErlangObject[]{new OtpErlangString("username") },
+                new OtpErlangObject[]{new OtpErlangString(username)}
+        );
+    }
+
+
 }

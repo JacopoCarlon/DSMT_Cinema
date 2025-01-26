@@ -64,8 +64,15 @@ public class Show {
     // todo
     public OtpErlangMap toOtpErlangMap(){
         return new OtpErlangMap(
-            new OtpErlangObject[]{new OtpErlangString("showID"), new OtpErlangString("showName"), new OtpErlangString("showDate"), new OtpErlangString("maxSeats"), new OtpErlangString("currAvailableSeats"), new OtpErlangString("isEnded")   },
+            new OtpErlangObject[]{new OtpErlangString("showID"), new OtpErlangString("showName"), new OtpErlangString("showDate"), new OtpErlangString("maxSeats"), new OtpErlangString("currAvailableSeats"), new OtpErlangString("isEnded") },
             new OtpErlangObject[]{new OtpErlangString(showID), new OtpErlangString(showName), new OtpErlangString(showDate), new OtpErlangLong(maxSeats), new OtpErlangLong(currAvailableSeats), new OtpErlangBoolean(isEnded)}
+        );
+    }
+
+    public OtpErlangMap showIDtoOtpErlangMap(){
+        return new OtpErlangMap(
+                new OtpErlangObject[]{new OtpErlangString("showID") },
+                new OtpErlangObject[]{new OtpErlangString(showID)}
         );
     }
 

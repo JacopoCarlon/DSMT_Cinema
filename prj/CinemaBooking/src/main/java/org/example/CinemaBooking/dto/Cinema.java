@@ -1,9 +1,6 @@
 package org.example.CinemaBooking.dto;
 
-import com.ericsson.otp.erlang.OtpErlangAtom;
-import com.ericsson.otp.erlang.OtpErlangMap;
-import com.ericsson.otp.erlang.OtpErlangObject;
-import com.ericsson.otp.erlang.OtpErlangString;
+import com.ericsson.otp.erlang.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +43,26 @@ public class Cinema {
                 new OtpErlangObject[]{new OtpErlangString(cinemaID), new OtpErlangString(cinemaName), new OtpErlangString(cinemaPassword), new OtpErlangString(cinemaLocation)}
         );
     }
+
+
+    public OtpErlangMap cinemaNamePwdToOtpErlangMapNoShows() {
+        return new OtpErlangMap(
+                new OtpErlangObject[]{new OtpErlangString("cinemaName"), new OtpErlangString("cinemaPassword")},
+                new OtpErlangObject[]{new OtpErlangString(cinemaName), new OtpErlangString(cinemaPassword)}
+        );
+    }
+
+
+    public static Cinema decodeFromErlangList(OtpErlangList list){
+        String          cinemaID        = ((OtpErlangString) list.elementAt(0)).stringValue();
+        String          cinemaName      = ((OtpErlangString) list.elementAt(1)).stringValue();
+        String          cinemaPassword  = ((OtpErlangString) list.elementAt(2)).stringValue();
+        String          cinemaLocation  = ((OtpErlangString) list.elementAt(3)).stringValue();
+        ArrayList<Show> cinemaShowList  = null;
+
+        return new Cinema(cinemaID, cinemaName, cinemaPassword, cinemaLocation, cinemaShowList);
+    }
+
 
 
     @Override

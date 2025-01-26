@@ -1,26 +1,34 @@
 package org.example.CinemaBooking.dto;
 
+import com.ericsson.otp.erlang.*;
+
 import java.util.Date;
 
 
 // this class is seen in the Costumer Page !!!
 public class Booking {
     String  username;
+    String  showID;
     String  showName;
     String  cinemaName;
-    Date    showDate;
+    String  showDate;
     long    num_seats;
 
-    public Booking(String username, String showName, String cinemaName, Date showDate, long num_seats){
+    public Booking(String username, String showID, String showName, String cinemaName, String showDate, long num_seats){
         // todo : manage negative number of seats reasonably ..?
         if (num_seats <= 0){
             num_seats = 0;
         }
         this.username = username;
+        this.showID = showID;
         this.showName = showName;
         this.cinemaName = cinemaName;
         this.showDate = showDate;
         this.num_seats = num_seats;
+    }
+
+    public void setBookingSeats(long new_num_sets){
+        this.num_seats = new_num_sets;
     }
 
     public String getUsername(){
@@ -35,7 +43,7 @@ public class Booking {
         return this.cinemaName;
     }
 
-    public Date showDate(){
+    public String showDate(){
         return this.showDate;
     }
 
@@ -45,11 +53,32 @@ public class Booking {
 
     public String toString(){
         return "Booking{username: " + username +
+                ", showID: " + showID +
                 ", showName: " + showName +
                 ", cinemaName: " + cinemaName +
                 ", showDate: " + showDate +
                 ", seatsBookedByUser: " + num_seats + "}\n";
     }
+
+    public static Booking decodeFromErlangList(OtpErlangList list){
+        String  username    = ((OtpErlangString) list.elementAt(0)).stringValue();
+        String  showID      = ((OtpErlangString) list.elementAt(1)).stringValue();
+        String  showName    = ((OtpErlangString) list.elementAt(2)).stringValue();
+        String  cinemaName  = ((OtpErlangString) list.elementAt(3)).stringValue();
+        String  showDate    = ((OtpErlangString) list.elementAt(4)).stringValue();
+        long    num_seats   = ((OtpErlangLong) list.elementAt(5)).longValue();
+
+        return new Booking(username, showID, showName , cinemaName, showDate, num_seats);
+    }
+
+
+    public OtpErlangMap toOtpErlangMap() {
+        return new OtpErlangMap(
+                new OtpErlangObject[]{new OtpErlangString("username"),new OtpErlangString("showID"), new OtpErlangString("showName"), new OtpErlangString("cinemaName"), new OtpErlangString("showDate"), new OtpErlangString("num_seats") },
+                new OtpErlangObject[]{new OtpErlangString(username), new OtpErlangString(showID), new OtpErlangString(showName), new OtpErlangString(cinemaName), new OtpErlangString(showDate), new OtpErlangLong(num_seats) }
+        );
+    }
+
 
     public void increaseBookingSeats(long to_add){
         this.num_seats += to_add;
