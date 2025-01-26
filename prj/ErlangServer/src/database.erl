@@ -14,7 +14,7 @@
 %% CRUD operations API
 -export([
   add_cinema/4, get_cinema/1, find_cinema_by_name/1,
-  add_customer/2, get_customer/1, update_customer_bookings/2, get_customer_bookings/1,
+  add_customer/2, get_customer/1, get_customer_bookings/2,
   add_show/6, get_show/1, get_cinema_shows/1, update_show_bookings/2
 ]).
 
@@ -27,7 +27,7 @@
 
 -record(customer,  {username,
                     password,
-                    bookings = []}). %% list of {ShowId}
+                    bookings = []}). %% set of {ShowId}
 
 
 -record(show,  {showId,
@@ -115,7 +115,7 @@ add_customer(Username, Password) ->
         io:format("[DATABASE] Check returned ~p~n", [CheckResult]),
         case CheckResult==[] of
           true  ->  io:format("[DATABASE] Username available. Trying write~n"),
-            mnesia:write(customer:new(Username, Password, []));
+            mnesia:write(customer:new(Username, Password, sets:new()));
           false ->  io:format("[DATABASE] Customer with same Username already exists~n"),
             false
         end
@@ -136,37 +136,35 @@ get_customer(Username) ->
   mnesia:transaction(F).
 
 
-get_customer_bookings(Username) ->
+get_customer_bookings(Username, OldShows) ->
+  Getter = fun(ShowId) ->
+    [Show] = mnesia:read(show, ShowId),
+    CurrentTime = erlang:monotonic_time(second),
+    
+    if Show#show.date < CurrentTime -> %% old show
+      if OldShows == true ->
+        %% return {ShowId, ShowName, Date, BookedSeats}
+        {true, {ShowId, Show#show.name, Show#show.date, maps:get(Username, Show#show.bookings)}};
+      else ->
+        false
+      end;
+
+    else ->
+      if OldShows == true ->
+        false;
+      else ->
+        %% return {ShowId, ShowName, Date, Pid}
+        {true, {ShowId, Show#show.name, Show#show.date, Show#show.pid}}
+      end
+    end
+  end,
+
   F = fun() ->
     io:format("[DATABASE] Searching list of shows booked by Customer ~s~n", [Username]),
     [Customer] = mnesia:read(customer, Username),
-    lists:map(
-      fun(ShowId) ->
-          [Show] = mnesia:read(show, ShowId),
-          CurrentTime = erlang:monotonic_time(second),
-          if Show#show.date < CurrentTime -> %% old show
-            %% return {old, ShowId, ShowName, Date, BookedSeats}
-            {old_show, ShowId, Show#show.name, Show#show.date, maps:get(Username, Show#show.bookings)};
-          else ->
-            %% return {new, ShowId, ShowName, Date, Pid}
-            {new, ShowId, Show#show.name, Show#show.date, Show#show.pid}
-          end
-      end,
-      Customer#customer.bookings
-    )
+    lists:filtermap(Getter, sets:to_list(Customer#customer.bookings))
   end,
   mnesia:transaction(F).
-
-
-update_customer_bookings(Username, ShowIdList) ->
-  F = fun() ->
-    io:format("[DATABASE] Updating list of shows booked by Customer ~s~n", Username),
-    [Customer] = mnesia:wread(customer, Username),
-    mnesia:write(Customer#customer{bookings = ShowIdList})
-  end,
-  Result = mnesia:transaction(F),
-  io:format("[DATABASE] Final result of add booking to customer is ~p~n", [Result]),
-  Result.
 
 
 %% SHOW
@@ -211,11 +209,33 @@ get_cinema_shows(CinemaId) ->
       end,
   mnesia:transaction(F).
 
-update_show_bookings(ShowId, BookingMap) ->
+update_show_bookings(ShowId, NewBookingMap) ->
   F = fun() ->
     io:format("[DATABASE] Updating list of bookers of show ~s~n", ShowId),
     [Show] = mnesia:wread(show, ShowId),
-    mnesia:write(Show#show{bookings = BookingMap})
+    OldBookingMap = Show#show.bookings,
+    
+    ToRemove = maps:keys(maps:without(maps:keys(NewBookingMap), OldBookingMap)),
+    lists:foreach(
+      fun(Username) ->
+        [Customer] = mnesia:wread(customer, Username),
+        BookingSet = sets:del_element(ShowId, Customer#customer.bookings),
+        mnesia:write(Customer#customer{bookings = BookingSet})
+      end,
+      ToRemove
+    ),
+
+    ToAdd = maps:without(maps:keys(OldBookingMap), NewBookingMap),
+    lists:foreach(
+      fun(Username) ->
+        [Customer] = mnesia:wread(customer, Username),
+        BookingSet = sets:add_element(ShowId, Customer#customer.bookings),
+        mnesia:write(Customer#customer{bookings = BookingSet})
+      end,
+      ToAdd
+    ),
+
+    mnesia:write(Show#show{bookings = NewBookingMap})
   end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of add booking to customer is ~p~n", [Result]),

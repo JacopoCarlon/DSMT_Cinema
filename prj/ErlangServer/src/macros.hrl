@@ -1,0 +1,1 @@
+-define(J_LISTENER, {mbox, listener@localhost})
