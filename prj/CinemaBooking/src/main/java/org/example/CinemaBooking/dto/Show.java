@@ -2,24 +2,27 @@ package org.example.CinemaBooking.dto;
 
 import java.util.Date;
 
-import com.ericsson.otp.erlang.OtpErlangMap;
+import com.ericsson.otp.erlang.*;
 
 
 // This class is only seen in the Cinema Page
 public class Show {
+    String  showID;
     String  showName;
-    Date    showDate;
+    String  showDate;
     long    maxSeats;
     long    currAvailableSeats;
     Boolean isEnded;
 
     public Show(
+            String showID,
             String showName,
-            Date showDate,
+            String showDate,
             long maxSeats ,
             long currAvailableSeats,
             Boolean isEnded)
     {
+        this.showID = showID;
         this.showName = showName;
         this.showDate = showDate;
         this.maxSeats = maxSeats;
@@ -28,24 +31,30 @@ public class Show {
     }
 
     public Show(
+            String showID,
             String showName,
-            Date showDate,
+            String showDate,
             long maxSeats
     ){
-        this(showName,showDate,maxSeats,0,false);
+        this(showID, showName ,showDate,maxSeats,0,false);
+    }
+
+    public String getShowID(){
+        return this.showID;
     }
 
     public String getShowName(){
         return this.showName;
     }
 
-    public Date getShowDate() {
+    public String getShowDate() {
         return showDate;
     }
 
     @Override
     public String toString(){
-        return "Show{showName: " + showName +
+        return "Show{showID: " + showID +
+                ", showName: " + showName +
                 ", showDate: " + showDate +
                 ", maxSeats: " + maxSeats +
                 ", currAvailableSeats: " + currAvailableSeats +
@@ -53,13 +62,23 @@ public class Show {
     }
 
     // todo
-    //  public OtpErlangMap encodeInErlangMap(){
-    //
-    //  }
+    public OtpErlangMap toOtpErlangMap(){
+        return new OtpErlangMap(
+            new OtpErlangObject[]{new OtpErlangString("showID"), new OtpErlangString("showName"), new OtpErlangString("showDate"), new OtpErlangString("maxSeats"), new OtpErlangString("currAvailableSeats"), new OtpErlangString("isEnded")   },
+            new OtpErlangObject[]{new OtpErlangString(showID), new OtpErlangString(showName), new OtpErlangString(showDate), new OtpErlangLong(maxSeats), new OtpErlangLong(currAvailableSeats), new OtpErlangBoolean(isEnded)}
+        );
+    }
 
     // todo
-    //  public OtpErlangMap decodeFromErlangMap(){
-    //
-    //  }
+    public static Show decodeFromErlangList(OtpErlangList list){
+        String  showID   = ((OtpErlangString) list.elementAt(0)).stringValue();
+        String  showName = ((OtpErlangString) list.elementAt(1)).stringValue();
+        String  showDate = ((OtpErlangString) list.elementAt(2)).stringValue();
+        long    maxSeats = ((OtpErlangLong) list.elementAt(3)).longValue();
+        long    currAvailableSeats = ((OtpErlangLong) list.elementAt(4)).longValue();
+        Boolean isEnded = ((OtpErlangBoolean) list.elementAt(5)).booleanValue();
+
+        return new Show(showID, showName, showDate, maxSeats, currAvailableSeats, isEnded);
+    }
 
 }

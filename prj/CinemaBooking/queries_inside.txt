@@ -1,7 +1,12 @@
+!!! NOTE :
+- userName è chiave unica
+- cinemaName è chiave unica
+
+
 
 view cinema -> see list of shows for cinema
     find_cinema_by_name("String") -> lista di cinema con quel nome (location, nomeCinema)
-    get_cinema_shows(cinemaID) -> showID, show_name, timestamp
+    -- -- get_cinema_shows(cinemaID) -> showID, show_name, timestamp
 
 
 viewShow
@@ -21,19 +26,19 @@ userPage
 
 
 registerNewSomething
-    registerNewCustomer ( username, password ) -> booleanResult, erroMsg
-    registerNewCinema ( cinemaName, cinemaPassword, address ) -> booleanResult, erroMsg
+    _ registerNewCustomer ( username, password ) -> booleanResult, erroMsg
+    - registerNewCinema ( cinemaName, cinemaPassword, address ) -> booleanResult, erroMsg
 
 
 loginExistingSomething
-    loginExistingCustomer (username, password ) -> booleanResult, erroMsg
-    loginExistingCinema (username, password ) -> booleanResult, erroMsg
+    _ loginExistingCustomer (username, password ) -> booleanResult, erroMsg
+    - loginExistingCinema (username, password ) -> booleanResult, erroMsg
 
 
 cinemaPersonalPage
-    "" get_cinema_shows(cinemaID) -> showID, show_name, timestamp
-    deleteShowFromCinema(cinemaID, showID) -> booleanResult, erroMsg
-    createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> booleanResult, showID, erroMsg
+    - "" get_cinema_shows(cinemaID) -> showID, show_name, timestamp
+    - deleteShowFromCinema(cinemaID, showID) -> booleanResult, erroMsg
+    - createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> booleanResult, showID, erroMsg
 
 
 
@@ -47,7 +52,6 @@ mvn install:install-file \
 -DgeneratePom=true
 
 Jacopo :  mvn install:install-file -Dfile=/usr/lib/erlang/lib/jinterface-1.12.1/priv/OtpErlang.jar -DgroupId=com.ericsson -DartifactId=erlang-jinterface -Dversion=1.12.1 -Dpackaging=jar -DgeneratePom=true
-
 
 
 

@@ -62,8 +62,8 @@ public class Customer {
 
     public OtpErlangMap toOtpErlangMap() {
         return new OtpErlangMap(
-                new OtpErlangObject[]{new OtpErlangAtom("username"), new OtpErlangString(username)},
-                new OtpErlangObject[]{new OtpErlangAtom("password"), new OtpErlangString(password)}
+                new OtpErlangObject[]{new OtpErlangAtom("username"), new OtpErlangString("password")},
+                new OtpErlangObject[]{new OtpErlangAtom(username), new OtpErlangString(password)}
         );
     }
 }
