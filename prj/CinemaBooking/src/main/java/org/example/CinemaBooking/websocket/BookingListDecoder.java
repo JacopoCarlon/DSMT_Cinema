@@ -1,11 +1,14 @@
 package org.example.CinemaBooking.websocket;
 
-import com.google.gson.Gson;
-import jakarta.websocket.DecodeException;
-import jakarta.websocket.Decoder;
-import jakarta.websocket.EndpointConfig;
 import org.example.CinemaBooking.dto.Booking;
 import org.example.CinemaBooking.dto.BookingList;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+
+import jakarta.websocket.EndpointConfig;
+import jakarta.websocket.DecodeException;
+import jakarta.websocket.Decoder;
 
 
 public class BookingListDecoder implements Decoder.Text<BookingList>{
@@ -13,11 +16,11 @@ public class BookingListDecoder implements Decoder.Text<BookingList>{
 
     @Override
     public BookingList decode(String s) throws DecodeException {
-        System.out.println("[AuctionListDecoder] Received: " + s);
-        BookingList auctionList = gson.fromJson(s, BookingList.class);
-        for(Booking auction: auctionList.getAuctionList())
-            System.out.println(auction.toString());
-        return auctionList;
+        System.out.println("[BookingListDecoder] Received: " + s);
+        BookingList bookingList = gson.fromJson(s, BookingList.class);
+        for(Booking t_booking: bookingList.getBookingsList())
+            System.out.println(t_booking.toString());
+        return bookingList;
     }
 
     @Override
@@ -34,7 +37,5 @@ public class BookingListDecoder implements Decoder.Text<BookingList>{
     public void destroy() {
         // Close resources
     }
-
-
 
 }

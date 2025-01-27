@@ -14,21 +14,6 @@
     </head>
     <body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>', '<%=request.getSession().getAttribute("is_cinema")%>' );">
         <div class="container">
-            <div class="d-flex d-flex justify-content-between p-3">
-                <a href="<%=request.getContextPath()%>/LoginServlet" class="btn btn-danger">Logout</a>
-                <h4 id="username"> Username: <%=request.getSession().getAttribute("username")%></h4>
-                <a href="<%=request.getContextPath()%>/CreateAuctionServlet" class="btn btn-primary">CreateAuction</a>
-            </div>
-            <div class="d-flex d-flex justify-content-center p-3">
-                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check" onclick="show_auctions(true)" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="btnradio1">ONGOING AUCTIONS</label>
-
-                    <input type="radio" class="btn-check" onclick="show_auctions(false)" name="btnradio" id="btnradio2" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio2">PAST AUCTIONS</label>
-                </div>
-            </div>
-
             <div class="card" id="current_bookings_card">
                 <h3 class="d-flex justify-content-center p-3">
                     Current Bookings
@@ -68,7 +53,6 @@
                     %>
                 </div>
             </div>
-
         </div>
     </body>
 </html>

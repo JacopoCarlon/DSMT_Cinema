@@ -36,8 +36,9 @@ public class RegistrationServlet extends HttpServlet {
 
         boolean isSignUpOkay = false;
         if(is_a_cinema) {
+            String cinemaAddr = request.getParameter("cinemaLocation");
             try {
-                isSignUpOkay = new JE_CommunicationHandler().registerNewCinema(request.getSession(), username, password);
+                isSignUpOkay = new JE_CommunicationHandler().registerNewCinema(request.getSession(), username, password, cinemaAddr);
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }

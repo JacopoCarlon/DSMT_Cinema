@@ -4,19 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="registration servlet + jsp progress">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/BookingList.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/UserPageServlet.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListDecoder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/UserPageEndpoint.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/jpages/user_private_page.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/js/user_page_websocket.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="working on endpoints for servlets">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListEncoder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Booking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Booking.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/BookingList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/BookingList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/RegistrationServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/RegistrationServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListDecoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/UserPageEndpoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/UserPageEndpoint.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/registration.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/registration.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/user_page_websocket.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/user_page_websocket.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,6 +69,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -110,7 +107,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737891515684</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="working on endpoints for servlets">
+      <option name="closed" value="true" />
+      <created>1737975768125</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1737975768125</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -119,6 +124,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="communication handler progress" />
     <MESSAGE value="registration servlet + jsp progress" />
-    <option name="LAST_COMMIT_MESSAGE" value="registration servlet + jsp progress" />
+    <MESSAGE value="working on endpoints for servlets" />
+    <option name="LAST_COMMIT_MESSAGE" value="working on endpoints for servlets" />
   </component>
 </project>

@@ -6,12 +6,12 @@ public class BookingList {
     ArrayList<Booking> bookingsList;
     boolean active;
 
-    public BookingList(ArrayList<Booking> auctionList, boolean active) {
-        this.bookingsList = auctionList;
+    public BookingList(ArrayList<Booking> new_bookingsList, boolean active) {
+        this.bookingsList = new_bookingsList;
         this.active = active;
     }
 
-    public ArrayList<Booking> getAuctionList() {
+    public ArrayList<Booking> getBookingsList() {
         return bookingsList;
     }
 

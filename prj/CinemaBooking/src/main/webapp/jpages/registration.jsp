@@ -42,6 +42,10 @@
                     <input type="checkbox" id="is_cinema" name="is_cinema" />
                     <label for="is_cinema">Are you a cinema (do not lie)</label>
                 </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">If you are a cinema, you must indicate your address ?</label>
+                    <input type="text" class="form-control" name="cinemaLocation" id="cinemaLocation" placeholder="via Dio Ti Salvi, 0" >
+                </div>
                 <input value="MAGIC" type="hidden">
                 <button id="regButton" type="submit" class="btn btn-primary" >
                     Do Register !

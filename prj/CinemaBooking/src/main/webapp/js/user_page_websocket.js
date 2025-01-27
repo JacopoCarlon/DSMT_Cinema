@@ -8,11 +8,9 @@ function connect(ctx, username, is_cinema) {
 
     ws.onmessage = function(event) {
         //Logic to remove message
-        console.log("Arrived new auction list")
-        var auctionListObject = JSON.parse(event.data);
-        console.log(auctionListObject);
-        console.log(auctionListObject.auctionList);
-        console.log(auctionListObject.active)
-        updateAuctionList(ctx, auctionListObject.auctionList, auctionListObject.active);
+        console.log("Arrived new booking list")
+        var bookingsListObject = JSON.parse(event.data);
+        console.log(bookingsListObject);
+        // idk if we will dynamically recreate the lists of bookings, we'll see
     };
 }
