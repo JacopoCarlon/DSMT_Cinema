@@ -62,7 +62,11 @@ public class LoginServlet extends HttpServlet {
             // request.getSession().setAttribute("is_a_cinema", (is_a_cinema)?"true":"false");
             request.getSession().removeAttribute("loginStatus");
             System.out.println("Login success");
-            response.sendRedirect(request.getContextPath() + "/MainMenuServlet");
+            if(is_a_cinema){
+                response.sendRedirect(request.getContextPath() + "/CinemaPageServlet");
+            }else{
+                response.sendRedirect(request.getContextPath() + "/UserPageServlet");
+            }
         } else {
             System.out.println("Sign in failed");
             request.getSession().setAttribute("loginStatus", "error");

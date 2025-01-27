@@ -90,9 +90,9 @@ public class JE_CommunicationHandler {
 
     // // get_customer_data(userName) -> userName, userBookings (lista di : showID, nomeShow cinemaShow dataShow numPostPrenotati )
     // get_shows_by_customer(username) -> showID, show_name, timestamp, ...
-    public List<Booking> get_shows_by_Customer(HttpSession session, Customer trg_customer) throws OtpErlangDecodeException, OtpErlangExit {
+    public List<Booking> get_shows_by_Customer(HttpSession session, String userName) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_shows_by_customer");
-        send(session, serverRegisteredPID, new OtpErlangAtom("getBookingsOfCustomer"), new OtpErlangString(trg_customer.getUsername()) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("getBookingsOfCustomer"), new OtpErlangString(userName) );
         return receiveBookingsListOfCustomer(session);
     }
 

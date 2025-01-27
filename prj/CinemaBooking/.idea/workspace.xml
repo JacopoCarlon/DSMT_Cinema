@@ -4,14 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="working on endpoints for servlets">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListEncoder.java" afterDir="false" />
+    <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="solidified booking en/de_coders">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/BookingList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/BookingList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/RegistrationServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/RegistrationServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListDecoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/communication/JE_CommunicationHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/communication/JE_CommunicationHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/LoginServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/LoginServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/UserPageServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/UserPageServlet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/UserPageEndpoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/UserPageEndpoint.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/registration.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/registration.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/user_private_page.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/user_private_page.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/js/user_page_websocket.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/user_page_websocket.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -115,7 +114,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737975768125</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="solidified booking en/de_coders">
+      <option name="closed" value="true" />
+      <created>1737977255788</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1737977255788</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -125,6 +132,7 @@
     <MESSAGE value="communication handler progress" />
     <MESSAGE value="registration servlet + jsp progress" />
     <MESSAGE value="working on endpoints for servlets" />
-    <option name="LAST_COMMIT_MESSAGE" value="working on endpoints for servlets" />
+    <MESSAGE value="solidified booking en/de_coders" />
+    <option name="LAST_COMMIT_MESSAGE" value="solidified booking en/de_coders" />
   </component>
 </project>

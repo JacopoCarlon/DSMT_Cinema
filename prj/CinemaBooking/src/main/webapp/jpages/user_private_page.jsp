@@ -20,7 +20,7 @@
                 </h3>
                 <div class="p-4 d-flex flex-wrap" id="parent_bookings_list">
                     <%
-                    List<Bookings> bookingsList = (List<Bookings>) request.getAttribute("activeBookingsList");
+                    List<Bookings> bookingsList = (List<Bookings>) request.getAttribute("bookingList");
                     if(bookingsList == null || bookingsList.size() == 0){
                     %>
                         <h5 class="d-flex justify-content-center p-3" id="noBookings">Nothing to Show<h5>

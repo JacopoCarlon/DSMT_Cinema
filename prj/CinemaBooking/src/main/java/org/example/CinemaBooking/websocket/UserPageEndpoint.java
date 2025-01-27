@@ -20,7 +20,7 @@ public class UserPageEndpoint {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException, EncodeException {
-        System.out.println("[MAIN MENU ENDPOINT] OnOpen");
+        System.out.println("[UserPageEndpoint] OnOpen");
         this.session = session;
         bookingEndpoints.add(this);
         users.put(session.getId(), username);
@@ -29,14 +29,14 @@ public class UserPageEndpoint {
 
     @OnMessage
     public void onMessage(Session session, BookingList boookingList) throws IOException, EncodeException {
-        System.out.println("[MAIN MENU ENDPOINT] OnMessage");
-        System.out.println("[MAIN MENU ENDPOINT] Bookings list is going to be broadcast");
+        System.out.println("[UserPageEndpoint] OnMessage");
+        System.out.println("[UserPageEndpoint] Bookings list is going to be broadcast");
         broadcast(boookingList);
     }
 
     @OnClose
     public void onClose(Session session) throws IOException, EncodeException {
-        System.out.println("[MAIN MENU ENDPOINT] OnClose: " + users.get(session.getId()) + " is exiting");
+        System.out.println("[UserPageEndpoint] OnClose: " + users.get(session.getId()) + " is exiting");
         bookingEndpoints.remove(this);
         users.remove(session.getId());
         printEndpointStatus();
@@ -61,7 +61,7 @@ public class UserPageEndpoint {
     }
 
     private static void printEndpointStatus(){
-        System.out.println("[MAIN MENU ENDPOINT] User connected:");
+        System.out.println("[UserPageEndpoint] User connected:");
         for(String user: users.values()){
             System.out.println(" user: " + user);
         }

@@ -3,7 +3,7 @@ let ws;
 function connect(ctx, username, is_cinema) {
     let host = document.location.host;
     const url = "ws://" +host  + ctx + "/user_page_endpoint/" + username ;
-    console.log("Connecting to main menu endpoint with url: " + url);
+    console.log("Connecting to UserPageEndpoint with url: " + url);
     ws = new WebSocket(url);
 
     ws.onmessage = function(event) {
