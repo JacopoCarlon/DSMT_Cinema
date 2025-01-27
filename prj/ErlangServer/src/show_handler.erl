@@ -133,11 +133,11 @@ do_new_booking(_, _, AvailableSeats, BookingMap) ->
 
 do_backup(ShowId, BookingMap, true) ->
     MainServerPid = whereis(main_server_endpoint),
-    io:format("[SHOW HANDLER] Handler of Show ~s sending backup update to ~p.~n", [ShowId, MainServerPid]),
+    io:format("[SHOW HANDLER] Handler of Show ~p sending backup update to ~p.~n", [ShowId, MainServerPid]),
     MainServerPid ! {show_backup, ShowId, BookingMap};
 do_backup(ShowId, _BookingMap, false) ->
     %% DO NOTHING
-    io:format("[SHOW HANDLER] Backup of Show ~s is already up to date.~n", [ShowId]).
+    io:format("[SHOW HANDLER] Backup of Show ~p is already up to date.~n", [ShowId]).
 
 
 timestring_to_seconds(String) ->
