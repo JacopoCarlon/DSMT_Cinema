@@ -35,6 +35,8 @@ public class Booking {
         return this.username;
     }
 
+    public String getShowID(){return this.showID;}
+
     public String showName(){
         return this.showName;
     }
