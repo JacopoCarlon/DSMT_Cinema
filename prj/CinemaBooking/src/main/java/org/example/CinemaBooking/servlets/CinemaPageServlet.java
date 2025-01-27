@@ -30,7 +30,9 @@ public class CinemaPageServlet extends HttpServlet  {
         System.out.println("DoGet CinemaPageServlet");
 
         // get active shows of cinema :
-        String username = request.getParameter("username");
+        // todo : test which way should be done getting username and is_a_cinema
+        // String username = request.getParameter("username");
+        String username = (String) request.getSession().getAttribute("username");
         String is_a_cinema = request.getParameter("is_a_cinema");
         System.out.println("DoGet CinemaPageServlet : try to get shows of cinema : " + username + " which is cinema ? : " + is_a_cinema);
         try {

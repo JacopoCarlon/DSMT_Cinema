@@ -14,6 +14,13 @@
     </head>
     <body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>', '<%=request.getSession().getAttribute("is_cinema")%>' );">
         <div class="container">
+            <div class="d-flex d-flex justify-content-between p-3">
+                <a href="<%=request.getContextPath()%>/LoginServlet" class="btn btn-danger">Logout</a>
+                <h4 id="username"> CinemaName: <%=request.getSession().getAttribute("username") ... %></h4>
+                <h4 id="username"> Is_A_Cinema: <%=request.getSession().getAttribute("is_a_cinema") ... %></h4>
+                <a href="<%=request.getContextPath()%>/CreateShowServlet" class="btn btn-primary">CreateShow for this Cinema !</a>
+            </div>
+
             <div class="card" id="current_cinema_card">
                 <h3 class="d-flex justify-content-center p-3">
                     Shows of this Cinema

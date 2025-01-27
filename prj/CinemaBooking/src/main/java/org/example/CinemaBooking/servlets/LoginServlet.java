@@ -22,7 +22,7 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // arrive here to login from a fresh browser, or after a logout
+        // arrive here to login from a fresh browser, or in order to do a logout
         // registrationStatus attribute has been removed in doGet of RegistrationServlet
         System.out.println("doGet Login");
         request.getSession().removeAttribute("username");
