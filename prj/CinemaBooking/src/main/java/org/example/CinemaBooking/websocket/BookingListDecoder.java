@@ -1,5 +1,6 @@
 package org.example.CinemaBooking.websocket;
 
+import com.google.gson.Gson;
 import jakarta.websocket.DecodeException;
 import jakarta.websocket.Decoder;
 import jakarta.websocket.EndpointConfig;
