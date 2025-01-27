@@ -70,10 +70,10 @@ public class JE_CommunicationHandler {
     }
 
     // createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> booleanResult, showID, erroMsg
-    public boolean createNewShowForCinema(HttpSession session, String cinemaID, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
+    public OtpErlangPid createNewShowForCinema(HttpSession session, String cinemaID, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform createNewShowForCinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("add_show"), new OtpErlangString(cinemaID) , trg_show.toOtpErlangMap());
-        return receiveRequestResult(session);
+        return receiveShowPid(session);
     }
 
     // find_cinema_by_name("String") -> lista di cinema con quel nome (location, nomeCinema)
@@ -189,6 +189,25 @@ public class JE_CommunicationHandler {
         }
         return status.toString().equals("ok");
     }
+
+
+    public OtpErlangPid receiveShowPid(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+        OtpErlangAtom status = new OtpErlangAtom("");
+        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
+        OtpErlangObject message = otpMbox.receive(receiveTimeoutMS);
+        if(message instanceof OtpErlangTuple){
+            OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
+            OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
+            status = (OtpErlangAtom) (resulTuple).elementAt(0);
+            if (status.toString().equals("false"))
+                return null;
+            OtpErlangList list = (OtpErlangList) (resulTuple).elementAt(1);
+            OtpErlangPid pid = (OtpErlangPid) (list).elementAt(0);
+            return pid;
+        }
+        return null;
+    }
+
 
     public List<Show> receiveShowOfCinema(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         List<Show> showList = new ArrayList<>();

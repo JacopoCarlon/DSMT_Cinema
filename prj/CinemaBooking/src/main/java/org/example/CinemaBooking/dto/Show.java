@@ -36,7 +36,19 @@ public class Show {
             String showDate,
             long maxSeats
     ){
-        this(showID, showName ,showDate,maxSeats,0,false);
+        this(showID, showName ,showDate,maxSeats,maxSeats,false);
+    }
+
+    public Show(
+            String showName,
+            String showDate,
+            long maxSeats,
+            long currAvailableSeats){
+        this("nemo", showName, showDate, maxSeats, currAvailableSeats, false);
+    }
+
+    public Show(String showID, String showName, String showDate, long maxSeats, long currAvailableSeats) {
+        this(showID, showName, showDate, maxSeats, currAvailableSeats, false);
     }
 
     public String getShowID(){

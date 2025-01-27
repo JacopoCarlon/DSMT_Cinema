@@ -26,6 +26,7 @@ public class LoginServlet extends HttpServlet {
         // registrationStatus attribute has been removed in doGet of RegistrationServlet
         System.out.println("doGet Login");
         request.getSession().removeAttribute("username");
+        request.getSession().removeAttribute("is_a_cinema");
         request.getSession().removeAttribute("loginStatus");
         String targetJSP = "/index.jsp";
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
@@ -57,13 +58,14 @@ public class LoginServlet extends HttpServlet {
         }
 
         if (isLoginOkay) {
+            // cinemas will be recognized by is_a_cinema -> username used as cinemaID (since they will insert cinemaID for login).
+            request.getSession().setAttribute("is_a_cinema", (is_a_cinema)?"true":"false");
             request.getSession().setAttribute("username", username);
-            request.getSession().setAttribute("is_a_cinema", is_a_cinema);
-            // request.getSession().setAttribute("is_a_cinema", (is_a_cinema)?"true":"false");
             request.getSession().removeAttribute("loginStatus");
             System.out.println("Login success");
             if(is_a_cinema){
-                response.sendRedirect(request.getContextPath() + "/CinemaPageServlet");
+                // response.sendRedirect(request.getContextPath() + "/CinemaPageServlet");
+                response.sendRedirect(request.getContextPath() + "/CreateShowServlet");
             }else{
                 response.sendRedirect(request.getContextPath() + "/UserPageServlet");
             }
