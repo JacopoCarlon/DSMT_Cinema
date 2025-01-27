@@ -15,7 +15,7 @@
 -export([
   add_cinema/3, get_cinema/1, find_cinema_by_name/1,
   add_customer/2, get_customer/1, get_customer_bookings/2,
-  add_show/5, get_show/1, get_cinema_shows/1, update_show_bookings/2, update_show_pid/2
+  add_show/4, remove_show/1, get_show/1, get_cinema_shows/1, update_show_bookings/2, update_show_pid/2
 ]).
 
 %%%% TABLES
@@ -33,6 +33,7 @@
 -record(show,  {showId,
                 name,
                 cinemaId,
+                cinemaName,
                 date,
                 maxSeats,
                 pid,
@@ -169,8 +170,9 @@ get_customer_bookings(Username, OldShows) ->
 
 
 %% SHOW
-add_show(CinemaId, Name, Date, MaxSeats, Pid) ->
+add_show(CinemaId, Name, Date, MaxSeats) ->
   F = fun() ->
+    [Cinema] = mnesia:read(cinema, CinemaId),
     io:format("[DATABASE] Shearching last assigned Show ID~n"),
     LastId = mnesia:last(show),
     io:format("[DATABASE] Check returned ~p~n", [LastId]),
@@ -179,11 +181,28 @@ add_show(CinemaId, Name, Date, MaxSeats, Pid) ->
       _               -> LastId +1
     end,
     io:format("[DATABASE] New ShowId is ~p~n", [NewShowId]),
-    mnesia:write(show:new(NewShowId, Name, CinemaId, Date, MaxSeats, Pid, maps:new())),
-    NewShowId
+    mnesia:write(show:new(NewShowId, Name, CinemaId, Cinema#cinema.name, Date, MaxSeats, none, maps:new())),
+    {NewShowId, Cinema#cinema.name}
   end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of add show is ~p~n", [Result]),
+  Result.
+
+remove_show(ShowId) ->
+  F = fun() ->
+    [Show] = mnesia:wread(show, ShowId),
+    lists:foreach(
+      fun(Username) ->
+        [Customer] = mnesia:wread(customer, Username),
+        BookingSet = sets:del_element(ShowId, Customer#customer.bookings),
+        mnesia:write(Customer#customer{bookings = BookingSet})
+      end,
+      maps:keys(Show#show.bookings)
+    ),
+    mnesia:delete({show, ShowId})
+  end,
+  Result = mnesia:transaction(F),
+  io:format("[DATABASE] Final result of delete show is ~p~n", [Result]),
   Result.
 
 get_show(ShowId) ->

@@ -9,11 +9,11 @@
 -module(show_handler).
 -author("nickrick3").
 
--export([init_show_handler/5]).
+-export([init_show_handler/6]).
 -include("macros.hrl").
 
 
-init_show_handler(ShowId, ShowName, CinemaName, Date, MaxNumOfSeats) ->
+init_show_handler(ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats) ->
     CurrentTime = erlang:monotonic_time(second),
     case CurrentTime > Date of
         true -> io:format("[SHOW HANDLER] Invalid date at initialization~n");
@@ -28,7 +28,8 @@ init_show_handler(ShowId, ShowName, CinemaName, Date, MaxNumOfSeats) ->
             show_loop(
                 #{
                     show_id     => ShowId, 
-                    show_name   => ShowName, 
+                    show_name   => ShowName,
+                    cinema_id   => CinemaId, 
                     cinema_name => CinemaName, 
                     date        => Date,
                     max_seats   => MaxNumOfSeats, 

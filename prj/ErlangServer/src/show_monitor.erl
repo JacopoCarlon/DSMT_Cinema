@@ -20,11 +20,11 @@ start_show_monitor() ->
 
 show_monitor_loop(MonitoredProcesses) ->
     receive
-        {add_show_monitor, ShowPid, ShowId, ShowName, Date, MaxNumOfSeats} ->
-            io:format("[SHOW MONITOR] Received request for monitoring ~p \"~s\"~n", [ShowPid, ShowName]),
-            Result = monitor(process, ShowPid),
+        {add_show_monitor, Pid, ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats} ->
+            io:format("[SHOW MONITOR] Received request for monitoring ~p \"~s\"~n", [Pid, ShowName]),
+            Result = monitor(process, Pid),
             io:format("[SHOW MONITOR] Monitor request returned ~p~n", [Result]),
-            NewMonitoredProcesses = maps:put(ShowPid, {ShowId, ShowName, Date, MaxNumOfSeats}, MonitoredProcesses),
+            NewMonitoredProcesses = maps:put(Pid, {ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats}, MonitoredProcesses),
             show_monitor_loop(NewMonitoredProcesses);
         
         {'DOWN', MonitorRef, process, Pid, normal} ->
@@ -39,9 +39,9 @@ show_monitor_loop(MonitoredProcesses) ->
             Tuple = maps:get(Pid, MonitoredProcesses, absent),
             io:format(" [SHOW MONITOR] The process to respawn is ~p~n", [Tuple]),
             case Tuple of
-                {ShowId, ShowName, Date, MaxNumOfSeats} ->
+                {ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats} ->
                     PidHandler = spawn( fun() -> 
-                        show_handler:init_show_handler(ShowId, ShowName, Date, MaxNumOfSeats)
+                        show_handler:init_show_handler(ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats)
                     end),
                     io:format(" [SHOW MONITOR] Process respawned with pid ~p~n", [PidHandler]),
                     MainEndpoint = whereis(main_server_endpoint),
