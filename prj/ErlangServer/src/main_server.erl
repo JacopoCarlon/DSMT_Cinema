@@ -107,19 +107,25 @@ register_cinema(CinemaName, Password, CinemaAddress) ->
   end.
 
 login_cinema(CinemaId, Password) ->
-  case gen_server:call(main_server, {get_cinema, CinemaId}) of
+  Debug = gen_server:call(main_server, {get_cinema, CinemaId}),
+  io:format("[DEBUG] Found ~p~n", [Debug]),
+  case Debug of
     {atomic, [CinemaTuple | _]} -> {lists:nth(2, CinemaTuple) == Password}; 
     _ -> {false}
   end.
 
 find_cinema(CinemaName) ->
-  case gen_server:call(main_server, {find_cinema, CinemaName}) of
+  Debug = gen_server:call(main_server, {find_cinema, CinemaName}),
+  io:format("[DEBUG] Found ~p~n", [Debug]),
+  case Debug of
     {atomic, TupleList} -> {true, TupleList};
     _ -> {false}
   end.
 
 get_cinema_shows(CinemaId) ->
-  case gen_server:call(main_server, {get_cinema_shows, CinemaId}) of
+  Debug = gen_server:call(main_server, {get_cinema_shows, CinemaId}),
+  io:format("[DEBUG] Found ~p~n", [Debug]),
+  case Debug of
     {atomic, TupleList} -> {true, TupleList}; 
     _ -> {false}
   end.
@@ -132,9 +138,7 @@ register_customer(Username, Password) ->
   end.
 
 login_customer(Username, Password) ->
-  Debug = gen_server:call(main_server, {get_customer, Username}),
-  io:format("[DEBUG] Found ~p~n", [Debug]),
-  case Debug of
+  case gen_server:call(main_server, {get_customer, Username}) of
     {atomic, [CustomerTuple | _]} -> {lists:nth(2, CustomerTuple) == Password};
     _ -> {false}
   end.
@@ -189,7 +193,7 @@ handle_call({get_customer, Username}, _From, _ServerState) ->
   {reply, Ret, []};
 
 handle_call({get_customer_bookings, Username}, _From, _ServerState) ->
-  Ret = database:get_customer_bookings(Username),
+  Ret = database:get_customer_bookings(Username, false),
   {reply, Ret, []};
 
 % show CRUD
@@ -210,7 +214,7 @@ handle_call({new_show, CinemaId, ShowName, ShowDate, MaxSeats}, _From, _ServerSt
           ShowMonitorPid ! {add_show_monitor, PidHandler, NewShowId, ShowName, CinemaId, CinemaName, ShowDate, MaxSeats},
           {reply, {atomic, NewShowId, PidHandler}, []};
         _ ->
-          io:format("[MAIN SERVER] Failed association of Show with Process. Rollback..."),
+          io:format("[MAIN SERVER] Failed association of Show with Process. Rollback...~n"),
           exit(PidHandler, kill),
           database:remove_show(NewShowId),
           {reply, {false}, []}
