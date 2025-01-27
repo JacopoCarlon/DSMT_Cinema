@@ -132,7 +132,9 @@ register_customer(Username, Password) ->
   end.
 
 login_customer(Username, Password) ->
-  case gen_server:call(main_server, {get_customer, Username}) of
+  Debug = gen_server:call(main_server, {get_customer, Username}),
+  io:format("[DEBUG] Found ~p~n", [Debug]),
+  case Debug of
     {atomic, [CustomerTuple | _]} -> {lists:nth(2, CustomerTuple) == Password};
     _ -> {false}
   end.

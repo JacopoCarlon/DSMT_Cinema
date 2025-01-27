@@ -27,7 +27,7 @@
 
 -record(customer,  {username,
                     password,
-                    bookings = []}). %% set of {ShowId}
+                    bookings}). %% set of {ShowId}
 
 
 -record(show,  {showId,
@@ -37,8 +37,36 @@
                 date,
                 maxSeats,
                 pid,
-                bookings = []}). %% definitive map of (CustomerUsername, NumOfSeats) pairs
+                bookings}). %% definitive map of (CustomerUsername, NumOfSeats) pairs
 
+
+%% Utilities
+compose_cinema(CinemaId, Password, CinemaName, CinemaAddress) ->
+  #cinema{
+    cinemaId = CinemaId,
+    password = Password,
+    name     = CinemaName,
+    address  = CinemaAddress
+  }.
+
+compose_customer(Username, Password, BookingSet) ->
+  #customer{
+    username = Username,
+    password = Password,
+    bookings = BookingSet
+  }.
+
+compose_show(ShowId, ShowName, CinemaId, CinemaName, Date, MaxSeats, Pid, BookingMap) ->
+  #show{
+    showId     = ShowId,
+    name       = ShowName,
+    cinemaId   = CinemaId,
+    cinemaName = CinemaName,
+    date       = Date,
+    maxSeats   = MaxSeats,
+    pid        = Pid,
+    bookings   = BookingMap
+  }.
 
 %% @doc Create Mnesia database
 %% disc_copies means that records are stored also on disk
@@ -76,7 +104,7 @@ add_cinema(Name, Password, Address) ->
       _               -> LastId +1
     end,
     io:format("[DATABASE] New CinemaId is ~p~n", [NewCinemaId]),
-    mnesia:write(cinema:new(NewCinemaId, Password, Name, Address)),
+    mnesia:write(compose_cinema(NewCinemaId, Password, Name, Address)),
     NewCinemaId
   end,
   Result = mnesia:transaction(F),
@@ -86,9 +114,9 @@ add_cinema(Name, Password, Address) ->
 get_cinema(CinemaId) ->
   F = fun() ->
         io:format("[DATABASE] Searching for cinema ID ~s~n", [CinemaId]),
-        Match = #cinema{cinemaId='$1', _=''},
+        Match = compose_cinema('$1', '$2', '$3', '$4'),
         Guard = [{'==', '$1', CinemaId}],
-        Result = ['$_'], %% return all fields
+        Result = [['$1', '$2', '$3', '$4']], %% return all fields
         mnesia:select(cinema, [{Match, Guard, Result}])
       end,
   mnesia:transaction(F).
@@ -96,9 +124,9 @@ get_cinema(CinemaId) ->
 find_cinema_by_name(CinemaName) ->
   F = fun() ->
     io:format("[DATABASE] Searching for cinema \"~s\"~n", [CinemaName]),
-    Match = #cinema{cinemaId='$1', name='$2', address='$3', _=''},
-    Guard = [{'==', '$1', CinemaName}],
-    Result = ['$$'], %% return list of {ID, Name, Address}
+    Match = compose_cinema('$1', '$2', '$3', '$4'),
+    Guard = [{'==', '$3', CinemaName}],
+    Result = [['$1', '$3', '$4']], %% return list of {ID, Name, Address}
     mnesia:select(cinema, [{Match, Guard, Result}])
       end,
   mnesia:transaction(F).
@@ -107,14 +135,14 @@ find_cinema_by_name(CinemaName) ->
 add_customer(Username, Password) ->
   F = fun() ->
         io:format("[DATABASE] Checking if Username \"~s\" already exists~n", [Username]),
-        Match = #customer{username='$1', _='_'},
+        Match = compose_customer('$1', '$_', '$_'),
         Guard = [{'==', '$1', Username}],
-        Result = ['$1'],
+        Result = [['$1']],
         CheckResult = mnesia:select(customer, [{Match, Guard, Result}]),
         io:format("[DATABASE] Check returned ~p~n", [CheckResult]),
         case CheckResult==[] of
           true  ->  io:format("[DATABASE] Username available. Trying write~n"),
-            mnesia:write(customer:new(Username, Password, sets:new()));
+            mnesia:write(compose_customer(Username, Password, sets:new()));
           false ->  io:format("[DATABASE] Customer with same Username already exists~n"),
             false
         end
@@ -127,9 +155,9 @@ add_customer(Username, Password) ->
 get_customer(Username) ->
   F = fun() ->
     io:format("[DATABASE] Searching for Customer ~s~n", [Username]),
-    Match = #customer{username='$1', _=''},
+    Match = compose_customer('$1', '$2', '$_'),
     Guard = [{'==', '$1', Username}],
-    Result = ['$_'], %% return all fields
+    Result = [['$1', '$2']], %% return all fields
     mnesia:select(customer, [{Match, Guard, Result}])
       end,
   mnesia:transaction(F).
@@ -172,7 +200,7 @@ add_show(CinemaId, Name, Date, MaxSeats) ->
       _               -> LastId +1
     end,
     io:format("[DATABASE] New ShowId is ~p~n", [NewShowId]),
-    mnesia:write(show:new(NewShowId, Name, CinemaId, Cinema#cinema.name, Date, MaxSeats, none, maps:new())),
+    mnesia:write(compose_show(NewShowId, Name, CinemaId, Cinema#cinema.name, Date, MaxSeats, 0, maps:new())),
     {NewShowId, Cinema#cinema.name}
   end,
   Result = mnesia:transaction(F),
@@ -199,9 +227,9 @@ remove_show(ShowId) ->
 get_show(ShowId) ->
   F = fun() ->
         io:format("[DATABASE] Searching for show \"~s\"~n", [ShowId]),
-        Match = #show{showId='$1', _=''},
+        Match = compose_show('$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8'),
         Guard = [{'==', '$1', ShowId}],
-        Result = ['$_'], %% return all fields
+        Result = [['$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8']], %% return all fields
         mnesia:select(show, [{Match, Guard, Result}])
       end,
   mnesia:transaction(F).
@@ -209,9 +237,9 @@ get_show(ShowId) ->
 get_show_pid(ShowId) ->
   F = fun() ->
         io:format("[DATABASE] Searching for show \"~s\"~n", [ShowId]),
-        Match = #show{showId='$1', pid='$2', _=''},
+        Match = compose_show('$1', '$_', '$_', '$_', '$_', '$_', '$7', '$_'),
         Guard = [{'==', '$1', ShowId}],
-        Result = ['$2'], %% return pid
+        Result = [['$7']], %% return pid
         mnesia:select(show, [{Match, Guard, Result}])
       end,
   mnesia:transaction(F).
@@ -219,9 +247,9 @@ get_show_pid(ShowId) ->
 get_cinema_shows(CinemaId) ->
   F = fun() ->
     io:format("[DATABASE] Searching for shows in Cinema \"~s\"~n", [CinemaId]),
-    Match = #show{showId='$1', name='$2', date='$3', cinemaId='$4', pid='$5', _=''},
+    Match = compose_show('$1', '$2', '$3', '$4', '$5', '$6', '$_', '$_'),
     Guard = [{'==', '$4', CinemaId}],
-    Result = ['$1', '$2', '$3', '$5'], %% return list of {ID, name, date, pid}
+    Result = [['$1', '$2', '$3', '$5']], %% return list of {ID, name, cinemaName, date}
     mnesia:select(show, [{Match, Guard, Result}])
   end,
   mnesia:transaction(F).
