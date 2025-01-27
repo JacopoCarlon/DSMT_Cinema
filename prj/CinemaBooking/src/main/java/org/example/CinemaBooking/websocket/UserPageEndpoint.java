@@ -63,7 +63,7 @@ public class UserPageEndpoint {
     private static void printEndpointStatus(){
         System.out.println("[UserPageEndpoint] User connected:");
         for(String user: users.values()){
-            System.out.println(" user: " + user);
+            System.out.println(" user : " + user);
         }
     }
 

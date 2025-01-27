@@ -64,8 +64,7 @@ public class LoginServlet extends HttpServlet {
             request.getSession().removeAttribute("loginStatus");
             System.out.println("Login success");
             if(is_a_cinema){
-                // response.sendRedirect(request.getContextPath() + "/CinemaPageServlet");
-                response.sendRedirect(request.getContextPath() + "/CreateShowServlet");
+                response.sendRedirect(request.getContextPath() + "/CinemaPageServlet");
             }else{
                 response.sendRedirect(request.getContextPath() + "/UserPageServlet");
             }

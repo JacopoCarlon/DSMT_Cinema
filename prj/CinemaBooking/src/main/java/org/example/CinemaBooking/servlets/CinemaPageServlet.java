@@ -22,26 +22,30 @@ import org.example.CinemaBooking.dto.Show;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "UserPageServlet", value = "/UserPageServlet")
-public class UserPageServlet extends HttpServlet{
-
+@WebServlet(name = "CinemaPageServlet", value = "/CinemaPageServlet")
+public class CinemaPageServlet extends HttpServlet  {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("DoGet UserPageServlet");
+        System.out.println("DoGet CinemaPageServlet");
 
-        // get active bookings of user :
+        // get active shows of cinema :
         String username = request.getParameter("username");
+        String is_a_cinema = request.getParameter("is_a_cinema");
+        System.out.println("DoGet CinemaPageServlet : try to get shows of cinema : " + username + " which is cinema ? : " + is_a_cinema);
         try {
-            List<Booking> bookingList = new JE_CommunicationHandler().get_shows_by_Customer(request.getSession(), username );
-            request.setAttribute("bookingList", bookingList);
-            request.getSession().setAttribute("bookingList", bookingList);
+            List<Show> showList = new JE_CommunicationHandler().get_shows_by_cinema(request.getSession(), username );
+            request.setAttribute("showList", showList);
+            request.getSession().setAttribute("showList", showList);
         } catch (OtpErlangExit | OtpErlangDecodeException e) {
             e.printStackTrace();
         }
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/pages/user_page.jsp");
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/pages/cinema_page.jsp");
         requestDispatcher.forward(request, response);
 
     }
 }
+
+
+

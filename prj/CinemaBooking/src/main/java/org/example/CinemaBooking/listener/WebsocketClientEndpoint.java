@@ -17,6 +17,7 @@ import jakarta.websocket.WebSocketContainer;
 // https://doc.e-is.pro/duniter4j/xref/org/duniter/core/util/websocket/WebsocketClientEndpoint.html
 //
 
+// for erlangMessageTask management
 @ClientEndpoint
 public class WebsocketClientEndpoint {
 

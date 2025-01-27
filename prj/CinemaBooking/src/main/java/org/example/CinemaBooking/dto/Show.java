@@ -60,8 +60,14 @@ public class Show {
     }
 
     public String getShowDate() {
-        return showDate;
+        return this.showDate;
     }
+
+    public long getMaxSeats() { return this.maxSeats; }
+
+    public long getCurrAvailableSeats() { return this.currAvailableSeats; }
+
+    public boolean getIsEnded() { return this.isEnded; }
 
     @Override
     public String toString(){
