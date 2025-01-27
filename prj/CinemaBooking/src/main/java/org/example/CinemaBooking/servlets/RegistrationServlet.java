@@ -20,7 +20,6 @@ public class RegistrationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("doGet");
         String targetJSP = "/jpages/registration.jsp";
-
         request.getSession().removeAttribute("registrationStatus");
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
         requestDispatcher.forward(request, response);
@@ -30,45 +29,34 @@ public class RegistrationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        Boolean is_a_cinema = Boolean.parseBoolean( request.getParameter("is_cinema") );
+        boolean is_a_cinema = Boolean.parseBoolean( request.getParameter("is_cinema") );
 
         System.out.println("DoPost Registration");
-        // System.out.println("username: " + username + "\npassword: " + password);
+        System.out.println("username: " + username + "password: " + password + "is_a_cinema: " + is_a_cinema);
 
         boolean isSignUpOkay = false;
-        if(is_a_cinema){
+        if(is_a_cinema) {
             try {
                 isSignUpOkay = new JE_CommunicationHandler().registerNewCinema(request.getSession(), username, password);
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }
-
-            if (isSignUpOkay){
-                System.out.println("Cinema Registration success");
-                response.sendRedirect(request.getContextPath() + "/LoginServlet");
-            } else {
-                System.out.println("Sign in failed");
-                request.getSession().setAttribute("registrationStatus", "error");
-                RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/registration.jsp");
-                requestDispatcher.forward(request, response);
-            }
-        }else{
+        } else {
             try {
                 isSignUpOkay = new JE_CommunicationHandler().registerNewCustomer(request.getSession(), username, password);
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }
-
-            if (isSignUpOkay){
-                System.out.println("Customer Registration success");
-                response.sendRedirect(request.getContextPath() + "/LoginServlet");
-            } else {
-                System.out.println("Sign in failed");
-                request.getSession().setAttribute("registrationStatus", "error");
-                RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/registration.jsp");
-                requestDispatcher.forward(request, response);
-            }
         }
-
+        if (isSignUpOkay){
+            System.out.println("Registration success");
+            response.sendRedirect(request.getContextPath() + "/LoginServlet");
+        } else {
+            System.out.println("Sign in failed");
+            // show error in html
+            request.getSession().setAttribute("registrationStatus", "error");
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/registration.jsp");
+            requestDispatcher.forward(request, response);
+        }
     }
 }
