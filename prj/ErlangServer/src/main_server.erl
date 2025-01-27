@@ -33,46 +33,48 @@ start_server() ->
 %%% Internal functions
 %%%===================================================================
 
-%% Expected reply for correct operation (login, registration) from server: {self(), {ok}}
+%% Expected reply for correct operation (login, registration) from server: {self(), {true}}
 %% Expected reply for any error on operation from server: {self(), {false}}
 %% I.E.
 %% The client will send a message like this: {#Pid<client@localhost.1.0>,login,#{"username" => "tizio","password" => "tizio"}}
-%% The server will reply with {self(), {ok}} if User "tizio" exists and the related pwd is "tizio", false otherwise
+%% The server will reply with {self(), {true}} if User "tizio" exists and the related pwd is "tizio", false otherwise
 server_loop() ->
   receive
     %% Cinema
-    {ClientPid, register_cinema, MessageMap} ->
+    {ClientPid, register_cinema, CinemaName, Password, CinemaAddress} ->
       io:format("[MAIN SERVER] Received a register cinema message~n"),
-      Ret = register_cinema(
-        maps:get("cinema_id", MessageMap), 
-        maps:get("password", MessageMap),
-        maps:get("cinema_name", MessageMap),
-        maps:get("cinema_addr", MessageMap)
-      ),
+      Ret = register_cinema(CinemaName, Password, CinemaAddress),
       ClientPid ! {self(), Ret};
     
-    {ClientPid, login_cinema, MessageMap} ->
+    {ClientPid, login_cinema, CinemaId, Password} ->
       io:format("[MAIN SERVER] Received a login cinema message~n"),
-      Ret = login_cinema(
-        maps:get("cinema_id", MessageMap), 
-        maps:get("password", MessageMap)
-      ),
+      Ret = login_cinema(CinemaId, Password),
+      ClientPid ! {self(), Ret};
+
+    {ClientPid, get_cinema_shows, CinemaId} ->
+      io:format("[MAIN SERVER] Received a get_cinema_shows message~n"),
+      Ret = get_cinema_shows(CinemaId),
       ClientPid ! {self(), Ret};
 
     %% Customer
-    {ClientPid, register_customer, MessageMap} ->
+    {ClientPid, register_customer, Username, Password} ->
       io:format("[MAIN SERVER] Received a register customer message~n"),
-      Ret = register_customer(
-        maps:get("username", MessageMap), 
-        maps:get("password", MessageMap)
-      ),
+      Ret = register_customer(Username, Password),
       ClientPid ! {self(), Ret};
 
-    {ClientPid, login_customer, MessageMap} ->
+    {ClientPid, login_customer, Username, Password} ->
       io:format("[MAIN SERVER] Received a login cinema message~n"),
-      Ret = login_customer(
-        maps:get("username", MessageMap), 
-        maps:get("password", MessageMap)
+      Ret = login_customer(Username, Password),
+      ClientPid ! {self(), Ret};
+
+    %% Show
+    {ClientPid, add_show, CinemaId, ShowMap} ->
+      io:format("[MAIN SERVER] Received an add show message~n"),
+      Ret = add_show(
+        CinemaId, 
+        maps:get("show_name", ShowMap),
+        maps:get("show_date", ShowMap),
+        maps:get("max_seats", ShowMap)
       ),
       ClientPid ! {self(), Ret};
 
@@ -82,47 +84,50 @@ server_loop() ->
       _Ret = restore_show(ShowId, PidHandler);
 
     %% DEFAULT
-    _ -> io:format("[MAIN SERVER] Received a message~n")
+    _ -> io:format("[MAIN SERVER] Received an unrecognized message~n")
   end,
   server_loop().
 
 
 %% Cinema functions
-register_cinema(CinemaId, Password, CinemaName, Address) ->
-  case gen_server:call(main_server, {register_cinema, CinemaId, Password, CinemaName, Address}) of
-    {atomic, ok} -> {ok};
+register_cinema(CinemaName, Password, CinemaAddress) ->
+  case gen_server:call(main_server, {add_cinema, CinemaName, Password, CinemaAddress}) of
+    {atomic, NewCinemaId} -> {true, NewCinemaId};
     _ -> {false}
   end.
 
 login_cinema(CinemaId, Password) ->
-  case gen_server:call(main_server, {add_cinema, CinemaId}) of
-    {atomic, [CinemaTuple | _]} -> 
-      case lists:nth(2, CinemaTuple) == Password of
-        true  -> {ok};
-        false -> {false}
-      end;
+  case gen_server:call(main_server, {get_cinema, CinemaId}) of
+    {atomic, [CinemaTuple | _]} -> {lists:nth(2, CinemaTuple) == Password}; 
     _ -> {false}
   end.
 
+get_cinema_shows(CinemaId) ->
+  case gen_server:call(main_server, {get_cinema_shows, CinemaId}) of
+    {atomic, TupleList} -> {true, TupleList}; 
+    _ -> {false}
+  end.
 
 %% Customer functions
 register_customer(Username, Password) ->
   case gen_server:call(main_server, {add_customer, Username, Password}) of
-    {atomic, ok} -> {ok};
+    {atomic, ok} -> {true};
     _ -> {false}
   end.
 
 login_customer(Username, Password) ->
   case gen_server:call(main_server, {get_customer, Username}) of
-    {atomic, [CustomerTuple | _]} -> 
-      case lists:nth(2, CustomerTuple) == Password of
-        true  -> {ok};
-        false -> {false}
-      end;
+    {atomic, [CustomerTuple | _]} -> {lists:nth(2, CustomerTuple) == Password};
     _ -> {false}
   end.
 
 %% Show Functions
+add_show(CinemaId, ShowName, ShowDate, MaxSeats) ->
+  case gen_server:call(main_server, {add_show, CinemaId, ShowName, ShowDate, MaxSeats}) of
+    {atomic, NewShowId} -> {true, NewShowId};
+    _ -> {false}
+  end.
+
 restore_show(ShowId, PidHandler) ->
   case gen_server:call(main_server, {update_show_pid, ShowId, PidHandler}) of
     {atomic, BookingBackup} -> 
@@ -138,14 +143,16 @@ init([]) ->
   database:start_database(),
   {ok, []}.
 
-handle_call({add_cinema, CinemaId, Password, CinemaName, Address}, _From, _ServerState) ->
-  Ret = database:add_cinema(CinemaId, Password, CinemaName, Address),
+%% cinema CRUD
+handle_call({add_cinema, CinemaName, Password, CinemaAddress}, _From, _ServerState) ->
+  Ret = database:add_cinema(CinemaName, Password, CinemaAddress),
   {reply, Ret, []};
 
 handle_call({get_cinema, CinemaId}, _From, _ServerState) ->
   Ret = database:get_cinema(CinemaId),
-  {reply, Ret, []}; 
+  {reply, Ret, []};
 
+% customer CRUD
 handle_call({add_customer, Username, Password}, _From, _ServerState) ->
   Ret = database:add_customer(Username, Password),
   {reply, Ret, []};
@@ -154,14 +161,19 @@ handle_call({get_customer, Username}, _From, _ServerState) ->
   Ret = database:get_customer(Username),
   {reply, Ret, []};
 
+% show CRUD
+handle_call({get_cinema_shows, CinemaId}, _From, _ServerState) ->
+  Ret = database:get_cinema_shows(CinemaId),
+  {reply, Ret, []};
+
+%%% TODO: create process
+handle_call({add_show, CinemaId, ShowName, ShowDate, MaxSeats}, _From, _ServerState) ->
+  Ret = database:get_cinema_shows(CinemaId),
+  {reply, Ret, []};
+
 handle_call({update_show_pid, ShowId, PidHandler}, _From, _ServerState) ->
   Ret = database:update_show_pid(ShowId, PidHandler),
   {reply, Ret, []}. 
-
-
-
-
-
 
 
 

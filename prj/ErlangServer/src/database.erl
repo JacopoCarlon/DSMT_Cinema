@@ -13,9 +13,9 @@
 -export([create_database/0, start_database/0, stop_database/0]).
 %% CRUD operations API
 -export([
-  add_cinema/4, get_cinema/1, find_cinema_by_name/1,
+  add_cinema/3, get_cinema/1, find_cinema_by_name/1,
   add_customer/2, get_customer/1, get_customer_bookings/2,
-  add_show/6, get_show/1, get_cinema_shows/1, update_show_bookings/2, update_show_pid/2
+  add_show/5, get_show/1, get_cinema_shows/1, update_show_bookings/2, update_show_pid/2
 ]).
 
 %%%% TABLES
@@ -46,11 +46,11 @@ create_database() ->
   application:start(mnesia),
   io:format("[DATABASE] Database server started~n"),
   mnesia:create_table(cinema,
-    [{attributes, record_info(fields, cinema)}, {disc_copies, [node()]}]),
+    [{attributes, record_info(fields, cinema)}, {type, ordered_set}, {disc_copies, [node()]}]),
   mnesia:create_table(customer,
     [{attributes, record_info(fields, customer)}, {disc_copies, [node()]}]),
   mnesia:create_table(show,
-    [{attributes, record_info(fields, show)}, {index, [cinemaId]}, {disc_copies, [node()]}]).
+    [{attributes, record_info(fields, show)}, {type, ordered_set}, {index, [cinemaId]}, {disc_copies, [node()]}]).
 
 
 %% @doc Start an existing Mnesia server
@@ -65,21 +65,19 @@ stop_database() ->
 %%%%%%%%%%%%%%% CRUD operations
 
 %% CINEMA
-add_cinema(CinemaId, Password, Name, Address) ->
+add_cinema(Name, Password, Address) ->
   F = fun() ->
-        io:format("[DATABASE] Checking if ID ~s already exists~n", [CinemaId]),
-        Match = #cinema{cinemaId='$1', _='_'},
-        Guard = [{'==', '$1', CinemaId}],
-        Result = ['$1'],
-        CheckResult = mnesia:select(cinema, [{Match, Guard, Result}]),
-        io:format("[DATABASE] Check returned ~p~n", [CheckResult]),
-        case CheckResult==[] of
-          true  ->  io:format("[DATABASE] ID available. Trying write~n"),
-                    mnesia:write(cinema:new(CinemaId, Password, Name, Address));
-          false ->  io:format("[DATABASE] Cinema with same ID already exists~n"),
-                    false
-        end
-      end,
+    io:format("[DATABASE] Searching last assigned ID...~n"),
+    LastId = mnesia:last(cinema),
+    io:format("[DATABASE] Check returned ~p~n", [LastId]),
+    NewCinemaId = case LastId of
+      '$end_of_table' -> 0;
+      _               -> LastId +1
+    end,
+    io:format("[DATABASE] New CinemaId is ~p~n", [NewCinemaId]),
+    mnesia:write(cinema:new(NewCinemaId, Password, Name, Address)),
+    NewCinemaId
+  end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of add cinema is ~p~n", [Result]),
   Result.
@@ -171,23 +169,19 @@ get_customer_bookings(Username, OldShows) ->
 
 
 %% SHOW
-add_show(ShowId, Name, CinemaId, Date, MaxSeats, Pid) ->
+add_show(CinemaId, Name, Date, MaxSeats, Pid) ->
   F = fun() ->
-        io:format("[DATABASE] Checking if Show ID ~s already exists~n", [ShowId]),
-        Match = #show{showId='$1', _='_'},
-        Guard = [{'==', '$1', ShowId}],
-        Result = ['$1'],
-        CheckResult = mnesia:select(show, [{Match, Guard, Result}]),
-        io:format("[DATABASE] Check returned ~p~n", [CheckResult]),
-        case CheckResult==[] of
-          true  ->
-            io:format("[DATABASE] Show ID available. Trying write~n"),
-            mnesia:write(show:new(ShowId, Name, CinemaId, Date, MaxSeats, Pid, maps:new()));
-          false ->
-            io:format("[DATABASE] Show with same ID already exists~n"),
-            false
-        end
-      end,
+    io:format("[DATABASE] Shearching last assigned Show ID~n"),
+    LastId = mnesia:last(show),
+    io:format("[DATABASE] Check returned ~p~n", [LastId]),
+    NewShowId = case LastId of
+      '$end_of_table' -> 0;
+      _               -> LastId +1
+    end,
+    io:format("[DATABASE] New ShowId is ~p~n", [NewShowId]),
+    mnesia:write(show:new(NewShowId, Name, CinemaId, Date, MaxSeats, Pid, maps:new())),
+    NewShowId
+  end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of add show is ~p~n", [Result]),
   Result.

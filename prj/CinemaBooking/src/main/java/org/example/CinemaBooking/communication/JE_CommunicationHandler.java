@@ -26,28 +26,28 @@ public class JE_CommunicationHandler {
     // registerNewCustomer ( username, password ) -> booleanResult, erroMsg
     public boolean registerNewCustomer(HttpSession session, String userName, String userPwd  ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform registerNewCustomer");
-        send(session, serverRegisteredPID, new OtpErlangAtom("customerRegister"), new OtpErlangString(userName), new OtpErlangString(userPwd) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("register_customer"), new OtpErlangString(userName), new OtpErlangString(userPwd) );
         return receiveRequestResult(session);
     }
 
     // loginExistingCustomer (username, password ) -> booleanResult, erroMsg
     public boolean loginExistingCustomer(HttpSession session, String userName, String userPwd ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform loginExistingCustomer");
-        send(session, serverRegisteredPID, new OtpErlangAtom("customerLogin"), new OtpErlangString(userName), new OtpErlangString(userPwd) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("login_customer"), new OtpErlangString(userName), new OtpErlangString(userPwd) );
         return receiveRequestResult(session);
     }
 
     // registerNewCinema ( cinemaName, cinemaPassword, address ) -> booleanResult, erroMsg
-    public boolean registerNewCinema(HttpSession session, String cinemaName, String cinemaPwd ) throws OtpErlangDecodeException, OtpErlangExit {
+    public boolean registerNewCinema(HttpSession session, String cinemaName, String cinemaPwd, String cinemaAddress ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform registerNewCinema");
-        send(session, serverRegisteredPID, new OtpErlangAtom("cinemaRegister"), new OtpErlangString(cinemaName), new OtpErlangString(cinemaPwd) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("register_cinema"), new OtpErlangString(cinemaName), new OtpErlangString(cinemaPwd), new OtpErlangString(cinemaAddress) );
         return receiveRequestResult(session);
     }
 
-    // loginExistingCinema (username, password ) -> booleanResult, erroMsg
-    public boolean loginExistingCinema(HttpSession session, String cinemaName, String cinemaPwd ) throws OtpErlangDecodeException, OtpErlangExit {
+    // loginExistingCinema (cinemaID, password ) -> booleanResult, erroMsg
+    public boolean loginExistingCinema(HttpSession session, String cinemaID, String cinemaPwd ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform loginExistingCinema");
-        send(session, serverRegisteredPID, new OtpErlangAtom("cinemaLogin"), new OtpErlangString(cinemaName), new OtpErlangString(cinemaPwd) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("login_cinema"), new OtpErlangString(cinemaID), new OtpErlangString(cinemaPwd) );
         return receiveRequestResult(session);
     }
 
@@ -58,7 +58,7 @@ public class JE_CommunicationHandler {
     // get_shows_by_cinema(cinemaID) -> showID, show_name, timestamp
     public List<Show> get_shows_by_cinema(HttpSession session, String cinemaID ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_shows_by_cinema");
-        send(session, serverRegisteredPID, new OtpErlangAtom("getShowOfCinema"), new OtpErlangString(cinemaID) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("get_cinema_shows"), new OtpErlangString(cinemaID) );
         return receiveShowOfCinema(session);
     }
 
@@ -72,7 +72,7 @@ public class JE_CommunicationHandler {
     // createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> booleanResult, showID, erroMsg
     public boolean createNewShowForCinema(HttpSession session, String cinemaID, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform createNewShowForCinema");
-        send(session, serverRegisteredPID, new OtpErlangAtom("addShowToCinema"), new OtpErlangString(cinemaID) , trg_show.toOtpErlangMap());
+        send(session, serverRegisteredPID, new OtpErlangAtom("add_show"), new OtpErlangString(cinemaID) , trg_show.toOtpErlangMap());
         return receiveRequestResult(session);
     }
 
