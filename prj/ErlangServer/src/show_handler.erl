@@ -14,12 +14,13 @@
 
 
 init_show_handler(ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats) ->
-    CurrentTime = erlang:monotonic_time(second),
-    case CurrentTime > Date of
+    CurrentTimeSeconds = calendar:datetime_to_gregorian_seconds(calendar:now_to_datetime(erlang:timestamp())),
+    DateSeconds = timestring_to_seconds(Date),
+    case CurrentTimeSeconds > DateSeconds of
         true -> io:format("[SHOW HANDLER] Invalid date at initialization~n");
         false ->
             % TIMERS
-            DeathTimerDuartion = (Date - CurrentTime)*1000,
+            DeathTimerDuartion = (DateSeconds - CurrentTimeSeconds)*1000,
             erlang:send_after(DeathTimerDuartion, self(), {self(), kill_auction_suicide}),
             BackupClockDuration = 15 * 60 * 1000,
             erlang:send_after(BackupClockDuration, self(), {backup_clock}),
@@ -137,3 +138,21 @@ do_backup(ShowId, BookingMap, true) ->
 do_backup(ShowId, _BookingMap, false) ->
     %% DO NOTHING
     io:format("[SHOW HANDLER] Backup of Show ~s is already up to date.~n", [ShowId]).
+
+
+timestring_to_seconds(String) ->
+    [Date, Time] = string:tokens(String, "T"),
+    [YY, MM, DD] = string:tokens(Date, "-"),
+    [HH, Min]    = string:tokens(Time, ":"),
+    calendar:datetime_to_gregorian_seconds(
+        {{
+            list_to_integer(YY),
+            list_to_integer(MM),
+            list_to_integer(DD)
+        },{
+            list_to_integer(HH),
+            list_to_integer(Min),
+            0
+        }}
+    ).
+    

@@ -138,7 +138,9 @@ get_customer(Username) ->
 get_customer_bookings(Username, IncludeOldShows) ->
   Getter = fun(ShowId) ->
     [Show] = mnesia:read(show, ShowId),
-    case (Show#show.date > erlang:monotonic_time(second)) or IncludeOldShows of
+    {{YY, MM, DD}, {H, M, _S}} = calendar:now_to_datetime(erlang:timestamp()),
+    CurrentTime = io_lib:format("~4w-~2..0w-~2..0wT~2..0w:~2..0w", [YY, MM, DD, H, M]),
+    case (CurrentTime < Show#show.date) or IncludeOldShows of
       true -> {true, {
           ShowId, 
           Show#show.name,
