@@ -51,6 +51,11 @@ server_loop() ->
       Ret = login_cinema(CinemaId, Password),
       ClientPid ! {self(), Ret};
 
+    {ClientPid, find_cinema_by_name, CinemaName} ->
+      io:format("[MAIN SERVER] Received a find_cinema_by_name message~n"),
+      Ret = find_cinema(CinemaName),
+      ClientPid ! {self(), Ret};
+
     {ClientPid, get_cinema_shows, CinemaId} ->
       io:format("[MAIN SERVER] Received a get_cinema_shows message~n"),
       Ret = get_cinema_shows(CinemaId),
@@ -63,8 +68,13 @@ server_loop() ->
       ClientPid ! {self(), Ret};
 
     {ClientPid, login_customer, Username, Password} ->
-      io:format("[MAIN SERVER] Received a login cinema message~n"),
+      io:format("[MAIN SERVER] Received a login customer message~n"),
       Ret = login_customer(Username, Password),
+      ClientPid ! {self(), Ret};
+
+    {ClientPid, get_customer_bookings, Username} ->
+      io:format("[MAIN SERVER] Received a get_customer_bookings message"),
+      Ret = customer_bookings(Username),
       ClientPid ! {self(), Ret};
 
     %% Show
@@ -102,6 +112,12 @@ login_cinema(CinemaId, Password) ->
     _ -> {false}
   end.
 
+find_cinema(CinemaName) ->
+  case gen_server:call(main_server, {find_cinema, CinemaName}) of
+    {atomic, TupleList} -> {true, TupleList};
+    _ -> {false}
+  end.
+
 get_cinema_shows(CinemaId) ->
   case gen_server:call(main_server, {get_cinema_shows, CinemaId}) of
     {atomic, TupleList} -> {true, TupleList}; 
@@ -118,6 +134,12 @@ register_customer(Username, Password) ->
 login_customer(Username, Password) ->
   case gen_server:call(main_server, {get_customer, Username}) of
     {atomic, [CustomerTuple | _]} -> {lists:nth(2, CustomerTuple) == Password};
+    _ -> {false}
+  end.
+
+customer_bookings(Username) ->
+  case gen_server:call(main_server, {get_customer_bookings, Username}) of
+    {atomic, BookingsList} -> {true, BookingsList};
     _ -> {false}
   end.
 
@@ -151,6 +173,10 @@ handle_call({get_cinema, CinemaId}, _From, _ServerState) ->
   Ret = database:get_cinema(CinemaId),
   {reply, Ret, []};
 
+handle_call({find_cinema, CinemaName}, _From, _ServerState) ->
+  Ret = database:find_cinema_by_name(CinemaName),
+  {reply, Ret, []};
+
 % customer CRUD
 handle_call({add_customer, Username, Password}, _From, _ServerState) ->
   Ret = database:add_customer(Username, Password),
@@ -158,6 +184,10 @@ handle_call({add_customer, Username, Password}, _From, _ServerState) ->
 
 handle_call({get_customer, Username}, _From, _ServerState) ->
   Ret = database:get_customer(Username),
+  {reply, Ret, []};
+
+handle_call({get_customer_bookings, Username}, _From, _ServerState) ->
+  Ret = database:get_customer_bookings(Username),
   {reply, Ret, []};
 
 % show CRUD

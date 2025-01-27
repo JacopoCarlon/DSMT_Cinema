@@ -62,10 +62,10 @@ show_loop(ShowInfo, BookingMap, ViewingCustomers, ChangedBookings) ->
         {Client, update_booking, MessageMap} ->
             io:format(" [SHOW HANDLER] Received update_booking message~n"),
             Username = maps:get("username",MessageMap),
-            RequestedSeats = maps:get("requested_seats", MessageMap),
-            io:format(" [SHOW HANDLER] Customer ~s wants to change its booked seats to ~p.~n", [Username, RequestedSeats]),
+            NewBookedSeats = maps:get("num_seats", MessageMap),
+            io:format(" [SHOW HANDLER] Customer ~s wants to change its booked seats to ~p.~n", [Username, NewBookedSeats]),
             {Success, NewAvailableSeats, NewBookingMap} = 
-                do_new_booking(Username, RequestedSeats, maps:get(avail_seats, ShowInfo), BookingMap),
+                do_new_booking(Username, NewBookedSeats, maps:get(avail_seats, ShowInfo), BookingMap),
             NewShowInfo = maps:put(avail_seats, NewAvailableSeats, ShowInfo),
             case Success of
                 false -> Client ! {self(), {false}};
@@ -119,12 +119,12 @@ do_new_booking(Username, 0, AvailableSeats, BookingMap) ->
         error -> {false, AvailableSeats, BookingMap};
         {OldBookedSeats, NewBookingMap} -> {true, AvailableSeats + OldBookedSeats, NewBookingMap}
     end;
-do_new_booking(Username, RequestedSeats, AvailableSeats, BookingMap) when is_number(RequestedSeats) and RequestedSeats > 0 ->
+do_new_booking(Username, NewBookedSeats, AvailableSeats, BookingMap) when is_number(NewBookedSeats) and NewBookedSeats > 0 ->
     OldBookedSeats = maps:get(Username, BookingMap, 0),
-    SeatsDelta = RequestedSeats - OldBookedSeats,
+    SeatsDelta = NewBookedSeats - OldBookedSeats,
     case SeatsDelta < AvailableSeats of 
         false -> {false, AvailableSeats, BookingMap};
-        true -> {true, AvailableSeats - SeatsDelta, maps:put(Username, RequestedSeats, BookingMap)}
+        true -> {true, AvailableSeats - SeatsDelta, maps:put(Username, NewBookedSeats, BookingMap)}
     end;
 do_new_booking(_, _, AvailableSeats, BookingMap) ->
     {false, AvailableSeats, BookingMap}.

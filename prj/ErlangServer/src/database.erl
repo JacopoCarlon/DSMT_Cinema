@@ -15,7 +15,7 @@
 -export([
   add_cinema/3, get_cinema/1, find_cinema_by_name/1,
   add_customer/2, get_customer/1, get_customer_bookings/2,
-  add_show/4, remove_show/1, get_show/1, get_cinema_shows/1, update_show_bookings/2, update_show_pid/2
+  add_show/4, remove_show/1, get_show/1, get_show_pid/1, get_cinema_shows/1, update_show_bookings/2, update_show_pid/2
 ]).
 
 %%%% TABLES
@@ -135,29 +135,18 @@ get_customer(Username) ->
   mnesia:transaction(F).
 
 
-get_customer_bookings(Username, OldShows) ->
+get_customer_bookings(Username, IncludeOldShows) ->
   Getter = fun(ShowId) ->
     [Show] = mnesia:read(show, ShowId),
-    CurrentTime = erlang:monotonic_time(second),
-    
-    case Show#show.date < CurrentTime of 
-      true -> %% old show
-        case OldShows of
-          false ->
-            false;
-          true ->
-            %% return {ShowId, ShowName, Date, BookedSeats}
-            {true, {ShowId, Show#show.name, Show#show.date, maps:get(Username, Show#show.bookings)}}
-        end;
-
-      false ->
-        case OldShows of 
-          false ->
-            %% return {ShowId, ShowName, Date, Pid}
-            {true, {ShowId, Show#show.name, Show#show.date, Show#show.pid}};
-          true ->
-            false
-        end
+    case (Show#show.date > erlang:monotonic_time(second)) or IncludeOldShows of
+      true -> {true, {
+          ShowId, 
+          Show#show.name,
+          Show#show.cinemaName,
+          Show#show.date, 
+          maps:get(Username, Show#show.bookings)
+        }};
+      false -> false
     end
   end,
 
@@ -211,6 +200,16 @@ get_show(ShowId) ->
         Match = #show{showId='$1', _=''},
         Guard = [{'==', '$1', ShowId}],
         Result = ['$_'], %% return all fields
+        mnesia:select(show, [{Match, Guard, Result}])
+      end,
+  mnesia:transaction(F).
+
+get_show_pid(ShowId) ->
+  F = fun() ->
+        io:format("[DATABASE] Searching for show \"~s\"~n", [ShowId]),
+        Match = #show{showId='$1', pid='$2', _=''},
+        Guard = [{'==', '$1', ShowId}],
+        Result = ['$2'], %% return pid
         mnesia:select(show, [{Match, Guard, Result}])
       end,
   mnesia:transaction(F).

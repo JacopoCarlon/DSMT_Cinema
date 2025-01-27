@@ -79,7 +79,7 @@ public class JE_CommunicationHandler {
     // find_cinema_by_name("String") -> lista di cinema con quel nome (location, nomeCinema)
     public List<Cinema> find_cinema_by_name(HttpSession session, String cinemaName ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform find_cinema_by_name");
-        send(session, serverRegisteredPID, new OtpErlangAtom("findCinemaFromCinemaName"), new OtpErlangString(cinemaName) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("find_cinema_by_name"), new OtpErlangString(cinemaName) );
         return receiveListOfCinemas(session);
     }
 
@@ -92,7 +92,7 @@ public class JE_CommunicationHandler {
     // get_shows_by_customer(username) -> showID, show_name, timestamp, ...
     public List<Booking> get_shows_by_Customer(HttpSession session, String userName) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_shows_by_customer");
-        send(session, serverRegisteredPID, new OtpErlangAtom("getBookingsOfCustomer"), new OtpErlangString(userName) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("get_customer_bookings"), new OtpErlangString(userName) );
         return receiveBookingsListOfCustomer(session);
     }
 
@@ -100,7 +100,8 @@ public class JE_CommunicationHandler {
     // send_booking(showID, userName, nuovo_numero_booking_da_utente )
     public boolean send_booking_by_Customer(HttpSession session, Booking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform send_booking_by_Customer");
-        send(session, serverRegisteredPID, new OtpErlangAtom("sendCreateUpdateBookingByCustomer"), trg_booking.toOtpErlangMap());
+        // TODO: change dest pid
+        send(session, serverRegisteredPID, new OtpErlangAtom("update_booking"), trg_booking.toOtpErlangMap());
         return receiveRequestResult(session);
     }
 
@@ -122,7 +123,8 @@ public class JE_CommunicationHandler {
 
     // get_show_data(showID, userName) -> showID, show_name, timestamp, num_occupati, num_massimo, posti_bookati_da_utente
     public Booking get_customer_show_booking_data(HttpSession session, Show trg_show, Customer trg_customer) throws OtpErlangDecodeException, OtpErlangExit {
-        System.out.println("Trying to perform send_booking_by_Customer");
+        System.out.println("Trying to perform get_booking_by_Customer");
+        // TODO: change Pid
         send(session, serverRegisteredPID, new OtpErlangAtom("createUpdateBookingByCustomer"), trg_show.showIDtoOtpErlangMap(), trg_customer.customerNameToOtpErlangMap() );
         List<Booking> bookings_user_showID =  receiveBookingsListOfCustomer(session);
         if( bookings_user_showID.size() == 1 ){
