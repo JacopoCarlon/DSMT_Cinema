@@ -214,10 +214,7 @@ handle_call({new_show, CinemaId, ShowName, ShowDate, MaxSeats}, _From, _ServerSt
           {reply, {false}, []}
       end;
     _ -> {reply, {false}, []}
-  end,
-
-  Ret = database:get_cinema_shows(CinemaId),
-  {reply, Ret, []};
+  end;
 
 handle_call({update_show_pid, ShowId, PidHandler}, _From, _ServerState) ->
   Ret = database:update_show_pid(ShowId, PidHandler),
