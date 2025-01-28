@@ -1,4 +1,4 @@
-package org.example.CinemaBooking.dto;
+package org.example.CinemaBooking.old_dto;
 
 import com.ericsson.otp.erlang.OtpErlangBoolean;
 import com.ericsson.otp.erlang.OtpErlangList;
@@ -6,20 +6,20 @@ import com.ericsson.otp.erlang.OtpErlangLong;
 import com.ericsson.otp.erlang.OtpErlangString;
 
 public class ShowExpanded {
-    String  showID;
+    long    showID;
     String  showName;
     String  showDate;
     long    maxSeats;
     long    currAvailableSeats;
     Boolean isEnded;
-    String username;
-    String cinemaName;
-    String cinemaLocation;
-    long numSeats;
-    String is_a_cinema;
+    String  username;
+    String  cinemaName;
+    String  cinemaLocation;
+    long    numSeats;
+    String  is_a_cinema;
 
     public ShowExpanded(
-            String  showID,
+            long    showID,
             String  showName,
             String  showDate,
             long    maxSeats,
@@ -46,7 +46,7 @@ public class ShowExpanded {
         this.is_a_cinema = is_a_cinema ;
     }
 
-    public String getShowID() {
+    public long getShowID() {
         return showID;
     }
 
@@ -104,7 +104,7 @@ this.numSeats = numSeats ;
 this.is_a_cinema = is_a_cinema ;
 */
     public static ShowExpanded decodeFromErlangList(OtpErlangList list) {
-        String  showID   = ((OtpErlangString) list.elementAt(0)).stringValue();
+        long    showID   = ((OtpErlangLong) list.elementAt(0)).longValue();
         String  showName = ((OtpErlangString) list.elementAt(1)).stringValue();
         String  showDate = ((OtpErlangString) list.elementAt(2)).stringValue();
         long    maxSeats = ((OtpErlangLong) list.elementAt(3)).longValue();

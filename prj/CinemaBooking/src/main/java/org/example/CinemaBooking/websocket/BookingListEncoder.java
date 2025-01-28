@@ -1,10 +1,6 @@
 package org.example.CinemaBooking.websocket;
 
-import org.example.CinemaBooking.dto.Booking;
-import org.example.CinemaBooking.dto.BookingList;
-
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.EncodeException;

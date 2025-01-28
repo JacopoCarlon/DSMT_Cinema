@@ -1,12 +1,10 @@
 package org.example.CinemaBooking.communication;
 
 import com.ericsson.otp.erlang.*;
-import org.example.CinemaBooking.Constants;
 
 import jakarta.servlet.http.HttpSession;
 import org.example.CinemaBooking.dto.*;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,7 +93,7 @@ public class JE_CommunicationHandler {
 
 
     // send_booking(showID, userName, nuovo_numero_booking_da_utente )
-    public boolean send_booking_by_Customer(HttpSession session, Booking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
+    public boolean send_booking_by_Customer(HttpSession session, CustomerBooking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform send_booking_by_Customer");
         // TODO: change dest pid
         send(session, serverRegisteredPID, new OtpErlangAtom("update_booking"), trg_booking.toOtpErlangMap());
@@ -104,9 +102,9 @@ public class JE_CommunicationHandler {
 
 
     // delete booking == send_booking(showID, userName, 0 )
-    public boolean delete_booking_of_Customer(HttpSession session, Booking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
+    public boolean delete_booking_of_Customer(HttpSession session, CustomerBooking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform delete_booking_by_Customer");
-        trg_booking.setBookingSeats(0);
+        trg_booking.setBookingSeats(0L);
         return send_booking_by_Customer(session, trg_booking );
     }
 
@@ -137,7 +135,7 @@ public class JE_CommunicationHandler {
     // todo
     public OtpErlangPid getShowPidFromBooking (HttpSession session, Booking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to get show pid");
-        send(session, serverRegisteredPID, new OtpErlangAtom("getShowPidFromBooking"), trg_booking.toOtpErlangMap());
+        send(session, serverRegisteredPID, new OtpErlangAtom("getShowPidFromBooking"), new OtpErlangLong(trg_booking.getShowID()));
         return receiveShowPid(session);
     }
 

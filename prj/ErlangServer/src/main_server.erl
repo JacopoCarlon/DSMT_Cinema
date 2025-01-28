@@ -88,6 +88,11 @@ server_loop() ->
       ),
       ClientPid ! {self(), Ret};
 
+    {ClientPid, get_show_pid, ShowId} ->
+      io:format("[MAIN SERVER] Received a get_show_pid message~n"),
+      Ret = get_show_pid(ShowId),
+      ClientPid ! {self(), Ret};
+
     %% Messages from show monitor and handlers
     {show_backup, ShowId, BookingMap} ->
       io:format("[MAIN SERVER] Received a show_backup message~n"),
@@ -160,6 +165,12 @@ add_new_show(CinemaId, ShowName, ShowDate, MaxSeats) ->
     _ -> {false}
   end.
 
+get_show_pid(ShowId) ->
+  case gen_server:call(main_server, {get_show_pid, ShowId}) of
+    {atomic, [PidHandler | _]} -> {true, PidHandler};
+    _ -> {false}
+  end.
+
 do_show_backup(ShowId, BookingMap) ->
   gen_server:call(main_server, {update_show_bookings, ShowId, BookingMap}).
 
@@ -228,6 +239,10 @@ handle_call({new_show, CinemaId, ShowName, ShowDate, MaxSeats}, _From, _ServerSt
       end;
     _ -> {reply, {false}, []}
   end;
+
+handle_call({get_show_pid, ShowId}, _From, _ServerState) ->
+  Ret = database:get_show_pid(ShowId),
+  {reply, Ret, []};
 
 handle_call({update_show_bookings, ShowId, BookingMap}, _From, _ServerState) ->
   database:update_show_bookings(ShowId, BookingMap);

@@ -30,8 +30,8 @@
                     bookings}). %% set of {ShowId}
 
 
--record(show,  {showId,
-                name,
+-record(show,  {show_id,
+                show_name,
                 cinema_id,
                 cinema_name,
                 date,
@@ -58,8 +58,8 @@ compose_customer(Username, Password, BookingSet) ->
 
 compose_show(ShowId, ShowName, CinemaId, CinemaName, Date, MaxSeats, Pid, BookingMap) ->
   #show{
-    showId      = ShowId,
-    name        = ShowName,
+    show_id     = ShowId,
+    show_name   = ShowName,
     cinema_id   = CinemaId,
     cinema_name = CinemaName,
     date        = Date,
@@ -171,7 +171,7 @@ get_customer_bookings(Username, IncludeOldShows) ->
     case (CurrentTime < Show#show.date) or IncludeOldShows of
       true -> {true, {
           ShowId, 
-          Show#show.name,
+          Show#show.show_name,
           Show#show.cinema_name,
           Show#show.date, 
           maps:get(Username, Show#show.bookings)
@@ -227,7 +227,7 @@ remove_show(ShowId) ->
 get_show(ShowId) ->
   F = fun() ->
         io:format("[DATABASE] Searching for show \"~p\"~n", [ShowId]),
-        Match = #show{showId='$1', name='$2', cinema_id='$3', cinema_name='$4', date='$5', max_seats='$6',  _='_'},
+        Match = #show{show_id='$1', show_name='$2', cinema_id='$3', cinema_name='$4', date='$5', max_seats='$6',  _='_'},
         Guard = [{'==', '$1', ShowId}],
         Result = ['$$'], %% return all fields
         mnesia:select(show, [{Match, Guard, Result}])
@@ -237,7 +237,7 @@ get_show(ShowId) ->
 get_show_pid(ShowId) ->
   F = fun() ->
         io:format("[DATABASE] Searching for show \"~p\"~n", [ShowId]),
-        Match = #show{showId='$1', pid='$2', _='_'},
+        Match = #show{show_id='$1', pid='$2', _='_'},
         Guard = [{'==', '$1', ShowId}],
         Result = [['$2']], %% return pid
         mnesia:select(show, [{Match, Guard, Result}])
@@ -247,7 +247,7 @@ get_show_pid(ShowId) ->
 get_cinema_shows(CinemaId) ->
   F = fun() ->
     io:format("[DATABASE] Searching for shows in Cinema \"~p\"~n", [CinemaId]),
-    Match = #show{showId='$1', name='$2', date='$3', cinema_id='$4', max_seats='$5', _='_'},
+    Match = #show{show_id='$1', show_name='$2', date='$3', cinema_id='$4', max_seats='$5', _='_'},
     Guard = [{'==', '$4', CinemaId}],
     Result = [['$1', '$2', '$3', '$5']], %% return list of {ID, name, date, max_seats}
     mnesia:select(show, [{Match, Guard, Result}])

@@ -1,4 +1,4 @@
-package org.example.CinemaBooking.dto;
+package org.example.CinemaBooking.old_dto;
 
 import java.util.ArrayList;
 

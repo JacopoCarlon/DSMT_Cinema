@@ -2,8 +2,6 @@ package org.example.CinemaBooking.servlets;
 
 import com.ericsson.otp.erlang.OtpErlangDecodeException;
 import com.ericsson.otp.erlang.OtpErlangExit;
-import com.ericsson.otp.erlang.OtpErlangPid;
-import com.ericsson.otp.erlang.OtpErlangRangeException;
 import org.example.CinemaBooking.communication.JE_CommunicationHandler;
 
 import jakarta.servlet.RequestDispatcher;
@@ -13,9 +11,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.example.CinemaBooking.dto.Booking;
-import org.example.CinemaBooking.dto.Cinema;
-import org.example.CinemaBooking.dto.Customer;
 import org.example.CinemaBooking.dto.Show;
 
 

@@ -1,9 +1,6 @@
 package org.example.CinemaBooking.servlets;
 
-import org.example.CinemaBooking.dto.Cinema;
 import org.example.CinemaBooking.dto.Show;
-import org.example.CinemaBooking.dto.Booking;
-import org.example.CinemaBooking.dto.BookingList;
 
 import org.example.CinemaBooking.communication.JE_CommunicationHandler;
 
@@ -14,12 +11,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 import com.ericsson.otp.erlang.OtpErlangDecodeException;
 import com.ericsson.otp.erlang.OtpErlangExit;
 import com.ericsson.otp.erlang.OtpErlangPid;
-import com.ericsson.otp.erlang.OtpErlangRangeException;
 
 @WebServlet(name = "CreateShowServlet", value = "/CreateShowServlet")
 public class CreateShowServlet extends HttpServlet{

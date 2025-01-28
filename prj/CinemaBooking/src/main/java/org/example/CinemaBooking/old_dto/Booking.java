@@ -1,20 +1,18 @@
-package org.example.CinemaBooking.dto;
+package org.example.CinemaBooking.old_dto;
 
 import com.ericsson.otp.erlang.*;
-
-import java.util.Date;
 
 
 // this class is seen in the Costumer Page !!!
 public class Booking {
     String  username;
-    String  showID;
+    long    showID;
     String  showName;
     String  cinemaName;
     String  showDate;
     long    num_seats;
 
-    public Booking(String username, String showID, String showName, String cinemaName, String showDate, long num_seats){
+    public Booking(String username, long showID, String showName, String cinemaName, String showDate, long num_seats){
         // todo : manage negative number of seats reasonably ..?
         if (num_seats <= 0){
             num_seats = 0;
@@ -35,7 +33,7 @@ public class Booking {
         return this.username;
     }
 
-    public String getShowID(){return this.showID;}
+    public long getShowID(){return this.showID;}
 
     public String showName(){
         return this.showName;
@@ -64,7 +62,7 @@ public class Booking {
 
     public static Booking decodeFromErlangList(OtpErlangList list){
         String  username    = ((OtpErlangString) list.elementAt(0)).stringValue();
-        String  showID      = ((OtpErlangString) list.elementAt(1)).stringValue();
+        long    showID      = ((OtpErlangLong) list.elementAt(1)).longValue();
         String  showName    = ((OtpErlangString) list.elementAt(2)).stringValue();
         String  cinemaName  = ((OtpErlangString) list.elementAt(3)).stringValue();
         String  showDate    = ((OtpErlangString) list.elementAt(4)).stringValue();
@@ -77,7 +75,7 @@ public class Booking {
     public OtpErlangMap toOtpErlangMap() {
         return new OtpErlangMap(
                 new OtpErlangObject[]{new OtpErlangString("username"),new OtpErlangString("showID"), new OtpErlangString("showName"), new OtpErlangString("cinemaName"), new OtpErlangString("showDate"), new OtpErlangString("num_seats") },
-                new OtpErlangObject[]{new OtpErlangString(username), new OtpErlangString(showID), new OtpErlangString(showName), new OtpErlangString(cinemaName), new OtpErlangString(showDate), new OtpErlangLong(num_seats) }
+                new OtpErlangObject[]{new OtpErlangString(username), new OtpErlangLong(showID), new OtpErlangString(showName), new OtpErlangString(cinemaName), new OtpErlangString(showDate), new OtpErlangLong(num_seats) }
         );
     }
 
