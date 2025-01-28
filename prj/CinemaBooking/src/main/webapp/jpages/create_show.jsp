@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
-        <title>Create Auction</title>
+        <title>Create Show</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -34,9 +34,9 @@
                             <input type="datetime-local" id="showDate" name="showDate" value="2025-11-11T11:11" min="2025-01-01T00:01" max="2150-12-31T11:59" required/>
                         </div>
                         <div class="mb-3">
-                            <label for="maxSeats" class="form-label">Auction Duration</label>
+                            <label for="maxSeats" class="form-label">Maximum Seats</label>
                             <div class="input-group">
-                                <input type="number" class="form-control" name="maxSeats" placeholder="maximum number of seats for the show" id="maxSeats" required>
+                                <input type="number" class="form-control" name="maxSeats" min="0" max="144000000"  id="maxSeats" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text">s</span>
                                 </div>

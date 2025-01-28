@@ -14,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @ServerEndpoint(value = "/cinema_page_endpoint/{username}", decoders = ShowListDecoder.class, encoders = ShowListEncoder.class)
 public class CinemaPageEndpoint {
 
-    private Session session  ;
+    private Session session ;
     private static final Set<CinemaPageEndpoint> showEndpoints = new CopyOnWriteArraySet<CinemaPageEndpoint>();
     private static HashMap<String, String> cinemas = new HashMap<String, String>();
 

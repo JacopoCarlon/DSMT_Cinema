@@ -4,10 +4,7 @@ import com.ericsson.otp.erlang.*;
 import org.example.CinemaBooking.Constants;
 
 import jakarta.servlet.http.HttpSession;
-import org.example.CinemaBooking.dto.Booking;
-import org.example.CinemaBooking.dto.Cinema;
-import org.example.CinemaBooking.dto.Customer;
-import org.example.CinemaBooking.dto.Show;
+import org.example.CinemaBooking.dto.*;
 
 import java.awt.print.Book;
 import java.util.ArrayList;
@@ -137,6 +134,22 @@ public class JE_CommunicationHandler {
     }
 
 
+    // todo
+    public OtpErlangPid getShowPidFromBooking (HttpSession session, Booking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
+        System.out.println("Trying to get show pid");
+        send(session, serverRegisteredPID, new OtpErlangAtom("getShowPidFromBooking"), trg_booking.toOtpErlangMap());
+        return receiveShowPid(session);
+    }
+
+
+    // todo
+    public ShowExpanded getShowExpandedUpdated(HttpSession session, OtpErlangPid ShowPid, String is_a_cinema, String caller_name) throws OtpErlangDecodeException, OtpErlangExit {
+        System.out.println("Trying to get showExtended values");
+        sendToPid(session, ShowPid, new OtpErlangAtom("getShowDataFromPid"), ShowPid, new OtpErlangString(is_a_cinema) , new OtpErlangString(caller_name) );
+        return receiveShowExpandedFromShowNode(session);
+    }
+
+
 
 
 
@@ -161,6 +174,7 @@ public class JE_CommunicationHandler {
     }
 
     // need somebody to tell me the showHandlerPID
+    // todo
     public void sendToPid(HttpSession session, OtpErlangPid showHandlerPID, OtpErlangObject... values){
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
         System.out.println("Created mbox with name: " + otpMbox.getName());
@@ -191,6 +205,7 @@ public class JE_CommunicationHandler {
     }
 
 
+    // todo
     public OtpErlangPid receiveShowPid(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangAtom status = new OtpErlangAtom("");
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
@@ -228,6 +243,27 @@ public class JE_CommunicationHandler {
         }
         return showList;
     }
+
+
+    // todo
+    public ShowExpanded receiveShowExpandedFromShowNode(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+        OtpErlangAtom status = new OtpErlangAtom("");
+        OtpErlangObject message = receive_setup(session, receiveTimeoutMS);
+        System.out.println("Receiving request result... ");
+        if(message instanceof OtpErlangTuple){
+            OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
+            OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
+            status = (OtpErlangAtom) (resulTuple).elementAt(0);
+            OtpErlangObject resultShow = (OtpErlangList) (resulTuple).elementAt(1);
+
+            ShowExpanded trg_show = ShowExpanded.decodeFromErlangList((OtpErlangList) resultShow);
+            return trg_show;
+        }
+        return null;
+    }
+
+
+
 
     public List<Cinema> receiveListOfCinemas(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         List<Cinema> cinemaList = new ArrayList<>();

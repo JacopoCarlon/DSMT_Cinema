@@ -16,8 +16,8 @@
         <div class="container">
             <div class="d-flex d-flex justify-content-between p-3">
                 <a href="<%=request.getContextPath()%>/LoginServlet" class="btn btn-danger">Logout</a>
-                <h4 id="username"> CinemaName: <%=request.getSession().getAttribute("username") ... %></h4>
-                <h4 id="username"> Is_A_Cinema: <%=request.getSession().getAttribute("is_a_cinema") ... %></h4>
+                <h4 id="h4username"> CinemaName: <%=request.getSession().getAttribute("username")%></h4>
+                <h4 id="h4isCinema"> Is_A_Cinema: <%=request.getSession().getAttribute("is_a_cinema")%></h4>
                 <a href="<%=request.getContextPath()%>/CreateShowServlet" class="btn btn-primary">CreateShow for this Cinema !</a>
             </div>
 

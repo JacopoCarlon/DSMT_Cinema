@@ -23,8 +23,10 @@ import com.ericsson.otp.erlang.OtpErlangRangeException;
 
 @WebServlet(name = "CreateShowServlet", value = "/CreateShowServlet")
 public class CreateShowServlet extends HttpServlet{
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // arrive here from A_jump from cinema_page.jsp ... -> just load the page bro
         String targetJSP = "/pages/create_show.jsp";
         request.getSession().removeAttribute("showCreationStatus");
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
@@ -70,11 +72,11 @@ public class CreateShowServlet extends HttpServlet{
         if (pid != null) {
             boolean isJoiningOkay = false;
             String showID = pid.toString();
-            System.out.println("Auction creation succeded, got pid: " + showID);
+            System.out.println("Show creation succeded, got pid: " + showID);
             Show updatedShow = new Show(showID, showName, showDate, maxSeats, currAvailableSeats);
             request.getSession().setAttribute("showCreationStatus", "success");
             // request.getSession().setAttribute("createdShow", updatedShow);
-            // request.getSession().setAttribute("currentAuctionPid", pid);
+            // request.getSession().setAttribute("currentShowPid", pid);
         } else {
             System.out.println("Show creation failed");
             request.getSession().setAttribute("showCreationStatus", "error");
