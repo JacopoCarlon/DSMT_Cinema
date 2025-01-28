@@ -100,7 +100,7 @@ add_cinema(Name, Password, Address) ->
     LastId = mnesia:last(cinema),
     io:format("[DATABASE] Check returned ~p~n", [LastId]),
     NewCinemaId = case LastId of
-      '$end_of_table' -> 0;
+      '$end_of_table' -> 1;
       _               -> LastId +1
     end,
     io:format("[DATABASE] New CinemaId is ~p~n", [NewCinemaId]),
@@ -196,7 +196,7 @@ add_show(CinemaId, Name, Date, MaxSeats) ->
     LastId = mnesia:last(show),
     io:format("[DATABASE] Check returned ~p~n", [LastId]),
     NewShowId = case LastId of
-      '$end_of_table' -> 0;
+      '$end_of_table' -> 1;
       _               -> LastId +1
     end,
     io:format("[DATABASE] New ShowId is ~p~n", [NewShowId]),
