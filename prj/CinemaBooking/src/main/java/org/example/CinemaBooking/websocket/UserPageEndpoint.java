@@ -27,12 +27,15 @@ public class UserPageEndpoint {
         printEndpointStatus();
     }
 
+    /*
+    TODO: check this
     @OnMessage
     public void onMessage(Session session, BookingList boookingList) throws IOException, EncodeException {
         System.out.println("[UserPageEndpoint] OnMessage");
         System.out.println("[UserPageEndpoint] Bookings list is going to be broadcast");
         broadcast(boookingList);
     }
+     */
 
     @OnClose
     public void onClose(Session session) throws IOException, EncodeException {
@@ -47,6 +50,8 @@ public class UserPageEndpoint {
         // Do error handling here
     }
 
+    /*
+    TODO: check this
     private static void broadcast(BookingList bookingList) throws IOException, EncodeException {
         bookingEndpoints.forEach(endpoint -> {
             synchronized (endpoint) {
@@ -59,6 +64,7 @@ public class UserPageEndpoint {
             }
         });
     }
+     */
 
     private static void printEndpointStatus(){
         System.out.println("[UserPageEndpoint] User connected:");

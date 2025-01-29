@@ -2,15 +2,15 @@ package org.example.CinemaBooking.dto;
 
 import com.ericsson.otp.erlang.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ShowExtended extends Show {
+// Used by cinemas for complete list of bookings, and by customer for their own booking
+public class ShowExpanded extends Show {
     List<CustomerBooking> bookingList;
 
-    public ShowExtended(
+    public ShowExpanded(
             Long showID,
             String showName,
             String showDate,
@@ -26,7 +26,7 @@ public class ShowExtended extends Show {
         this.bookingList = bookingList;
     }
 
-    public ShowExtended(Show show, List<CustomerBooking> bookingList) {
+    public ShowExpanded(Show show, List<CustomerBooking> bookingList) {
         super(show);
         this.bookingList = bookingList;
     }
@@ -35,7 +35,14 @@ public class ShowExtended extends Show {
         return bookingList;
     }
 
-    public static ShowExtended decodeFromErlangList(OtpErlangList list){
+    public CustomerBooking getFirstBooking() {
+        if (bookingList == null || bookingList.isEmpty()) {
+            return null;
+        }
+        return bookingList.getFirst();
+    }
+
+    public static ShowExpanded decodeFromErlangList(OtpErlangList list){
         Show base = Show.decodeFromErlangList(list);
 
         OtpErlangObject[] tupleList = ((OtpErlangList) list.elementAt(9)).elements();
@@ -43,6 +50,6 @@ public class ShowExtended extends Show {
                 .map(tuple -> CustomerBooking.decodeFromOtpErlangTuple((OtpErlangTuple) tuple))
                 .collect(Collectors.toList());
 
-        return new ShowExtended(base, bookingList);
+        return new ShowExpanded(base, bookingList);
     }
 }

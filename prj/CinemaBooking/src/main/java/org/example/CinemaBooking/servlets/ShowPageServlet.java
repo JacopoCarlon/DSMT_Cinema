@@ -44,17 +44,23 @@ public class ShowPageServlet extends HttpServlet{
         String sender_Name = (String) request.getSession().getAttribute("username");
 
         ShowExpanded old_show_expanded = (ShowExpanded) request.getSession().getAttribute("currentShowExpanded");
-        String old_showID = old_show_expanded.getShowID();
+        long old_showID = old_show_expanded.getShowID();
         String old_showName = old_show_expanded.getShowName();
         String old_showDate = old_show_expanded.getShowDate();
         long old_maxSeats = old_show_expanded.getMaxSeats();
         long old_currAvailableSeats = old_show_expanded.getCurrAvailableSeats();
-        boolean old_isEnded = old_show_expanded.getEnded();
+        boolean old_isEnded = old_show_expanded.getIsEnded();
         String old_cinemaName = old_show_expanded.getCinemaName();
         String old_cinemaLocation = old_show_expanded.getCinemaLocation();
-        String old_username = old_show_expanded.getUsername();
-        long old_num_seats = old_show_expanded.getNumSeats();
-        String old_is_a_cinema = old_show_expanded.getIs_a_cinema();
+
+        CustomerBooking cb = old_show_expanded.getFirstBooking();
+        String old_username = null;
+        long old_num_seats = 0;
+        if (cb != null) {
+            old_username = cb.getCustomer();
+            old_num_seats = cb.getBookingSeats();
+        }
+
 
         if (Objects.equals(is_this_a_cinema, "true")) {
             System.out.println("Show booking failed : requested by a cinema : cname " + old_cinemaName);
@@ -66,11 +72,10 @@ public class ShowPageServlet extends HttpServlet{
         long new_booking_number = Long.parseLong(request.getParameter("new_booking_number"));
 
 
-        Booking oldBooking = new Booking(old_username, old_showID, old_showName, old_cinemaName, old_showDate, old_num_seats);
-        Booking newBooking = new Booking(old_username, old_showID, old_showName, old_cinemaName, old_showDate, new_booking_number);
+        CustomerBooking newBooking = new CustomerBooking(old_username, new_booking_number);
 
         System.out.println("DoPost Booking Update");
-        System.out.println(newBooking.toString());
+        System.out.println(newBooking);
 
 
         // now we try to execute the new booking
@@ -78,7 +83,7 @@ public class ShowPageServlet extends HttpServlet{
         JE_CommunicationHandler communicationHandler = new JE_CommunicationHandler();
         OtpErlangPid pid = null;
         try {
-            pid = communicationHandler.getShowPidFromBooking(request.getSession(), oldBooking);
+            pid = communicationHandler.getShowPidFromId(request.getSession(), old_showID);
         } catch (OtpErlangDecodeException | OtpErlangExit e) {
             e.printStackTrace();
         }

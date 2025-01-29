@@ -57,18 +57,18 @@ public class CreateShowServlet extends HttpServlet{
         System.out.println("DoPost Show Creation");
         System.out.println("showName: " + showName + "\nshowDate: " + showDate + "\nmaxSeats: " + maxSeats);
 
-        OtpErlangPid pid = null;
+        Long new_id = null;
         try {
-            pid = new JE_CommunicationHandler().createNewShowForCinema(request.getSession(), cinemaName, newShow);
+            new_id = new JE_CommunicationHandler().createNewShowForCinema(request.getSession(), cinemaName, newShow);
         } catch (OtpErlangDecodeException | OtpErlangExit e) {
             e.printStackTrace();
         }
 
-        if (pid != null) {
+        if (new_id != null) {
             boolean isJoiningOkay = false;
-            String showID = pid.toString();
-            System.out.println("Show creation succeded, got pid: " + showID);
-            Show updatedShow = new Show(showID, showName, showDate, maxSeats, currAvailableSeats);
+            System.out.println("Show creation succeded, got id: " + new_id);
+            // TODO: add cinema details to construct Show
+            Show updatedShow = new Show(new_id, showName, showDate, maxSeats, currAvailableSeats);
             request.getSession().setAttribute("showCreationStatus", "success");
             // request.getSession().setAttribute("createdShow", updatedShow);
             // request.getSession().setAttribute("currentShowPid", pid);

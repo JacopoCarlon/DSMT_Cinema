@@ -5,13 +5,14 @@ import com.google.gson.Gson;
 import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.EncodeException;
 import jakarta.websocket.Encoder;
+import org.example.CinemaBooking.dto.ShowList;
 
 
-public class BookingListEncoder implements Encoder.Text<BookingList> {
+public class BookingListEncoder implements Encoder.Text<ShowList> {
     private static Gson gson = new Gson();
 
     @Override
-    public String encode(BookingList message) throws EncodeException {
+    public String encode(ShowList message) throws EncodeException {
         String json = gson.toJson(message);
         System.out.println("Message encoded in JSON: " + message);
         return json;

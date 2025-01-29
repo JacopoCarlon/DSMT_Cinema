@@ -6,7 +6,7 @@ public class CustomerBooking {
     String customer;
     Long bookingSeats;
 
-    CustomerBooking(String customer, Long bookingSeats) {
+    public CustomerBooking(String customer, Long bookingSeats) {
         this.customer = customer;
         this.bookingSeats = bookingSeats;
     }

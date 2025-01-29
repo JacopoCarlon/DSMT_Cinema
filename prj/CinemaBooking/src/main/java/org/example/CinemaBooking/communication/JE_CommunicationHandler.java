@@ -65,10 +65,10 @@ public class JE_CommunicationHandler {
     }
 
     // createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> booleanResult, showID, erroMsg
-    public OtpErlangPid createNewShowForCinema(HttpSession session, String cinemaID, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
+    public Long createNewShowForCinema(HttpSession session, String cinemaID, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform createNewShowForCinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("add_show"), new OtpErlangString(cinemaID) , trg_show.toOtpErlangMap());
-        return receiveShowPid(session);
+        return receiveShowID(session);
     }
 
     // find_cinema_by_name("String") -> lista di cinema con quel nome (location, nomeCinema)
@@ -85,7 +85,7 @@ public class JE_CommunicationHandler {
 
     // // get_customer_data(userName) -> userName, userBookings (lista di : showID, nomeShow cinemaShow dataShow numPostPrenotati )
     // get_shows_by_customer(username) -> showID, show_name, timestamp, ...
-    public List<Booking> get_shows_by_Customer(HttpSession session, String userName) throws OtpErlangDecodeException, OtpErlangExit {
+    public List<ShowExpanded> get_shows_by_Customer(HttpSession session, String userName) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_shows_by_customer");
         send(session, serverRegisteredPID, new OtpErlangAtom("get_customer_bookings"), new OtpErlangString(userName) );
         return receiveBookingsListOfCustomer(session);
@@ -115,7 +115,7 @@ public class JE_CommunicationHandler {
 
     // -----------------------------------------------------------------------------------------------
     // SHOW PAGE --------------------------------------------------------------------------------------- :
-
+/*
     // get_show_data(showID, userName) -> showID, show_name, timestamp, num_occupati, num_massimo, posti_bookati_da_utente
     public Booking get_customer_show_booking_data(HttpSession session, Show trg_show, Customer trg_customer) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_booking_by_Customer");
@@ -130,12 +130,18 @@ public class JE_CommunicationHandler {
         }
         return null;
     }
-
+*/
 
     // todo
-    public OtpErlangPid getShowPidFromBooking (HttpSession session, Booking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
+    public OtpErlangPid getShowPidFromBooking (HttpSession session, ShowExpanded trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to get show pid");
         send(session, serverRegisteredPID, new OtpErlangAtom("getShowPidFromBooking"), new OtpErlangLong(trg_booking.getShowID()));
+        return receiveShowPid(session);
+    }
+
+    public OtpErlangPid getShowPidFromId (HttpSession session, Long showId) throws OtpErlangDecodeException, OtpErlangExit {
+        System.out.println("Trying to get show pid");
+        send(session, serverRegisteredPID, new OtpErlangAtom("getShowPidFromBooking"), new OtpErlangLong(showId));
         return receiveShowPid(session);
     }
 
@@ -205,11 +211,11 @@ public class JE_CommunicationHandler {
 
     // todo
     public OtpErlangPid receiveShowPid(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
-        OtpErlangAtom status = new OtpErlangAtom("");
+        OtpErlangAtom status;
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
         OtpErlangObject message = otpMbox.receive(receiveTimeoutMS);
         if(message instanceof OtpErlangTuple){
-            OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
+            // OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
             OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
             status = (OtpErlangAtom) (resulTuple).elementAt(0);
             if (status.toString().equals("false"))
@@ -217,6 +223,24 @@ public class JE_CommunicationHandler {
             OtpErlangList list = (OtpErlangList) (resulTuple).elementAt(1);
             OtpErlangPid pid = (OtpErlangPid) (list).elementAt(0);
             return pid;
+        }
+        return null;
+    }
+
+    // todo
+    public Long receiveShowID(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+        OtpErlangAtom status;
+        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
+        OtpErlangObject message = otpMbox.receive(receiveTimeoutMS);
+        if(message instanceof OtpErlangTuple){
+            // OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
+            OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
+            status = (OtpErlangAtom) (resulTuple).elementAt(0);
+            if (status.toString().equals("false"))
+                return null;
+            OtpErlangList list = (OtpErlangList) (resulTuple).elementAt(1);
+            OtpErlangLong showID = (OtpErlangLong) (list).elementAt(0);
+            return showID.longValue();
         }
         return null;
     }
@@ -284,8 +308,8 @@ public class JE_CommunicationHandler {
     }
 
 
-    public List<Booking> receiveBookingsListOfCustomer(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
-        List<Booking> usersBookingsList = new ArrayList<>();
+    public List<ShowExpanded> receiveBookingsListOfCustomer(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+        List<ShowExpanded> usersBookingsList = new ArrayList<>();
         OtpErlangAtom status = new OtpErlangAtom("");
         OtpErlangObject message = receive_setup(session, receiveFetchMS);
         System.out.println("Receiving request result... ");
@@ -296,7 +320,7 @@ public class JE_CommunicationHandler {
             OtpErlangList resultList = (OtpErlangList) (resulTuple).elementAt(1);
 
             for(OtpErlangObject result : resultList){
-                Booking trg_booking = Booking.decodeFromErlangList((OtpErlangList) result);
+                ShowExpanded trg_booking = ShowExpanded.decodeFromErlangList((OtpErlangList) result);
                 System.out.println("Fetched: " + trg_booking);
                 usersBookingsList.add(trg_booking);
             }

@@ -1,15 +1,15 @@
 package org.example.CinemaBooking.dto;
-import java.util.ArrayList;
+import java.util.List;
 
 public class ShowList {
 
-    ArrayList<Show> showsList;
+    List<ShowExpanded> showsList;
 
-    public ShowList(ArrayList<Show> new_showList) {
+    public ShowList(List<ShowExpanded> new_showList) {
         this.showsList = new_showList;
     }
 
-    public ArrayList<Show> getShowsList() {
+    public List<ShowExpanded> getShowsList() {
         return showsList;
     }
 

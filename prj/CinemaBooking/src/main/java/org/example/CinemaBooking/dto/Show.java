@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.ericsson.otp.erlang.*;
 
-
+// Used when booked seats are not relevant
 public class Show {
     Long    showID;
     String  showName;
