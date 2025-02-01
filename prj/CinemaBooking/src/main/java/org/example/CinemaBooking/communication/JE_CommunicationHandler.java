@@ -153,11 +153,22 @@ public class JE_CommunicationHandler {
     }
 
 
-    // todo
-    public ShowExpanded getShowExpandedUpdated(HttpSession session, OtpErlangPid ShowPid, String is_a_cinema, String caller_name) throws OtpErlangDecodeException, OtpErlangExit {
+    // getShowExpandedUpdated(username)
+    // -> {id, name, date, cinemaId, cinemaName, cinemaLocation, maxSeats, availSeats, isEnded(==false), committedBooking, waitingBooking}
+    // Used by customers to get a show page
+    public ShowExpanded getShowExpandedUpdated(HttpSession session, OtpErlangPid showPid, String callerCustomer) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to get showExtended values");
-        sendToPid(session, ShowPid, new OtpErlangAtom("getShowDataFromPid"), ShowPid, new OtpErlangString(is_a_cinema) , new OtpErlangString(caller_name) );
+        sendToPid(session, showPid, new OtpErlangAtom("get_data_for_customer"), new OtpErlangString(callerCustomer));
         return receiveShowExpandedFromShowNode(session);
+    }
+
+    // getShowWithBookingsUpdated(username)
+    // -> {id, name, date, cinemaId, cinemaName, cinemaLocation, maxSeats, availSeats, isEnded, committedBookingsList, waitingBookingList}
+    // Used by cinemas to get a show page. It gets all bookings along with available seats
+    public ShowWithBookings getShowWithBookingsUpdated(HttpSession session, OtpErlangPid showPid, Long cinemaId) throws OtpErlangDecodeException, OtpErlangExit {
+        System.out.println("Trying to get showExtended values");
+        sendToPid(session, showPid, new OtpErlangAtom("get_data_for_cinema"), new OtpErlangLong(cinemaId));
+        return receiveShowWithBookingsFromShowNode(session);
     }
 
 
@@ -271,7 +282,22 @@ public class JE_CommunicationHandler {
     }
 
 
-    // todo
+    public ShowWithBookings receiveShowWithBookingsFromShowNode(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+        OtpErlangAtom status = new OtpErlangAtom("");
+        OtpErlangObject message = receive_setup(session, receiveTimeoutMS);
+        System.out.println("Receiving request result... ");
+        if(message instanceof OtpErlangTuple){
+            OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
+            OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
+            status = (OtpErlangAtom) (resulTuple).elementAt(0);
+            OtpErlangList resultShow = (OtpErlangList) (resulTuple).elementAt(1);
+
+            return ShowWithBookings.decodeFromErlangList(resultShow);
+        }
+        return null;
+    }
+
+
     public ShowExpanded receiveShowExpandedFromShowNode(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangAtom status = new OtpErlangAtom("");
         OtpErlangObject message = receive_setup(session, receiveTimeoutMS);

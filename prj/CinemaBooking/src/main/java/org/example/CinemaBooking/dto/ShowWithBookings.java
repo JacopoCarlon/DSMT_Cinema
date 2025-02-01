@@ -60,10 +60,13 @@ public class ShowWithBookings extends Show {
     public static ShowWithBookings decodeFromErlangList(OtpErlangList list) {
         Show baseShow = Show.decodeFromErlangList(list);
 
-        OtpErlangObject[] committedTupleList = ((OtpErlangList) list.elementAt(9)).elements();
-        List<CustomerBooking> committedBookingsList = Arrays.stream(committedTupleList)
-                .map(tuple -> CustomerBooking.decodeFromOtpErlangTuple((OtpErlangTuple) tuple))
-                .toList();
+        List<CustomerBooking> committedBookingsList = null;
+        if (list.elementAt(9) != null) {
+            OtpErlangObject[] committedTupleList = ((OtpErlangList) list.elementAt(9)).elements();
+            committedBookingsList = Arrays.stream(committedTupleList)
+                    .map(tuple -> CustomerBooking.decodeFromOtpErlangTuple((OtpErlangTuple) tuple))
+                    .toList();
+        }
 
         List<CustomerBooking> waitingForCommitList = null;
         if (list.elementAt(9) != null) {
