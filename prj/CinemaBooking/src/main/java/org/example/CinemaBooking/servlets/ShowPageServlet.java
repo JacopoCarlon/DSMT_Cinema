@@ -53,14 +53,7 @@ public class ShowPageServlet extends HttpServlet{
         String old_cinemaName = old_show_expanded.getCinemaName();
         String old_cinemaLocation = old_show_expanded.getCinemaLocation();
 
-        CustomerBooking cb = old_show_expanded.getFirstBooking();
-        String old_username = null;
-        long old_num_seats = 0;
-        if (cb != null) {
-            old_username = cb.getCustomer();
-            old_num_seats = cb.getBookingSeats();
-        }
-
+        long old_num_seats = old_show_expanded.getCommittedBooking();
 
         if (Objects.equals(is_this_a_cinema, "true")) {
             System.out.println("Show booking failed : requested by a cinema : cname " + old_cinemaName);
@@ -72,7 +65,7 @@ public class ShowPageServlet extends HttpServlet{
         long new_booking_number = Long.parseLong(request.getParameter("new_booking_number"));
 
 
-        CustomerBooking newBooking = new CustomerBooking(old_username, new_booking_number);
+        CustomerBooking newBooking = new CustomerBooking(sender_Name, new_booking_number);
 
         System.out.println("DoPost Booking Update");
         System.out.println(newBooking);
@@ -96,7 +89,9 @@ public class ShowPageServlet extends HttpServlet{
             boolean updateBookingStatusResult = false;
             try {
                 // we send the new booking
-                updateBookingStatusResult = new JE_CommunicationHandler().send_booking_by_Customer(request.getSession(), newBooking);
+                ShowExpanded newState = new JE_CommunicationHandler().send_booking_by_Customer(request.getSession(), pid, newBooking);
+                updateBookingStatusResult = newState != null;
+                // TODO: change the page to conform to new state
 
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();

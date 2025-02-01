@@ -35,6 +35,14 @@ public class ShowExpanded extends Show {
         this.waitingForCommitBooking = waitingForCommitBooking;
     }
 
+    public Long getCommittedBooking() {
+        return committedBooking;
+    }
+
+    public Long getWaitingForCommitBooking() {
+        return waitingForCommitBooking;
+    }
+
     public static ShowExpanded decodeFromErlangList(OtpErlangList list){
         Show base = Show.decodeFromErlangList(list);
         Long committedBooking = ((OtpErlangLong) list.elementAt(9)).longValue();

@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="reformed dto">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowWithBookings.java" afterDir="false" />
+    <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="comm_handler small fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/communication/JE_CommunicationHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/communication/JE_CommunicationHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Cinema.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Cinema.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Show.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Show.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/CustomerBooking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/CustomerBooking.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowExpanded.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowExpanded.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/ShowPageServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/ShowPageServlet.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,7 +95,7 @@
       <workItem from="1738074057929" duration="11892000" />
       <workItem from="1738165361068" duration="3228000" />
       <workItem from="1738345349858" duration="3359000" />
-      <workItem from="1738425990155" duration="2178000" />
+      <workItem from="1738425990155" duration="4743000" />
     </task>
     <task id="LOCAL-00001" summary="communication handler progress">
       <option name="closed" value="true" />
@@ -187,7 +185,23 @@
       <option name="project" value="LOCAL" />
       <updated>1738170866767</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="reformed comm_handler">
+      <option name="closed" value="true" />
+      <created>1738428828657</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1738428828657</updated>
+    </task>
+    <task id="LOCAL-00013" summary="comm_handler small fix">
+      <option name="closed" value="true" />
+      <created>1738429709688</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1738429709688</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -203,6 +217,8 @@
     <MESSAGE value="cinema lists its shows" />
     <MESSAGE value="linking cinemaPage to createShow" />
     <MESSAGE value="reformed dto" />
-    <option name="LAST_COMMIT_MESSAGE" value="reformed dto" />
+    <MESSAGE value="reformed comm_handler" />
+    <MESSAGE value="comm_handler small fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="comm_handler small fix" />
   </component>
 </project>

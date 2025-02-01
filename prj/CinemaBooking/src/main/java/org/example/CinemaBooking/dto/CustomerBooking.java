@@ -4,34 +4,34 @@ import com.ericsson.otp.erlang.*;
 
 public class CustomerBooking {
     String customer;
-    Long bookingSeats;
+    Long bookedSeats;
 
-    public CustomerBooking(String customer, Long bookingSeats) {
+    public CustomerBooking(String customer, Long bookedSeats) {
         this.customer = customer;
-        this.bookingSeats = bookingSeats;
+        this.bookedSeats = bookedSeats;
     }
 
     public String getCustomer() {
         return customer;
     }
 
-    public Long getBookingSeats() {
-        return bookingSeats;
+    public Long getBookedSeats() {
+        return bookedSeats;
     }
 
-    public void setBookingSeats(Long numSeats) {
-        this.bookingSeats = numSeats;
+    public void setBookedSeats(Long numSeats) {
+        this.bookedSeats = numSeats;
     }
 
     @Override
     public String toString() {
-        return "CustomerBooking{customer: " + customer + ", numSeats: " + bookingSeats + "}";
+        return "CustomerBooking{customer: " + customer + ", numSeats: " + bookedSeats + "}";
     }
 
     public OtpErlangMap toOtpErlangMap() {
         return new OtpErlangMap(
                 new OtpErlangObject[]{ new OtpErlangString("customer"), new OtpErlangString("num_seats")},
-                new OtpErlangObject[]{ new OtpErlangString(customer), new OtpErlangLong(bookingSeats) }
+                new OtpErlangObject[]{ new OtpErlangString(customer), new OtpErlangLong(bookedSeats) }
         );
     }
 

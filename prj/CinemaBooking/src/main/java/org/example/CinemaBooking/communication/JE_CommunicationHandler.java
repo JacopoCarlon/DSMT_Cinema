@@ -109,7 +109,7 @@ public class JE_CommunicationHandler {
     // delete booking == send_booking(showID, userName, 0 )
     public ShowExpanded delete_booking_of_Customer(HttpSession session, OtpErlangPid showPid,  CustomerBooking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform delete_booking_by_Customer");
-        trg_booking.setBookingSeats(0L);
+        trg_booking.setBookedSeats(0L);
         return send_booking_by_Customer(session, showPid,  trg_booking);
     }
 
