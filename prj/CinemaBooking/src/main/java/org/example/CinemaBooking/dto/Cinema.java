@@ -10,11 +10,23 @@ public class Cinema {
     String          cinemaPassword;
     String          cinemaLocation;
 
-    public Cinema(long cinemaID, String cinemaName, String cinemaPassword, String cinemaLocation, ArrayList<Show> showList){
+    public Cinema(long cinemaID, String cinemaName, String cinemaPassword, String cinemaLocation){
         this.cinemaID = cinemaID;
         this.cinemaName = cinemaName;
         this.cinemaPassword = cinemaPassword;
         this.cinemaLocation = cinemaLocation;
+    }
+
+    public long getCinemaID() {
+        return cinemaID;
+    }
+
+    public String getCinemaName() {
+        return cinemaName;
+    }
+
+    public String getCinemaLocation() {
+        return cinemaLocation;
     }
 
     public OtpErlangMap toOtpErlangMap() {
@@ -39,7 +51,7 @@ public class Cinema {
         String          cinemaName      = ((OtpErlangString) list.elementAt(1)).stringValue();
         String          cinemaLocation  = ((OtpErlangString) list.elementAt(2)).stringValue();
 
-        return new Cinema(cinemaID, cinemaName, null, cinemaLocation, null);
+        return new Cinema(cinemaID, cinemaName, null, cinemaLocation);
     }
 
 

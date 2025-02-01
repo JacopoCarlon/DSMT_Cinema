@@ -38,6 +38,26 @@ public class Show {
         this.isEnded = isEnded;
     }
 
+    public Show(
+            Long showID,
+            String showName,
+            String showDate,
+            Cinema cinema,
+            Long maxSeats,
+            Long currAvailableSeats,
+            Boolean isEnded
+    ) {
+        this.showID = showID;
+        this.showName = showName;
+        this.showDate = showDate;
+        this.maxSeats = maxSeats;
+        this.currAvailableSeats = currAvailableSeats;
+        this.isEnded = isEnded;
+        this.cinemaID = cinema.getCinemaID();
+        this.cinemaName = cinema.getCinemaName();
+        this.cinemaLocation = cinema.getCinemaLocation();
+    }
+
     public Show(Show otherShow) {
         this.showID = otherShow.showID;
         this.showName = otherShow.showName;

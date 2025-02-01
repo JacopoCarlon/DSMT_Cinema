@@ -18,28 +18,29 @@ public class JE_CommunicationHandler {
     // -----------------------------------------------------------------------------------------------
     // REGISTRATION --------------------------------------------------------------------------------------- :
 
-    // registerNewCustomer ( username, password ) -> booleanResult, erroMsg
+    // registerNewCustomer ( username, password ) -> booleanResult
     public boolean registerNewCustomer(HttpSession session, String userName, String userPwd  ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform registerNewCustomer");
         send(session, serverRegisteredPID, new OtpErlangAtom("register_customer"), new OtpErlangString(userName), new OtpErlangString(userPwd) );
         return receiveRequestResult(session);
     }
 
-    // loginExistingCustomer (username, password ) -> booleanResult, erroMsg
+    // loginExistingCustomer (username, password ) -> booleanResult
     public boolean loginExistingCustomer(HttpSession session, String userName, String userPwd ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform loginExistingCustomer");
         send(session, serverRegisteredPID, new OtpErlangAtom("login_customer"), new OtpErlangString(userName), new OtpErlangString(userPwd) );
         return receiveRequestResult(session);
     }
 
-    // registerNewCinema ( cinemaName, cinemaPassword, address ) -> booleanResult, erroMsg
-    public boolean registerNewCinema(HttpSession session, String cinemaName, String cinemaPwd, String cinemaAddress ) throws OtpErlangDecodeException, OtpErlangExit {
+    // registerNewCinema ( cinemaName, cinemaPassword, address ) -> {false} / {true, newCinemaID}
+    // TODO: change return value
+    public Long registerNewCinema(HttpSession session, String cinemaName, String cinemaPwd, String cinemaAddress ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform registerNewCinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("register_cinema"), new OtpErlangString(cinemaName), new OtpErlangString(cinemaPwd), new OtpErlangString(cinemaAddress) );
-        return receiveRequestResult(session);
+        return receiveNumericID(session);
     }
 
-    // loginExistingCinema (cinemaID, password ) -> booleanResult, erroMsg
+    // loginExistingCinema (cinemaID, password ) -> booleanResult
     public boolean loginExistingCinema(HttpSession session, String cinemaID, String cinemaPwd ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform loginExistingCinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("login_cinema"), new OtpErlangString(cinemaID), new OtpErlangString(cinemaPwd) );
@@ -50,28 +51,31 @@ public class JE_CommunicationHandler {
     // -----------------------------------------------------------------------------------------------
     // CINEMA PAGE + ACTIONS --------------------------------------------------------------------------------------- :
 
-    // get_shows_by_cinema(cinemaID) -> showID, show_name, timestamp
+    // get_shows_by_cinema(cinemaID) -> List<Show> --> {id, name, date, cinemaId, cinemaName, cinemaLocation, maxSeats, availSeats, isEnded}
     public List<Show> get_shows_by_cinema(HttpSession session, String cinemaID ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_shows_by_cinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("get_cinema_shows"), new OtpErlangString(cinemaID) );
         return receiveShowOfCinema(session);
     }
 
+    /*
+    // TODO: valutare se tenere o no
     // deleteShowFromCinema(cinemaID, showID) -> booleanResult, erroMsg
     public boolean deleteShowFromCinema(HttpSession session, String cinemaID , String showID ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform deleteShowFromCinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("deleteShowFromCinema"), new OtpErlangString(cinemaID) , new OtpErlangString(showID) );
         return receiveRequestResult(session);
     }
+     */
 
-    // createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> booleanResult, showID, erroMsg
+    // createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> {false} / {true, newShowID}
     public Long createNewShowForCinema(HttpSession session, String cinemaID, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform createNewShowForCinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("add_show"), new OtpErlangString(cinemaID) , trg_show.toOtpErlangMap());
-        return receiveShowID(session);
+        return receiveNumericID(session);
     }
 
-    // find_cinema_by_name("String") -> lista di cinema con quel nome (location, nomeCinema)
+    // find_cinema_by_name("String") -> List<Cinema> --> {id, name, location}
     public List<Cinema> find_cinema_by_name(HttpSession session, String cinemaName ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform find_cinema_by_name");
         send(session, serverRegisteredPID, new OtpErlangAtom("find_cinema_by_name"), new OtpErlangString(cinemaName) );
@@ -83,8 +87,8 @@ public class JE_CommunicationHandler {
     // -----------------------------------------------------------------------------------------------
     // USER PAGE --------------------------------------------------------------------------------------- :
 
-    // // get_customer_data(userName) -> userName, userBookings (lista di : showID, nomeShow cinemaShow dataShow numPostPrenotati )
-    // get_shows_by_customer(username) -> showID, show_name, timestamp, ...
+    // get_shows_by_customer(username) -> List<ShowExpanded>
+    // --> {id, name, date, cinemaId, cinemaName, cinemaLocation, maxSeats, availSeats, isEnded(==false), committedBooking, waitingBooking(==null)}
     public List<ShowExpanded> get_shows_by_Customer(HttpSession session, String userName) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_shows_by_customer");
         send(session, serverRegisteredPID, new OtpErlangAtom("get_customer_bookings"), new OtpErlangString(userName) );
@@ -92,20 +96,21 @@ public class JE_CommunicationHandler {
     }
 
 
-    // send_booking(showID, userName, nuovo_numero_booking_da_utente )
-    public boolean send_booking_by_Customer(HttpSession session, CustomerBooking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
+    // send_booking({userName, nuovo_numero_booking_da_utente}) -> updated ShowExpanded
+    public ShowExpanded send_booking_by_Customer(HttpSession session, OtpErlangPid showPid, CustomerBooking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform send_booking_by_Customer");
         // TODO: change dest pid
-        send(session, serverRegisteredPID, new OtpErlangAtom("update_booking"), trg_booking.toOtpErlangMap());
-        return receiveRequestResult(session);
+        sendToPid(session, showPid, new OtpErlangAtom("update_booking"), trg_booking.toOtpErlangMap());
+        // TODO: function for ShowExpanded
+        return receiveShowExpandedFromShowNode(session);
     }
 
 
     // delete booking == send_booking(showID, userName, 0 )
-    public boolean delete_booking_of_Customer(HttpSession session, CustomerBooking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
+    public ShowExpanded delete_booking_of_Customer(HttpSession session, OtpErlangPid showPid,  CustomerBooking trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform delete_booking_by_Customer");
         trg_booking.setBookingSeats(0L);
-        return send_booking_by_Customer(session, trg_booking );
+        return send_booking_by_Customer(session, showPid,  trg_booking);
     }
 
     // logout
@@ -132,14 +137,16 @@ public class JE_CommunicationHandler {
     }
 */
 
-    // todo
-    public OtpErlangPid getShowPidFromBooking (HttpSession session, ShowExpanded trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
+    // getShowPidFromBooking
+    /* TODO: better remove this
+    public OtpErlangPid getShowPidFromBooking(HttpSession session, ShowExpanded trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to get show pid");
         send(session, serverRegisteredPID, new OtpErlangAtom("getShowPidFromBooking"), new OtpErlangLong(trg_booking.getShowID()));
         return receiveShowPid(session);
     }
+     */
 
-    public OtpErlangPid getShowPidFromId (HttpSession session, Long showId) throws OtpErlangDecodeException, OtpErlangExit {
+    public OtpErlangPid getShowPidFromId(HttpSession session, Long showId) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to get show pid");
         send(session, serverRegisteredPID, new OtpErlangAtom("getShowPidFromBooking"), new OtpErlangLong(showId));
         return receiveShowPid(session);
@@ -178,7 +185,6 @@ public class JE_CommunicationHandler {
     }
 
     // need somebody to tell me the showHandlerPID
-    // todo
     public void sendToPid(HttpSession session, OtpErlangPid showHandlerPID, OtpErlangObject... values){
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
         System.out.println("Created mbox with name: " + otpMbox.getName());
@@ -205,7 +211,7 @@ public class JE_CommunicationHandler {
             OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
             status = (OtpErlangAtom) (resulTuple).elementAt(0);
         }
-        return status.toString().equals("ok");
+        return status.toString().equals("true");
     }
 
 
@@ -221,14 +227,13 @@ public class JE_CommunicationHandler {
             if (status.toString().equals("false"))
                 return null;
             OtpErlangList list = (OtpErlangList) (resulTuple).elementAt(1);
-            OtpErlangPid pid = (OtpErlangPid) (list).elementAt(0);
-            return pid;
+            return (OtpErlangPid) (list).elementAt(0);
         }
         return null;
     }
 
     // todo
-    public Long receiveShowID(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+    public Long receiveNumericID(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangAtom status;
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
         OtpErlangObject message = otpMbox.receive(receiveTimeoutMS);
@@ -239,8 +244,7 @@ public class JE_CommunicationHandler {
             if (status.toString().equals("false"))
                 return null;
             OtpErlangList list = (OtpErlangList) (resulTuple).elementAt(1);
-            OtpErlangLong showID = (OtpErlangLong) (list).elementAt(0);
-            return showID.longValue();
+            return ((OtpErlangLong) (list).elementAt(0)).longValue();
         }
         return null;
     }
@@ -276,10 +280,9 @@ public class JE_CommunicationHandler {
             OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
             OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
             status = (OtpErlangAtom) (resulTuple).elementAt(0);
-            OtpErlangObject resultShow = (OtpErlangList) (resulTuple).elementAt(1);
+            OtpErlangList resultShow = (OtpErlangList) (resulTuple).elementAt(1);
 
-            ShowExpanded trg_show = ShowExpanded.decodeFromErlangList((OtpErlangList) resultShow);
-            return trg_show;
+            return ShowExpanded.decodeFromErlangList(resultShow);
         }
         return null;
     }
@@ -327,9 +330,5 @@ public class JE_CommunicationHandler {
         }
         return usersBookingsList;
     }
-
-
-
-
 
 }

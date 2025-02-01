@@ -5,19 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="reformed dto">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowWithBookings.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/communication/JE_CommunicationHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/communication/JE_CommunicationHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/CustomerBooking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/CustomerBooking.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Cinema.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Cinema.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Show.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Show.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowExtended.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowExpanded.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/CreateShowServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/CreateShowServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/ShowPageServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/ShowPageServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListDecoder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListEncoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListEncoder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/UserPageEndpoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/UserPageEndpoint.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ErlangServer/src/Mnesia.server@localhost/DECISION_TAB.LOG" beforeDir="false" afterPath="$PROJECT_DIR$/../ErlangServer/src/Mnesia.server@localhost/DECISION_TAB.LOG" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ErlangServer/src/Mnesia.server@localhost/LATEST.LOG" beforeDir="false" afterPath="$PROJECT_DIR$/../ErlangServer/src/Mnesia.server@localhost/LATEST.LOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowExpanded.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowExpanded.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +95,9 @@
       <updated>1737827536080</updated>
       <workItem from="1737827537086" duration="622000" />
       <workItem from="1738074057929" duration="11892000" />
-      <workItem from="1738165361068" duration="3055000" />
+      <workItem from="1738165361068" duration="3228000" />
+      <workItem from="1738345349858" duration="3359000" />
+      <workItem from="1738425990155" duration="2178000" />
     </task>
     <task id="LOCAL-00001" summary="communication handler progress">
       <option name="closed" value="true" />
@@ -184,7 +179,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738100824603</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="reformed dto">
+      <option name="closed" value="true" />
+      <created>1738170866767</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1738170866767</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
