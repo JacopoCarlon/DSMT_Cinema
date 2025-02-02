@@ -15,7 +15,7 @@
 -export([
   add_cinema/3, get_cinema/1, find_cinema_by_name/1,
   add_customer/2, get_customer/1, get_customer_bookings/2,
-  add_show/4, remove_show/1, get_show/1, get_show_pid/1, get_cinema_shows/1, update_show_bookings/2, update_show_pid/2
+  add_show/4, remove_show/1, get_show/1, get_show_pid/1, get_cinema_shows/1, update_show_bookings/4, update_show_pid/2
 ]).
 
 %%%% TABLES
@@ -32,10 +32,13 @@
 
 -record(show,  {show_id,
                 show_name,
+                show_date,
                 cinema_id,
                 cinema_name,
-                date,
+                cinema_location,
                 max_seats,
+                curr_avail_seats,
+                old_show,
                 pid,
                 bookings}). %% definitive map of (CustomerUsername, NumOfSeats) pairs
 
@@ -56,17 +59,25 @@ compose_customer(Username, Password, BookingSet) ->
     bookings = BookingSet
   }.
 
-compose_show(ShowId, ShowName, CinemaId, CinemaName, Date, MaxSeats, Pid, BookingMap) ->
+compose_show(ShowId, ShowName, ShowDate, Cinema, MaxSeats, CurrAvailSeats, OldShow, Pid, BookingMap) ->
   #show{
-    show_id     = ShowId,
-    show_name   = ShowName,
-    cinema_id   = CinemaId,
-    cinema_name = CinemaName,
-    date        = Date,
-    max_seats   = MaxSeats,
-    pid         = Pid,
-    bookings    = BookingMap
+    show_id          = ShowId,
+    show_name        = ShowName,
+    show_date        = ShowDate,
+    cinema_id        = Cinema#cinema.cinema_id,
+    cinema_name      = Cinema#cinema.name,
+    cinema_location  = Cinema#cinema.address,
+    max_seats        = MaxSeats,
+    curr_avail_seats = CurrAvailSeats,
+    old_show         = OldShow,
+    pid              = Pid,
+    bookings         = BookingMap
   }.
+
+is_old_date(Date) ->
+  {{YY, MM, DD}, {H, M, _S}} = calendar:now_to_datetime(erlang:timestamp()),
+  CurrentTime = io_lib:format("~4w-~2..0w-~2..0wT~2..0w:~2..0w", [YY, MM, DD, H, M]),
+  CurrentTime > Date.
 
 %% @doc Create Mnesia database
 %% disc_copies means that records are stored also on disk
@@ -168,12 +179,12 @@ get_customer_bookings(Username, IncludeOldShows) ->
     [Show] = mnesia:read(show, ShowId),
     {{YY, MM, DD}, {H, M, _S}} = calendar:now_to_datetime(erlang:timestamp()),
     CurrentTime = io_lib:format("~4w-~2..0w-~2..0wT~2..0w:~2..0w", [YY, MM, DD, H, M]),
-    case (CurrentTime < Show#show.date) or IncludeOldShows of
+    case (CurrentTime < Show#show.show_date) or IncludeOldShows of
       true -> {true, {
           ShowId, 
           Show#show.show_name,
           Show#show.cinema_name,
-          Show#show.date, 
+          Show#show.show_date, 
           maps:get(Username, Show#show.bookings)
         }};
       false -> false
@@ -189,7 +200,7 @@ get_customer_bookings(Username, IncludeOldShows) ->
 
 
 %% SHOW
-add_show(CinemaId, Name, Date, MaxSeats) ->
+add_show(CinemaId, ShowName, ShowDate, MaxSeats) ->
   F = fun() ->
     [Cinema] = mnesia:read(cinema, CinemaId),
     io:format("[DATABASE] Shearching last assigned Show ID~n"),
@@ -200,8 +211,19 @@ add_show(CinemaId, Name, Date, MaxSeats) ->
       _               -> LastId +1
     end,
     io:format("[DATABASE] New ShowId is ~p~n", [NewShowId]),
-    mnesia:write(compose_show(NewShowId, Name, CinemaId, Cinema#cinema.name, Date, MaxSeats, 0, maps:new())),
-    {NewShowId, Cinema#cinema.name}
+    OldShow = is_old_date(ShowDate),
+    mnesia:write(compose_show(
+        NewShowId, 
+        ShowName, 
+        ShowDate, 
+        Cinema, 
+        MaxSeats, 
+        MaxSeats, 
+        OldShow, 
+        0, 
+        maps:new()
+    )),
+    {NewShowId, Cinema#cinema.name, Cinema#cinema.address, OldShow}
   end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of add show is ~p~n", [Result]),
@@ -227,7 +249,7 @@ remove_show(ShowId) ->
 get_show(ShowId) ->
   F = fun() ->
         io:format("[DATABASE] Searching for show \"~p\"~n", [ShowId]),
-        Match = #show{show_id='$1', show_name='$2', cinema_id='$3', cinema_name='$4', date='$5', max_seats='$6',  _='_'},
+        Match = #show{show_id='$1', show_name='$2', cinema_id='$3', cinema_name='$4', show_date='$5', max_seats='$6',  _='_'},
         Guard = [{'==', '$1', ShowId}],
         Result = ['$$'], %% return all fields
         mnesia:select(show, [{Match, Guard, Result}])
@@ -247,40 +269,56 @@ get_show_pid(ShowId) ->
 get_cinema_shows(CinemaId) ->
   F = fun() ->
     io:format("[DATABASE] Searching for shows in Cinema \"~p\"~n", [CinemaId]),
-    Match = #show{show_id='$1', show_name='$2', date='$3', cinema_id='$4', max_seats='$5', _='_'},
+    Match = #show{show_id='$1', show_name='$2', show_date='$3', cinema_id='$4', max_seats='$5', _='_'},
     Guard = [{'==', '$4', CinemaId}],
-    Result = [['$1', '$2', '$3', '$5']], %% return list of {ID, name, date, max_seats}
+    Result = [['$1', '$2', '$3', '$5']], %% return list of {ID, name, show_date, max_seats}
     mnesia:select(show, [{Match, Guard, Result}])
   end,
   mnesia:transaction(F).
 
-update_show_bookings(ShowId, NewBookingMap) ->
+update_show_bookings(ShowId, UpdateMap, AvailableSeats, EndOfLife) ->
   F = fun() ->
     io:format("[DATABASE] Updating list of bookers of show ~p~n", [ShowId]),
     [Show] = mnesia:wread({show, ShowId}),
     OldBookingMap = Show#show.bookings,
     
-    ToRemove = maps:keys(maps:without(maps:keys(NewBookingMap), OldBookingMap)),
     lists:foreach(
-      fun(Username) ->
-        [Customer] = mnesia:wread({customer, Username}),
-        BookingSet = sets:del_element(ShowId, Customer#customer.bookings),
-        mnesia:write(Customer#customer{bookings = BookingSet})
+      fun({Username, NewBookedSeats}) ->
+        %% remove canceled bookings
+        case NewBookedSeats of
+          0 ->
+            [RemoveCustomer] = mnesia:wread({customer, Username}),
+            BookingSetRem = sets:del_element(ShowId, RemoveCustomer#customer.bookings),
+            mnesia:write(RemoveCustomer#customer{bookings = BookingSetRem});
+          _ -> nothing_to_do
+        end,
+        %% add new bookings
+        case maps:is_key(Username, OldBookingMap) of
+          false ->
+            [AddCustomer] = mnesia:wread({customer, Username}),
+            BookingSetAdd = sets:add_element(ShowId, AddCustomer#customer.bookings),
+            mnesia:write(AddCustomer#customer{bookings = BookingSetAdd});
+          true -> nothing_to_do
+        end
       end,
-      ToRemove
+      maps:to_list(UpdateMap)
     ),
 
-    ToAdd = maps:without(maps:keys(OldBookingMap), NewBookingMap),
-    lists:foreach(
-      fun(Username) ->
-        [Customer] = mnesia:wread({customer, Username}),
-        BookingSet = sets:add_element(ShowId, Customer#customer.bookings),
-        mnesia:write(Customer#customer{bookings = BookingSet})
-      end,
-      ToAdd
+    NewBookingMap = maps:filter(
+        fun(_Key, Value) -> Value > 0 end, 
+        maps:merge(OldBookingMap, UpdateMap)
     ),
+    NewPid = case EndOfLife of
+      true  -> 0;
+      false -> Show#show.pid
+    end,
 
-    mnesia:write(Show#show{bookings = NewBookingMap})
+    mnesia:write(Show#show{
+      bookings          = NewBookingMap, 
+      curr_avail_seats  = AvailableSeats,
+      pid               = NewPid,
+      old_show          = EndOfLife
+    })
   end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of update bookings is ~p~n", [Result]),

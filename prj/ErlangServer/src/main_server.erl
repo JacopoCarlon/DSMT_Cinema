@@ -94,9 +94,9 @@ server_loop() ->
       ClientPid ! {self(), Ret};
 
     %% Messages from show monitor and handlers
-    {show_backup, ShowId, BookingMap} ->
+    {show_backup, ShowId, UpdateMap, AvailableSeats, EndOfLife} ->
       io:format("[MAIN SERVER] Received a show_backup message~n"),
-      _Ret = do_show_backup(ShowId, BookingMap);
+      _Ret = do_show_backup(ShowId, UpdateMap, AvailableSeats, EndOfLife);
 
     {respawned_handler, ShowId, PidHandler} ->
       io:format("[MAIN SERVER] Received a respawned_handler message~n"),
@@ -171,8 +171,8 @@ get_show_pid(ShowId) ->
     _ -> {false}
   end.
 
-do_show_backup(ShowId, BookingMap) ->
-  gen_server:call(main_server, {update_show_bookings, ShowId, BookingMap}).
+do_show_backup(ShowId, UpdateMap, AvailableSeats, EndOfLife) ->
+  gen_server:call(main_server, {update_show_bookings, ShowId, UpdateMap, AvailableSeats, EndOfLife}).
 
 restore_show(ShowId, PidHandler) ->
   case gen_server:call(main_server, {update_show_pid, ShowId, PidHandler}) of
@@ -222,21 +222,22 @@ handle_call({get_cinema_shows, CinemaId}, _From, _ServerState) ->
 handle_call({new_show, CinemaId, ShowName, ShowDate, MaxSeats}, _From, _ServerState) ->
   AddRet = database:add_show(CinemaId, ShowName, ShowDate, MaxSeats),
   case AddRet of
-    {atomic, {NewShowId, CinemaName}} -> 
+    {atomic, NewShowId, CinemaName, CinemaLocation, false} -> 
       PidHandler = spawn(fun() -> 
-        show_handler:init_show_handler(NewShowId, ShowName, CinemaId, CinemaName, ShowDate, MaxSeats) 
+        show_handler:init_show_handler(NewShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxSeats) 
       end),
       case database:update_show_pid(NewShowId, PidHandler) of 
         {atomic, _BookingMap} ->
           ShowMonitorPid = whereis(show_monitor),
-          ShowMonitorPid ! {add_show_monitor, PidHandler, NewShowId, ShowName, CinemaId, CinemaName, ShowDate, MaxSeats},
-          {reply, {atomic, NewShowId, PidHandler}, []};
+          ShowMonitorPid ! {add_show_monitor, PidHandler, NewShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxSeats},
+          {reply, {atomic, NewShowId}, []};
         _ ->
           io:format("[MAIN SERVER] Failed association of Show with Process. Rollback...~n"),
           exit(PidHandler, kill),
           database:remove_show(NewShowId),
           {reply, {false}, []}
       end;
+    {atomic, NewShowId, _CinemaName, _CinemaLocation, true} -> {reply, {atomic, NewShowId}, []};
     _ -> {reply, {false}, []}
   end;
 
@@ -244,8 +245,8 @@ handle_call({get_show_pid, ShowId}, _From, _ServerState) ->
   Ret = database:get_show_pid(ShowId),
   {reply, Ret, []};
 
-handle_call({update_show_bookings, ShowId, BookingMap}, _From, _ServerState) ->
-  database:update_show_bookings(ShowId, BookingMap);
+handle_call({update_show_bookings, ShowId, UpdateMap, AvailableSeats, EndOfLife}, _From, _ServerState) ->
+  database:update_show_bookings(ShowId, UpdateMap, AvailableSeats, EndOfLife);
 
 handle_call({update_show_pid, ShowId, PidHandler}, _From, _ServerState) ->
   Ret = database:update_show_pid(ShowId, PidHandler),
