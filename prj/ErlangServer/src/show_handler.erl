@@ -160,11 +160,11 @@ construct_msg_for_customer(Username, StaticInfo, AvailableSeats, CommittedBookin
         maps:get(cinema_location, StaticInfo),
         maps:get(max_seats, StaticInfo),
         AvailableSeats,
-        CommittedValue
+        [{Username, CommittedValue}]
     ],
     case maps:get(Username, WaitingBookingMap, none) of
         none -> {self(), MessageList};
-        UncommittedValue -> {self(), lists:append(MessageList, [UncommittedValue])}
+        UncommittedValue -> {self(), lists:append(MessageList, [[{Username, UncommittedValue}]])}
     end.
 
 % message for others

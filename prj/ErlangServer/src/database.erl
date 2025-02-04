@@ -104,7 +104,7 @@ stop_database() ->
 
 %%%%%%%%%%%%%%% CRUD operations
 
-%% CINEMA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CINEMA
 add_cinema(Name, Password, Address) ->
   F = fun() ->
     io:format("[DATABASE] Searching last assigned ID...~n"),
@@ -142,7 +142,7 @@ find_cinema_by_name(CinemaName) ->
       end,
   mnesia:transaction(F).
 
-%% CUSTOMER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CUSTOMER
 add_customer(Username, Password) ->
   F = fun() ->
         io:format("[DATABASE] Checking if Username \"~s\" already exists~n", [Username]),
@@ -177,15 +177,20 @@ get_customer(Username) ->
 get_customer_bookings(Username, IncludeOldShows) ->
   Getter = fun(ShowId) ->
     [Show] = mnesia:read(show, ShowId),
-    {{YY, MM, DD}, {H, M, _S}} = calendar:now_to_datetime(erlang:timestamp()),
-    CurrentTime = io_lib:format("~4w-~2..0w-~2..0wT~2..0w:~2..0w", [YY, MM, DD, H, M]),
-    case (CurrentTime < Show#show.show_date) or IncludeOldShows of
-      true -> {true, {
+    case (Show#show.old_show == false) or IncludeOldShows of
+      true -> BookedSeats = maps:get(Username, Show#show.bookings, 0), 
+        {true, {
           ShowId, 
           Show#show.show_name,
           Show#show.cinema_name,
           Show#show.show_date, 
-          maps:get(Username, Show#show.bookings)
+          Show#show.cinema_id,
+          Show#show.cinema_name,
+          Show#show.cinema_location,
+          Show#show.max_seats,
+          Show#show.curr_avail_seats,
+          Show#show.old_show,
+          [{Username, BookedSeats}]
         }};
       false -> false
     end
@@ -199,7 +204,7 @@ get_customer_bookings(Username, IncludeOldShows) ->
   mnesia:transaction(F).
 
 
-%% SHOW
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SHOW
 add_show(CinemaId, ShowName, ShowDate, MaxSeats) ->
   F = fun() ->
     [Cinema] = mnesia:read(cinema, CinemaId),
@@ -249,7 +254,18 @@ remove_show(ShowId) ->
 get_show(ShowId) ->
   F = fun() ->
         io:format("[DATABASE] Searching for show \"~p\"~n", [ShowId]),
-        Match = #show{show_id='$1', show_name='$2', cinema_id='$3', cinema_name='$4', show_date='$5', max_seats='$6',  _='_'},
+        Match = #show{
+          show_id='$1', 
+          show_name='$2', 
+          show_date='$3', 
+          cinema_id='$4', 
+          cinema_name='$5',
+          cinema_location='$6',
+          max_seats='$7',
+          curr_avail_seats='$8',
+          old_show='$9',
+          _='_'
+        },
         Guard = [{'==', '$1', ShowId}],
         Result = ['$$'], %% return all fields
         mnesia:select(show, [{Match, Guard, Result}])
@@ -269,7 +285,18 @@ get_show_pid(ShowId) ->
 get_cinema_shows(CinemaId) ->
   F = fun() ->
     io:format("[DATABASE] Searching for shows in Cinema \"~p\"~n", [CinemaId]),
-    Match = #show{show_id='$1', show_name='$2', show_date='$3', cinema_id='$4', max_seats='$5', _='_'},
+    Match = #show{
+      show_id='$1', 
+      show_name='$2', 
+      show_date='$3', 
+      cinema_id='$4', 
+      cinema_name='$5',
+      cinema_location='$6',
+      max_seats='$7',
+      curr_avail_seats='$8',
+      old_show='$9',
+      _='_'
+    },
     Guard = [{'==', '$4', CinemaId}],
     Result = [['$1', '$2', '$3', '$5']], %% return list of {ID, name, show_date, max_seats}
     mnesia:select(show, [{Match, Guard, Result}])
