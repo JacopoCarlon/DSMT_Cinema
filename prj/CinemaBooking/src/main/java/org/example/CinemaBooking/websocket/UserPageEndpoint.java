@@ -11,36 +11,37 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-@ServerEndpoint(value = "/user_page_endpoint/{username}", decoders = BookingListDecoder.class, encoders = BookingListEncoder.class)
+@ServerEndpoint(value = "/user_page_endpoint/{username}", decoders = ShowExpandedListDecoder.class, encoders = ShowExpandedListEncoder.class)
 public class UserPageEndpoint {
 
     private Session session ;
-    private static final Set<UserPageEndpoint> bookingEndpoints = new CopyOnWriteArraySet<UserPageEndpoint>();
+    private static final Set<UserPageEndpoint> userPageEndpoints = new CopyOnWriteArraySet<UserPageEndpoint>();
     private static HashMap<String, String> users = new HashMap<String, String>();
 
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException, EncodeException {
         System.out.println("[UserPageEndpoint] OnOpen");
         this.session = session;
-        bookingEndpoints.add(this);
+        userPageEndpoints.add(this);
         users.put(session.getId(), username);
         printEndpointStatus();
     }
 
     /*
     TODO: check this
+    */
     @OnMessage
-    public void onMessage(Session session, BookingList boookingList) throws IOException, EncodeException {
+    public void onMessage(Session session, ShowExpandedList showExpandedList) throws IOException, EncodeException {
         System.out.println("[UserPageEndpoint] OnMessage");
-        System.out.println("[UserPageEndpoint] Bookings list is going to be broadcast");
-        broadcast(boookingList);
+        System.out.println("[UserPageEndpoint] ShowExpandedList list is going to be broadcast");
+        broadcast(showExpandedList);
     }
-     */
+
 
     @OnClose
     public void onClose(Session session) throws IOException, EncodeException {
         System.out.println("[UserPageEndpoint] OnClose: " + users.get(session.getId()) + " is exiting");
-        bookingEndpoints.remove(this);
+        userPageEndpoints.remove(this);
         users.remove(session.getId());
         printEndpointStatus();
     }
@@ -52,19 +53,20 @@ public class UserPageEndpoint {
 
     /*
     TODO: check this
-    private static void broadcast(BookingList bookingList) throws IOException, EncodeException {
-        bookingEndpoints.forEach(endpoint -> {
+    */
+    private static void broadcast(ShowExpandedList showExpandedList) throws IOException, EncodeException {
+        userPageEndpoints.forEach(endpoint -> {
             synchronized (endpoint) {
                 try {
                     endpoint.session.getBasicRemote()
-                            .sendObject(bookingList);
+                            .sendObject(showExpandedList);
                 } catch (IOException | EncodeException e) {
                     e.printStackTrace();
                 }
             }
         });
     }
-     */
+
 
     private static void printEndpointStatus(){
         System.out.println("[UserPageEndpoint] User connected:");

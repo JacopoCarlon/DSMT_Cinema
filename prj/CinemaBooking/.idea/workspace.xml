@@ -5,10 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="comm_handler small fix">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowWithBookingsListDecoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowWithBookingsListEncoder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/CustomerBooking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/CustomerBooking.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowExpanded.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowExpanded.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/ShowPageServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/ShowPageServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowExpandedList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListDecoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListEncoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BookingListEncoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/CinemaPageEndpoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/CinemaPageEndpoint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowListDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowExpandedListDecoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowListEncoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowExpandedListEncoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowPageEndpoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowPageEndpoint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/UserPageEndpoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/UserPageEndpoint.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,8 +41,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;git@github.com:JacopoCarlon/DSMT_Cinema.git&quot;,
-    &quot;accountId&quot;: &quot;eb96fffa-2011-4395-957d-6984d8f73e02&quot;
+    &quot;url&quot;: &quot;https://github.com/JacopoCarlon/DSMT_Cinema.git&quot;,
+    &quot;accountId&quot;: &quot;71947ebb-496d-4a11-88fe-9078045e707b&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -74,14 +81,6 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/old_dto" />
     </key>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23339.11" />
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23339.11" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

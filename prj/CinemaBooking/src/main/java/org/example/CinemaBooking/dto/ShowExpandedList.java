@@ -1,11 +1,11 @@
 package org.example.CinemaBooking.dto;
 import java.util.List;
 
-public class ShowList {
+public class ShowExpandedList {
 
     List<ShowExpanded> showsList;
 
-    public ShowList(List<ShowExpanded> new_showList) {
+    public ShowExpandedList(List<ShowExpanded> new_showList) {
         this.showsList = new_showList;
     }
 

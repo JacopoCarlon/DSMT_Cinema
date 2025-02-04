@@ -7,11 +7,10 @@ import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-@ServerEndpoint(value = "/cinema_page_endpoint/{username}", decoders = ShowListDecoder.class, encoders = ShowListEncoder.class)
+@ServerEndpoint(value = "/cinema_page_endpoint/{username}", decoders = ShowExpandedListDecoder.class, encoders = ShowExpandedListEncoder.class)
 public class CinemaPageEndpoint {
 
     private Session session ;
@@ -28,10 +27,10 @@ public class CinemaPageEndpoint {
     }
 
     @OnMessage
-    public void onMessage(Session session, ShowList showList) throws IOException, EncodeException {
+    public void onMessage(Session session, ShowExpandedList showExpandedList) throws IOException, EncodeException {
         System.out.println("[CinemaPageEndpoint] OnMessage");
         System.out.println("[CinemaPageEndpoint] Show list is going to be broadcast");
-        broadcast(showList);
+        broadcast(showExpandedList);
     }
 
     @OnClose
@@ -47,12 +46,12 @@ public class CinemaPageEndpoint {
         // Do error handling here
     }
 
-    private static void broadcast(ShowList showList) throws IOException, EncodeException {
+    private static void broadcast(ShowExpandedList showExpandedList) throws IOException, EncodeException {
         showEndpoints.forEach(endpoint -> {
             synchronized (endpoint) {
                 try {
                     endpoint.session.getBasicRemote()
-                            .sendObject(showList);
+                            .sendObject(showExpandedList);
                 } catch (IOException | EncodeException e) {
                     e.printStackTrace();
                 }
