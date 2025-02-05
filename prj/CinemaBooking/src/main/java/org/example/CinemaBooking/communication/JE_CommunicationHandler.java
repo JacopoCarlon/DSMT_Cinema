@@ -55,7 +55,7 @@ public class JE_CommunicationHandler {
     public List<Show> get_shows_by_cinema(HttpSession session, Long cinemaID ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_shows_by_cinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("get_cinema_shows"), new OtpErlangLong(cinemaID) );
-        return receiveShowOfCinema(session);
+        return receiveListOfShows(session);
     }
 
     /*
@@ -170,6 +170,13 @@ public class JE_CommunicationHandler {
     }
 
 
+    // -----------------------------------------------------------------------------------------------
+    // BROWSE SHOWS PAGE --------------------------------------------------------------------------------------- :
+    public List<Show> getListOfShows(HttpSession session, Boolean includeOld) throws OtpErlangDecodeException, OtpErlangExit {
+        System.out.println("Trying to get list of shows");
+        send(session, serverRegisteredPID, new OtpErlangAtom("get_list_of_shows"), new OtpErlangBoolean(includeOld));
+        return receiveListOfShows(session);
+    }
 
 
 
@@ -259,7 +266,7 @@ public class JE_CommunicationHandler {
     }
 
 
-    public List<Show> receiveShowOfCinema(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+    public List<Show> receiveListOfShows(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         List<Show> showList = new ArrayList<>();
         OtpErlangAtom status = new OtpErlangAtom("");
         OtpErlangObject message = receive_setup(session, receiveFetchMS);

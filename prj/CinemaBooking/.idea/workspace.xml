@@ -5,16 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="comm_handler small fix">
+      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowList.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/BrowseShowsPageServlet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/BrowseShowsPageEndpoint.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowListDecoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/websocket/ShowListEncoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/jpages/browse_shows_page.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Show.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/Show.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowWithBookings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/dto/ShowWithBookings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/CinemaPageServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/CinemaPageServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/RegistrationServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/RegistrationServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/ShowPageServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/ShowPageServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/UserPageServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/servlets/UserPageServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/cinema_page.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/cinema_page.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/show_page.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/show_page.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/user_page.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/user_page.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/communication/JE_CommunicationHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/communication/JE_CommunicationHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/broser_shows_page.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/browse_shows_websocket.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,12 +38,12 @@
     &quot;assignee&quot;: &quot;JacopoCarlon&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/JacopoCarlon/DSMT_Cinema.git",
-    "accountId": "71947ebb-496d-4a11-88fe-9078045e707b"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/JacopoCarlon/DSMT_Cinema.git&quot;,
+    &quot;accountId&quot;: &quot;71947ebb-496d-4a11-88fe-9078045e707b&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
@@ -79,6 +79,9 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java/org/example/CinemaBooking/old_dto" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example.CinemaBooking.dto" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
