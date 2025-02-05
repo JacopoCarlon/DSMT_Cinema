@@ -25,7 +25,7 @@ public class CinemaPageServlet extends HttpServlet  {
         System.out.println("DoGet CinemaPageServlet");
 
         // get active shows of cinema :
-        // todo : test which way should be done getting username and is_a_cinema
+        // todo : add check is cinema not user
         // String username = request.getParameter("username");
         Long cinemaID = (Long) request.getSession().getAttribute("username");
         String is_a_cinema = request.getParameter("is_a_cinema");
@@ -33,15 +33,42 @@ public class CinemaPageServlet extends HttpServlet  {
         try {
             List<Show> showList = new JE_CommunicationHandler().get_shows_by_cinema(request.getSession(), cinemaID );
             request.setAttribute("showList", showList);
-            request.getSession().setAttribute("showList", showList);
+            // request.getSession().setAttribute("showList", showList);
         } catch (OtpErlangExit | OtpErlangDecodeException e) {
             e.printStackTrace();
         }
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/pages/cinema_page.jsp");
         requestDispatcher.forward(request, response);
-
     }
+
+
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // arrive here by pressing on a show from userPage -> want to see the show page
+        System.out.println("doPost UserPageServlet");
+
+        // String username = request.getParameter("username");
+        Long showID = Long.parseLong( request.getParameter("showID") );
+        /*
+        String showName = request.getParameter("showName");
+        String cinemaName = request.getParameter("cinemaName");
+        String showDate = request.getParameter("showDate");
+        long num_seats = Long.parseLong( request.getParameter("num_seats") ) ;
+        String session_is_this_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
+        String session_name = (String) request.getSession().getAttribute("username");
+        */
+        request.getSession().removeAttribute("getShowID");
+        request.getSession().setAttribute("getShowID", showID);
+
+        // we go straight to a get in the ShowServlet of show_page.jsp !
+        System.out.println("go to show page");
+        response.sendRedirect(request.getContextPath() + "/ShowServlet");
+        return;
+    }
+
+
 }
 
 

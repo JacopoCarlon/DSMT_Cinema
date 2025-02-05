@@ -26,14 +26,15 @@
                 </h3>
                 <div class="p-4 d-flex flex-wrap" id="parent_bookings_list">
                     <%
-                    List<Bookings> bookingsList = (List<Bookings>) request.getAttribute("bookingList");
-                    if(bookingsList == null || bookingsList.size() == 0){
+                    List<ShowWithBookings> showWithBookingsList = (List<ShowWithBookings>) request.getAttribute("showWithBookingsList");
+                    if(showWithBookingsList == null || showWithBookingsList.size() == 0){
                     %>
                         <h5 class="d-flex justify-content-center p-3" id="noBookings">Nothing to Show<h5>
                     <%
                     } else {
-                        for(int i=0; i<bookingsList.size(); i++){
-                            Booking this_booking = bookingsList.get(i);
+                        for(int i=0; i<showWithBookingsList.size(); i++){
+                            ShowWithBookings this_booking = showWithBookingsList.get(i);
+                            Long this_committed_bookings = this_booking.getFirstCommittedBooking();
                     %>
                             <form class="card w-25" action="<%=request.getContextPath()%>/UserPageServlet" method="post">
                                 <div class="card-body d-flex flex-column justify-content-between p-3">
@@ -41,14 +42,13 @@
                                         <input type="hidden" name="username" value="<%=this_booking.getUsername()%>">
                                         <input type="hidden" name="showID" value="<%=this_booking.getShowID()%>">
                                         <input type="hidden" name="showName" value="<%=this_booking.showName()%>">
-                                        <input type="hidden" name="cinemaName" value="<%=this_booking.cinemaName()%>">
                                         <input type="hidden" name="showDate" value="<%=this_booking.showDate()%>">
-                                        <input type="hidden" name="num_seats" value="<%=this_booking.num_seats()%>">
+                                        <input type="hidden" name="cinemaName" value="<%=this_booking.cinemaName()%>">
                                         <h5 class="card-title">Prenotazione <%=i%> </h5>
                                         <div>showName: <%=this_booking.showName()%></div>
                                         <div>cinemaName: <%=this_booking.cinemaName()%></div>
                                         <div>showDate: <%=this_booking.showDate()%></div>
-                                        <div>number booked seats by you: <%=this_booking.num_seats()%></div>
+                                        <div>number booked seats by you registered in server: <%=this_committed_bookings%></div>
                                     </div>
                                     <button type="submit" class="btn btn-primary m-3">Enter</button>
                                 </div>

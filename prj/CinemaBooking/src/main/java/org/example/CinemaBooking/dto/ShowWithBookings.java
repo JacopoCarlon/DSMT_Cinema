@@ -31,6 +31,8 @@ public class ShowWithBookings extends Show {
         this.waitingForCommitList = waitingForCommitList;
     }
 
+
+
     public ShowWithBookings(
             Long showID,
             String showName,

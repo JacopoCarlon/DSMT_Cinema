@@ -27,13 +27,71 @@ public class ShowPageServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         System.out.println("DoGet ShowPageServlet");
         // arrive here from POST by UserPageServlet or CinemaPageServlet
-        // ShowExpanded is already in :
-        // request.getSession().setAttribute("currentShowExpanded", updatedShowExpanded);
-        String targetJSP = "/pages/show_page.jsp";
+
+        String username = "";
+        Long cinemaID = -1L;
+        String is_a_cinema = request.getParameter("is_a_cinema");
+
+        // does the query arrive from a cinema or a user ?
+        boolean session_this_is_a_cinema = Objects.equals(is_a_cinema, "true");
+
+        if(session_this_is_a_cinema){
+            cinemaID = (Long) request.getSession().getAttribute("username");
+        }else{
+            username = (String) request.getSession().getAttribute("username");
+        }
+
+        Long trgShowID = (Long) request.getSession().getAttribute("getShowID");
+
+        JE_CommunicationHandler communicationHandler = new JE_CommunicationHandler();
+        OtpErlangPid pid = null;
+        try {
+            pid = communicationHandler.getShowPidFromId(request.getSession(), trgShowID);
+        } catch (OtpErlangDecodeException | OtpErlangExit e) {
+            e.printStackTrace();
+        }
+
+        if(pid != null){
+            System.out.println("GET Show pid got: " + pid.toString());
+            // // request.getSession().removeAttribute("getShowID");
+            request.getSession().removeAttribute("currentShowPid");
+            request.getSession().setAttribute("currentShowPid", pid);
+            boolean good_to_move = false;
+
+            ShowWithBookings gottenSWB = null;
+            try {
+                // we get the updated show data
+                if (session_this_is_a_cinema){
+                    gottenSWB = new JE_CommunicationHandler().getShowWithBookingsForCinema(request.getSession(), pid, cinemaID);
+                }else{
+                    gottenSWB = new JE_CommunicationHandler().getShowWithBookingsForCustomer(request.getSession(), pid, username);
+                }
+
+                if (gottenSWB != null){
+                    good_to_move = true;
+                }
+            } catch (OtpErlangDecodeException | OtpErlangExit e) {
+                e.printStackTrace();
+            }
+
+            if(good_to_move ){
+                request.getSession().removeAttribute("currentSWB");
+                request.getSession().setAttribute("currentSWB", gottenSWB);
+                System.out.println("GET can properly load show page");
+                response.sendRedirect(request.getContextPath() + "/ShowServlet");
+            }else {
+                System.out.println("GET something went wrong in ShowPageServlet.java ");
+                request.getSession().removeAttribute("currentShowPid");
+                request.getSession().removeAttribute("currentSWB");
+            }
+        }
+
         request.getSession().removeAttribute("bookingUpdateStatus");
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
+
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/show_page.jsp");
         requestDispatcher.forward(request, response);
     }
 
@@ -83,8 +141,8 @@ public class ShowPageServlet extends HttpServlet{
 
 
         if (pid != null) {
-            System.out.println("Show pid got: " + pid.toString());
-            request.getSession().setAttribute("currentShowPid", pid);
+            System.out.println("POST Show pid got: " + pid.toString());
+            // request.getSession().setAttribute("currentShowPid", pid);
 
             boolean updateBookingStatusResult = false;
             try {

@@ -92,7 +92,9 @@ public class Show {
     }
 
     public Long getCinemaID(){return this.cinemaID;}
+
     public String getCinemaName(){return this.cinemaName;}
+
     public String getCinemaLocation(){return this.cinemaLocation;}
 
     public Long getMaxSeats() { return this.maxSeats; }

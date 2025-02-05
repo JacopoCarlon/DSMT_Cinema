@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 import com.ericsson.otp.erlang.OtpErlangDecodeException;
 import com.ericsson.otp.erlang.OtpErlangExit;
@@ -32,7 +33,7 @@ public class CreateShowServlet extends HttpServlet{
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String is_this_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
         Long cinemaID = (Long) request.getSession().getAttribute("username");
-        if ( is_this_a_cinema != "true" ){
+        if (!Objects.equals(is_this_a_cinema, "true")){
             System.out.println("Show creation failed : requested by something that is not a cinema : uname" + cinemaID);
             return;
         }

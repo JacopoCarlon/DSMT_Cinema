@@ -50,7 +50,7 @@
                                         <div>showName: <%=this_show.getShowName()%></div>
                                         <div>showDate: <%=this_show.getShowDate()%></div>
                                         <div>maxSeats: <%=this_show.getMaxSeats()%></div>
-                                        <div>currAvailableSeats: <%=this_show.getCurrAvailableSeats()%></div>
+                                        <div>currAvailableSeats in server : <%=this_show.getCurrAvailableSeats()%></div>
                                         <div>isEnded: <%=this_show.getIsEnded()%></div>
                                     </div>
                                     <button type="submit" class="btn btn-primary m-3">Enter</button>

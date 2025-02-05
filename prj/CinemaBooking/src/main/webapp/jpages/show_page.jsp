@@ -19,9 +19,7 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/show_page_websocket.js"></script>
     </head>
     <%
-      ShowExpanded this_show_expanded = (ShowExpanded) request.getSession().getAttribute("currentShowExpanded");
-      String curr_username = this_show_expanded.getUsername();
-      String curr_is_a_cinema = this_show_expanded.getIs_a_cinema();
+      ShowWithBookings this_showWithBookings = (ShowWithBookings) request.getSession().getAttribute("currentSWB");
     %>
     <body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>', '<%=request.getSession().getAttribute("is_cinema")%>' );">
         <div class="container">
@@ -37,42 +35,82 @@
                 </h3>
 
                 <h5 class="d-flex justify-content-center">
-                    <div id="des_showID"        > showID : <%=this_show_expanded.getShowID()%></div>
-                    <div id="des_showName"      > showName : <%=this_show_expanded.getShowName()%></div>
-                    <div id="des_showDate"      > showDate : <%=this_show_expanded.getShowDate()%></div>
-                    <div id="des_maxSeats"      > maxSeats : <%=this_show_expanded.getMaxSeats()%></div>
-                    <div id="des_currAvailableSeats"  > currAvailableSeats : <%=this_show_expanded.getCurrAvailableSeats()%></div>
-                    <div id="des_isEnded"       > isEnded : <%=this_show_expanded.getEnded()%></div>
-                    <div id="des_cinemaName"    > isEnded : <%=this_show_expanded.getCinemaName()%></div>
-                    <div id="des_cinemaLocation"    > isEnded : <%=this_show_expanded.getCinemaLocation()%></div>
-                    <div id="des_username"      > username : <%=this_show_expanded.getUsername()%></div>
-                    <div id="des_num_seats"     > num_seats : <%=this_show_expanded.getNum_seats()%></div>
-                    <div id="des_is_a_cinema"   > is_a_cinema : <%=this_show_expanded.getIs_a_cinema()%></div>
-                    <div id="des_testUN0"   > this_show_expanded.getUsername() : <%=this_show_expanded.getUsername()%></div>
-                    <div id="des_testUN1"   > request.getSession().getAttribute(username) : <%=request.getSession().getAttribute("username")%></div>
+                    <div id="des_showID"        > showID : <%=this_showWithBookings.getShowID()%></div>
+                    <div id="des_showName"      > showName : <%=this_showWithBookings.getShowName()%></div>
+                    <div id="des_showDate"      > showDate : <%=this_showWithBookings.getShowDate()%></div>
+                    <div id="des_cinemaID"      > cinemaID : <%=this_showWithBookings.getCinemaID()%></div>
+                    <div id="des_cinemaName"     > cinemaName : <%=this_showWithBookings.getCinemaName()%></div>
+                    <div id="des_cinemaLocation" > cinemaLocation : <%=this_showWithBookings.getCinemaLocation()%></div>
+                    <div id="maxSeats" > maxSeats : <%=this_showWithBookings.getMaxSeats()%></div>
+                    <div id="currAvailableSeats" > currAvailableSeats : <%=this_showWithBookings.getCurrAvailableSeats()%></div>
+                    <div id="isEnded" > isEnded : <%=this_showWithBookings.getIsEnded()%></div>
                 </h5>
 
                 <div class="p-4 d-flex flex-wrap" id="changes_form_parent">
-                <form action="<%=request.getContextPath()%>/ShowPageServlet" method="post" oninput='check_valid_booking()'>
-                    <div class="d-flex justify-content-between mb-3">
-                        <div class="mb-3">
-                            <label for="new_booking_number" class="form-label">Enter your new_booking_number</label>
-                            <input type="number"
-                                class="form-control"
-                                name="new_booking_number"
-                                id="new_booking_number"
-                                min="0"
-                                max="144000000"
-                                aria-describedby="bid"
-                                required>
-                        </div>
-                        </div>
-                            <button type="submit" class="btn btn-primary mx-2 px-4" <%=(this_show_expanded.getUsername().equals(request.getSession().getAttribute("username"))) ? "disabled" : ""%>> Set this as new booking </button>
-                        </div>
-                    </form>
+
+                <%
+                    ShowWithBookings gottenSWB = (ShowWithBookings) request.getAttribute("showWithBookingsList");
+
+                    String is_a_cinema = request.getSession().getAttribute("is_a_cinema");
+
+                    if(is_a_cinema == "true" ){
+                        List<CustomerBooking> committedBookingsList = gottenSWB.getCommittedBookingsList();
+                        List<CustomerBooking> waitingBookingsList = gottenSWB.getWaitingForCommitList();
+                %>
+                            <h4 class="d-flex justify-content-center p-3" id="comBookings">Committed Bookings :<h5>
+                <%
+                        for(int i=0; i<committedBookingsList.size(); i++){
+                            CustomerBooking this_booking = committedBookingsList.get(i);
+                            String custName = this_booking.getCustomer();
+                            Long custCommittedSeats = this_booking.getBookedSeats();
+                %>
+                            <div > custName : <%=custName%></div>
+                            <div > custCommittedSeats : <%=custCommittedSeats%></div>
+                        <%
+                        }
+                %>
+                            <h4 class="d-flex justify-content-center p-3" id="comBookings">Waiting for Commit Bookings :<h5>
+                <%
+                        for(int i=0; i<waitingBookingsList.size(); i++){
+                            CustomerBooking this_booking = waitingBookingsList.get(i);
+                            String custName = this_booking.getCustomer();
+                            Long custWaitingForCommitSeats = this_booking.getBookedSeats();
+                %>
+                            <div > custName : <%=custName%></div>
+                            <div > custWaitingForCommitSeats : <%=custWaitingForCommitSeats%></div>
+                <%
+                        }
+                    } else {
+                        Long your_committed_booking = this_showWithBookings.getFirstCommittedBooking();
+                        Long your_waiting_booking = this_showWithBookings.getFirstWaitingBooking();
+                %>
+                    <h5 class="d-flex justify-content-center">
+                        <div id="des_showID"        > your_committed_booking : <%=your_committed_booking%></div>
+                        <div id="des_showName"      > your_waiting_booking : <%=your_waiting_booking%></div>
+                    </h5>
+                        <form action="<%=request.getContextPath()%>/ShowPageServlet" method="post" oninput='check_valid_booking()'>
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="mb-3">
+                                    <label for="new_booking_number" class="form-label">Enter your new_booking_number</label>
+                                    <input type="number"
+                                        class="form-control"
+                                        name="new_booking_number"
+                                        id="new_booking_number"
+                                        min="0"
+                                        max="144000000"
+                                        aria-describedby="bid"
+                                        required>
+                                </div>
+                                </div>
+                                    <button type="submit" class="btn btn-primary mx-2 px-4" <%=(this_show_expanded.getUsername().equals(request.getSession().getAttribute("username"))) ? "disabled" : ""%>> Set this as new booking </button>
+                                </div>
+                            </div>
+                        </form>
+                <%
+
+                    }
+                %>
                 </div>
-
-
             </div>
         </div>
     </body>

@@ -19,9 +19,9 @@ public class RegistrationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("doGet");
-        String targetJSP = "/jpages/registration.jsp";
         request.getSession().removeAttribute("registrationStatus");
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
+
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/registration.jsp");
         requestDispatcher.forward(request, response);
     }
 
