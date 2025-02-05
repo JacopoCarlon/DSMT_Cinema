@@ -78,6 +78,11 @@ server_loop() ->
       ClientPid ! {self(), Ret};
 
     %% Show
+    {ClientPid, get_list_of_shows, IncludeOldShows} ->
+      io:format("[MAIN SERVER] Received a get_list_of_shows message~n"),
+      Ret = get_list_of_shows(IncludeOldShows),
+      ClientPid ! {self(), Ret};
+
     {ClientPid, add_show, CinemaId, ShowMap} ->
       io:format("[MAIN SERVER] Received an add show message~n"),
       Ret = add_new_show(
@@ -159,6 +164,12 @@ customer_bookings(Username) ->
   end.
 
 %% Show Functions
+get_list_of_shows(IncludeOldShows) ->
+  case gen_server:call(main_server, {get_shows_list, IncludeOldShows}) of
+    {atomic, ShowList} -> {true, ShowList};
+    _ -> {false}
+  end.
+
 add_new_show(CinemaId, ShowName, ShowDate, MaxSeats) ->
   case gen_server:call(main_server, {new_show, CinemaId, ShowName, ShowDate, MaxSeats}) of
     {atomic, NewShowId, PidHandler} -> {true, NewShowId, PidHandler};
@@ -215,6 +226,10 @@ handle_call({get_customer_bookings, Username}, _From, _ServerState) ->
   {reply, Ret, []};
 
 % show CRUD
+handle_call({get_shows_list, IncludeOldShows}, _From, _ServerState) ->
+  Ret = database:get_shows_list(IncludeOldShows),
+  {reply, Ret, []};
+
 handle_call({get_cinema_shows, CinemaId}, _From, _ServerState) ->
   Ret = database:get_cinema_shows(CinemaId),
   {reply, Ret, []};

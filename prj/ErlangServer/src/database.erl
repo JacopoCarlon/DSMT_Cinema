@@ -15,7 +15,8 @@
 -export([
   add_cinema/3, get_cinema/1, find_cinema_by_name/1,
   add_customer/2, get_customer/1, get_customer_bookings/2,
-  add_show/4, remove_show/1, get_show/1, get_show_pid/1, get_cinema_shows/1, update_show_bookings/4, update_show_pid/2
+  get_shows_list/1, add_show/4, remove_show/1, get_show/1, get_show_pid/1, 
+  get_cinema_shows/1, update_show_bookings/4, update_show_pid/2
 ]).
 
 %%%% TABLES
@@ -250,6 +251,30 @@ remove_show(ShowId) ->
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of delete show is ~p~n", [Result]),
   Result.
+
+get_shows_list(IncludeOldShows) ->
+  F = fun() ->
+    io:format("[DATABASE] Searching for shows~n"),
+    Match = #show{
+      show_id='$1', 
+      show_name='$2', 
+      show_date='$3', 
+      cinema_id='$4', 
+      cinema_name='$5',
+      cinema_location='$6',
+      max_seats='$7',
+      curr_avail_seats='$8',
+      old_show='$9',
+      _='_'
+    },
+    Guard = case IncludeOldShows of
+      true -> [];
+      false -> [{'==', '$1', false}]
+    end,
+    Result = ['$$'], %% return all fields
+    mnesia:select(show, [{Match, Guard, Result}])
+  end,
+  mnesia:transaction(F).
 
 get_show(ShowId) ->
   F = fun() ->
