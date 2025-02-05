@@ -153,19 +153,19 @@ public class JE_CommunicationHandler {
     }
 
 
-    // getShowExpandedUpdated(username)
+    // getShowWithBookingsForCustomer(username)
     // -> {id, name, date, cinemaId, cinemaName, cinemaLocation, maxSeats, availSeats, isEnded(==false), committedBooking, waitingBooking}
     // Used by customers to get a show page
-    public ShowExpanded getShowExpandedUpdated(HttpSession session, OtpErlangPid showPid, String callerCustomer) throws OtpErlangDecodeException, OtpErlangExit {
+    public ShowWithBookings getShowWithBookingsForCustomer(HttpSession session, OtpErlangPid showPid, String callerCustomer) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to get showExtended values");
         sendToPid(session, showPid, new OtpErlangAtom("get_data_for_customer"), new OtpErlangString(callerCustomer));
-        return receiveShowExpandedFromShowNode(session);
+        return receiveShowWithBookingsFromShowNode(session);
     }
 
-    // getShowWithBookingsUpdated(username)
+    // getShowWithBookingsForCinema(username)
     // -> {id, name, date, cinemaId, cinemaName, cinemaLocation, maxSeats, availSeats, isEnded, committedBookingsList, waitingBookingList}
     // Used by cinemas to get a show page. It gets all bookings along with available seats
-    public ShowWithBookings getShowWithBookingsUpdated(HttpSession session, OtpErlangPid showPid, Long cinemaId) throws OtpErlangDecodeException, OtpErlangExit {
+    public ShowWithBookings getShowWithBookingsForCinema(HttpSession session, OtpErlangPid showPid, Long cinemaId) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to get showExtended values");
         sendToPid(session, showPid, new OtpErlangAtom("get_data_for_cinema"), new OtpErlangLong(cinemaId));
         return receiveShowWithBookingsFromShowNode(session);
