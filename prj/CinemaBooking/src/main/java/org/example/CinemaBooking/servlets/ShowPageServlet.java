@@ -89,7 +89,7 @@ public class ShowPageServlet extends HttpServlet{
             boolean updateBookingStatusResult = false;
             try {
                 // we send the new booking
-                ShowExpanded newState = new JE_CommunicationHandler().send_booking_by_Customer(request.getSession(), pid, newBooking);
+                ShowWithBookings newState = new JE_CommunicationHandler().send_booking_by_Customer(request.getSession(), pid, newBooking);
                 updateBookingStatusResult = newState != null;
                 // TODO: change the page to conform to new state
 

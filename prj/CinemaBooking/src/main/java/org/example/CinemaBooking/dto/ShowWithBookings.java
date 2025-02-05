@@ -26,9 +26,9 @@ public class ShowWithBookings extends Show {
             List<CustomerBooking> committedBookingsList,
             List<CustomerBooking> waitingForCommitList
     ) {
+        super(showID, showName, showDate, cinemaID, cinemaName, cinemaLocation, maxSeats, currAvailableSeats, isEnded);
         this.committedBookingsList = committedBookingsList;
         this.waitingForCommitList = waitingForCommitList;
-        super(showID, showName, showDate, cinemaID, cinemaName, cinemaLocation, maxSeats, currAvailableSeats, isEnded);
     }
 
     public ShowWithBookings(
@@ -42,9 +42,9 @@ public class ShowWithBookings extends Show {
             List<CustomerBooking> committedBookingsList,
             List<CustomerBooking> waitingForCommitList
     ){
+        super(showID, showName, showDate, cinema, maxSeats, currAvailableSeats, isEnded);
         this.committedBookingsList = committedBookingsList;
         this.waitingForCommitList = waitingForCommitList;
-        super(showID, showName, showDate, cinema, maxSeats, currAvailableSeats, isEnded);
     }
 
     public ShowWithBookings(
@@ -52,11 +52,33 @@ public class ShowWithBookings extends Show {
             List<CustomerBooking> committedBookingsList,
             List<CustomerBooking> waitingForCommitList
     ) {
+        super(otherShow);
         this.committedBookingsList = committedBookingsList;
         this.waitingForCommitList = waitingForCommitList;
-        super(otherShow);
     }
 
+    //////////////////////////////////////////////////////////////////////////////
+    public List<CustomerBooking> getCommittedBookingsList() {
+        return committedBookingsList;
+    }
+
+    public Long getFirstCommittedBooking() {
+        if (committedBookingsList == null || committedBookingsList.isEmpty())
+            return 0L;
+        return committedBookingsList.getFirst().bookedSeats;
+    }
+
+    public List<CustomerBooking> getWaitingForCommitList() {
+        return waitingForCommitList;
+    }
+
+    public Long getFirstWaitingBooking() {
+        if (waitingForCommitList == null || waitingForCommitList.isEmpty())
+            return 0L;
+        return waitingForCommitList.getFirst().bookedSeats;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
     public static ShowWithBookings decodeFromErlangList(OtpErlangList list) {
         Show baseShow = Show.decodeFromErlangList(list);
 
