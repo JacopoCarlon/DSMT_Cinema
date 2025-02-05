@@ -31,9 +31,9 @@ public class CreateShowServlet extends HttpServlet{
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String is_this_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
-        String cinemaName = (String) request.getSession().getAttribute("username");
+        Long cinemaID = (Long) request.getSession().getAttribute("username");
         if ( is_this_a_cinema != "true" ){
-            System.out.println("Show creation failed : requested by something that is not a cinema : uname" + cinemaName);
+            System.out.println("Show creation failed : requested by something that is not a cinema : uname" + cinemaID);
             return;
         }
 
@@ -59,19 +59,21 @@ public class CreateShowServlet extends HttpServlet{
 
         Long new_id = null;
         try {
-            new_id = new JE_CommunicationHandler().createNewShowForCinema(request.getSession(), cinemaName, newShow);
+            new_id = new JE_CommunicationHandler().createNewShowForCinema(request.getSession(), cinemaID, newShow);
         } catch (OtpErlangDecodeException | OtpErlangExit e) {
             e.printStackTrace();
         }
 
-        if (new_id != null) {
+        if (new_id >= 0) {
             boolean isJoiningOkay = false;
             System.out.println("Show creation succeded, got id: " + new_id);
             // TODO: add cinema details to construct Show
-            Show updatedShow = new Show(new_id, showName, showDate, maxSeats, currAvailableSeats);
+            // Show updatedShow = new Show(new_id, showName, showDate, maxSeats, currAvailableSeats);
             request.getSession().setAttribute("showCreationStatus", "success");
             // request.getSession().setAttribute("createdShow", updatedShow);
             // request.getSession().setAttribute("currentShowPid", pid);
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/pages/cinema_page.jsp");
+            requestDispatcher.forward(request, response);
         } else {
             System.out.println("Show creation failed");
             request.getSession().setAttribute("showCreationStatus", "error");

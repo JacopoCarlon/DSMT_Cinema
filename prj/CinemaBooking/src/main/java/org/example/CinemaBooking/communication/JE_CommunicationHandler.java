@@ -41,9 +41,9 @@ public class JE_CommunicationHandler {
     }
 
     // loginExistingCinema (cinemaID, password ) -> booleanResult
-    public boolean loginExistingCinema(HttpSession session, String cinemaID, String cinemaPwd ) throws OtpErlangDecodeException, OtpErlangExit {
+    public boolean loginExistingCinema(HttpSession session, Long cinemaID, String cinemaPwd ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform loginExistingCinema");
-        send(session, serverRegisteredPID, new OtpErlangAtom("login_cinema"), new OtpErlangString(cinemaID), new OtpErlangString(cinemaPwd) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("login_cinema"), new OtpErlangLong(cinemaID), new OtpErlangString(cinemaPwd) );
         return receiveRequestResult(session);
     }
 
@@ -52,9 +52,9 @@ public class JE_CommunicationHandler {
     // CINEMA PAGE + ACTIONS --------------------------------------------------------------------------------------- :
 
     // get_shows_by_cinema(cinemaID) -> List<Show> --> {id, name, date, cinemaId, cinemaName, cinemaLocation, maxSeats, availSeats, isEnded}
-    public List<Show> get_shows_by_cinema(HttpSession session, String cinemaID ) throws OtpErlangDecodeException, OtpErlangExit {
+    public List<Show> get_shows_by_cinema(HttpSession session, Long cinemaID ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_shows_by_cinema");
-        send(session, serverRegisteredPID, new OtpErlangAtom("get_cinema_shows"), new OtpErlangString(cinemaID) );
+        send(session, serverRegisteredPID, new OtpErlangAtom("get_cinema_shows"), new OtpErlangLong(cinemaID) );
         return receiveShowOfCinema(session);
     }
 
@@ -69,9 +69,9 @@ public class JE_CommunicationHandler {
      */
 
     // createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> {false} / {true, newShowID}
-    public Long createNewShowForCinema(HttpSession session, String cinemaID, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
+    public Long createNewShowForCinema(HttpSession session, Long cinemaID, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform createNewShowForCinema");
-        send(session, serverRegisteredPID, new OtpErlangAtom("add_show"), new OtpErlangString(cinemaID) , trg_show.toOtpErlangMap());
+        send(session, serverRegisteredPID, new OtpErlangAtom("add_show"), new OtpErlangLong(cinemaID) , trg_show.toOtpErlangMap());
         return receiveNumericID(session);
     }
 
@@ -253,11 +253,11 @@ public class JE_CommunicationHandler {
             OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
             status = (OtpErlangAtom) (resulTuple).elementAt(0);
             if (status.toString().equals("false"))
-                return null;
+                return -1L;
             OtpErlangList list = (OtpErlangList) (resulTuple).elementAt(1);
             return ((OtpErlangLong) (list).elementAt(0)).longValue();
         }
-        return null;
+        return -1L;
     }
 
 

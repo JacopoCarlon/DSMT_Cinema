@@ -27,11 +27,11 @@ public class CinemaPageServlet extends HttpServlet  {
         // get active shows of cinema :
         // todo : test which way should be done getting username and is_a_cinema
         // String username = request.getParameter("username");
-        String username = (String) request.getSession().getAttribute("username");
+        Long cinemaID = (Long) request.getSession().getAttribute("username");
         String is_a_cinema = request.getParameter("is_a_cinema");
-        System.out.println("DoGet CinemaPageServlet : try to get shows of cinema : " + username + " which is cinema ? : " + is_a_cinema);
+        System.out.println("DoGet CinemaPageServlet : try to get shows of cinema : " + cinemaID + " which is cinema ? : " + is_a_cinema);
         try {
-            List<Show> showList = new JE_CommunicationHandler().get_shows_by_cinema(request.getSession(), username );
+            List<Show> showList = new JE_CommunicationHandler().get_shows_by_cinema(request.getSession(), cinemaID );
             request.setAttribute("showList", showList);
             request.getSession().setAttribute("showList", showList);
         } catch (OtpErlangExit | OtpErlangDecodeException e) {

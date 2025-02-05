@@ -45,7 +45,7 @@ public class LoginServlet extends HttpServlet {
         boolean isLoginOkay = false;
         if(is_a_cinema){
             try {
-                isLoginOkay = new JE_CommunicationHandler().loginExistingCinema(request.getSession(), username, password);
+                isLoginOkay = new JE_CommunicationHandler().loginExistingCinema(request.getSession(), Long.parseLong(username), password);
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }
