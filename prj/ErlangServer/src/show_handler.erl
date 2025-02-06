@@ -187,7 +187,7 @@ construct_message(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingM
 
 %%% BACKUP UTILITIES
 % No changes
-do_backup(ShowId, CommittedBookings, #{}, AvailableSeats, false) ->
+do_backup(ShowId, CommittedBookings, #{}, _AvailableSeats, false) ->
     %% DO NOTHING
     io:format("[SHOW HANDLER] Backup of Show ~p is already up to date.~n", [ShowId]),
     CommittedBookings;
