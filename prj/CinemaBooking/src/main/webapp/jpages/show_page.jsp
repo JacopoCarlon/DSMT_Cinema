@@ -28,12 +28,10 @@
                 <h4 id="h4username"> UserName: <%=request.getSession().getAttribute("username")%></h4>
                 <h4 id="h4isCinema"> Is_A_Cinema: <%=request.getSession().getAttribute("is_a_cinema")%></h4>
             </div>
-
             <div class="card" id="current_bookings_card">
                 <h3 class="d-flex justify-content-center p-3">
                     this show :
                 </h3>
-
                 <h5 class="d-flex justify-content-center">
                     <div id="des_showID"        > showID : <%=this_showWithBookings.getShowID()%></div>
                     <div id="des_showName"      > showName : <%=this_showWithBookings.getShowName()%></div>
@@ -45,19 +43,46 @@
                     <div id="currAvailableSeats" > currAvailableSeats : <%=this_showWithBookings.getCurrAvailableSeats()%></div>
                     <div id="isEnded" > isEnded : <%=this_showWithBookings.getIsEnded()%></div>
                 </h5>
-
                 <div class="p-4 d-flex flex-wrap" id="changes_form_parent">
 
                 <%
-                    ShowWithBookings gottenSWB = (ShowWithBookings) request.getAttribute("showWithBookingsList");
-
                     String is_a_cinema = request.getSession().getAttribute("is_a_cinema");
 
                     if(is_a_cinema == "true" ){
-                        List<CustomerBooking> committedBookingsList = gottenSWB.getCommittedBookingsList();
-                        List<CustomerBooking> waitingBookingsList = gottenSWB.getWaitingForCommitList();
+                        List<CustomerBooking> committedBookingsList = this_showWithBookings.getCommittedBookingsList();
+                        List<CustomerBooking> waitingBookingsList = this_showWithBookings.getWaitingForCommitList();
+                        List<Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
+
                 %>
-                            <h4 class="d-flex justify-content-center p-3" id="comBookings">Committed Bookings :<h5>
+                    <h4 class="d-flex justify-content-center p-3" id="comBookings">Triplet listings : </h4>
+
+                    <table width="80%" border="1">
+                        <thead>
+                            <tr>
+                                <td>UserName<\td>
+                                <td>ConfirmedBooking<\td>
+                                <td>WaitingBooking<\td>
+                            <\tr>
+                        <\thead>
+                        <tbody>
+                        <%
+                            for(int i=0; i<tripleList.size(); i++){
+                                CustomerBooking this_triple = tripleList.get(i);
+                                String custName = this_booking.getCustomer();
+                                Long custCommittedSeats = this_booking.getBookedSeats();
+                        %>
+                            <tr>
+                                <td> <%=this_triple.getUsername()%> <\td>
+                                <td> <%=this_triple.getStoredBooking()%> <\td>
+                                <td> <%=this_triple.getWaitingBooking()%> <\td>
+                            <\tr>
+                            <%
+                            }
+                        %>
+                        <\tbody>
+                    </table>
+
+                    <h4 class="d-flex justify-content-center p-3" id="comBookings">Committed Bookings : </h4>
                 <%
                         for(int i=0; i<committedBookingsList.size(); i++){
                             CustomerBooking this_booking = committedBookingsList.get(i);
@@ -69,7 +94,7 @@
                         <%
                         }
                 %>
-                            <h4 class="d-flex justify-content-center p-3" id="comBookings">Waiting for Commit Bookings :<h5>
+                    <h4 class="d-flex justify-content-center p-3" id="comBookings">Waiting for Commit Bookings :<h5>
                 <%
                         for(int i=0; i<waitingBookingsList.size(); i++){
                             CustomerBooking this_booking = waitingBookingsList.get(i);

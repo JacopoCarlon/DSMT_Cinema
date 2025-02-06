@@ -4,9 +4,7 @@ import com.ericsson.otp.erlang.OtpErlangList;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ShowWithBookings extends Show {
@@ -102,4 +100,57 @@ public class ShowWithBookings extends Show {
 
         return new ShowWithBookings(baseShow, committedBookingsList, waitingForCommitList);
     }
+
+
+    public class Triple{
+        String username;
+        Long storedBooking;
+        Long waitingBooking;
+
+        public Triple(String uName, Long storedBooking, Long waitingBooking){
+            this.username = uName;
+            this.storedBooking = storedBooking;
+            this.waitingBooking = waitingBooking;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public Long getStoredBooking() {
+            return storedBooking;
+        }
+
+        public Long getWaitingBooking() {
+            return waitingBooking;
+        }
+    }
+
+
+    public List<Triple> getFullOuterJoinBookings(){
+        // // List<CustomerBooking> committedBookingsList = this.committedBookingsList;
+        // // List<CustomerBooking> waitingForCommitList = this.waitingForCommitList;
+        // Map to store the merged results
+        Map<String, Triple> map = new HashMap<>();
+        // Process committedBookingsList
+        for (CustomerBooking cBooking : this.committedBookingsList) {
+            map.put(cBooking.customer, new Triple(cBooking.customer, cBooking.bookedSeats, cBooking.bookedSeats));
+        }
+        // Process waitingForCommitList
+        for (CustomerBooking wBooking : this.waitingForCommitList) {
+            if (map.containsKey(wBooking.customer)) {
+                // If the username exists in the map, update the waitingBooking
+                Triple this_triple = map.get(wBooking.customer);
+                this_triple.waitingBooking = wBooking.bookedSeats;
+            } else {
+                // If the username does not exist in the map, add a new Triple with storedBooking as 0
+                map.put(wBooking.customer, new Triple(wBooking.customer, 0L, wBooking.bookedSeats));
+            }
+        }
+        // Convert the map to a List<Triple>
+        return new ArrayList<>(map.values());
+    }
+
+
+
 }
