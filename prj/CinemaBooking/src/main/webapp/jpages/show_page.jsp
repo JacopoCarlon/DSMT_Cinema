@@ -1,10 +1,12 @@
-<%@ page import="dto.Booking" %>
-<%@ page import="dto.BookingList" %>
 <%@ page import="dto.Cinema" %>
 <%@ page import="dto.Customer" %>
+<%@ page import="dto.CustomerBooking" %>
 <%@ page import="dto.Show" %>
 <%@ page import="dto.ShowExpanded" %>
+<%@ page import="dto.ShowExpandedList" %>
 <%@ page import="dto.ShowList" %>
+<%@ page import="dto.ShowWithBookings" %>
+<%@ page import="dto.ShowWithBookingsList" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.io.OutputStream" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
