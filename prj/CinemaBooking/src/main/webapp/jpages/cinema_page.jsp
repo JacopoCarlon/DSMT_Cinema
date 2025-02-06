@@ -1,6 +1,7 @@
 <%@ page import="org.example.CinemaBooking.dto.Show" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.io.OutputStream" %>
+<%@ page import="org.example.CinemaBooking.dto.Cinema" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
@@ -14,10 +15,36 @@
     <body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>', '<%=request.getSession().getAttribute("is_cinema")%>' );">
         <div class="container">
             <div class="d-flex d-flex justify-content-between p-3">
+
                 <a href="<%=request.getContextPath()%>/LoginServlet" class="btn btn-danger">Logout</a>
-                <h4 id="h4username"> CinemaName: <%=request.getSession().getAttribute("username")%></h4>
-                <h4 id="h4isCinema"> Is_A_Cinema: <%=request.getSession().getAttribute("is_a_cinema")%></h4>
-                <a href="<%=request.getContextPath()%>/CreateShowServlet" class="btn btn-primary">CreateShow for this Cinema !</a>
+                <%
+                Object cinemaObj = request.getAttribute("cinemaInfo");
+                if (cinemaObj instanceof Cinema) {
+                    Cinema cinema = (Cinema) cinemaObj;
+                %>
+
+                    <h4 id="cinemaName"> Cinema Name: <%=cinema.getCinemaName()%></h4>
+                    <h4 id="cinemaLocation"> Address: <%=cinema.getCinemaLocation()%></h4>
+                    <%
+                    if (
+                            request.getSession().getAttribute("is_a_cinema") == "true" &&
+                            (Long) request.getSession().getAttribute("username") == cinema.getCinemaID()
+                    ){
+                    %>
+                        <a href="<%=request.getContextPath()%>/CreateShowServlet" class="btn btn-primary">CreateShow for this Cinema !</a>
+                    <%
+                    }
+                    %>
+                <%
+                } // end if (cinemaObj instanceof Cinema)
+                else {
+                %>
+                    <div class="alert alert-danger" role="alert">
+                        This Cinema doesn't exists!
+                    </div>
+                <%
+                }
+                %>
             </div>
 
             <div class="card" id="current_cinema_card">
@@ -26,37 +53,32 @@
                 </h3>
                 <div class="p-4 d-flex flex-wrap" id="parent_cinema_list">
                     <%
-                    List<Show> showsList = (List<Show>) request.getAttribute("showsList");
-                    if(showsList == null || showsList.size() == 0){
+                    Object showsListObj = request.getAttribute("showsList");
+                    if(!(showsListObj instanceof List<?>) || ((List<?>)showsListObj).isEmpty()){
                     %>
-                        <h5 class="d-flex justify-content-center p-3" id="noShows">Nothing to Show<h5>
+                        <h5 class="d-flex justify-content-center p-3" id="noShows">Nothing to Show</h5>
                     <%
                     } else {
-                        for(int i=0; i<showsList.size(); i++){
-                            Show this_show = showsList.get(i);
+                        for(Object showObj : (List<?>) showsListObj){
+                            if (showObj instanceof Show) {
+                                Show this_show = (Show) showObj;
                     %>
                             <form class="card w-25" action="<%=request.getContextPath()%>/CinemaPageServlet" method="post">
                                 <div class="card-body d-flex flex-column justify-content-between p-3">
                                     <div>
                                         <input type="hidden" name="showID" value="<%=this_show.getShowID()%>">
-                                        <input type="hidden" name="showName" value="<%=this_show.getShowName()%>">
-                                        <input type="hidden" name="showDate" value="<%=this_show.getShowDate()%>">
-                                        <input type="hidden" name="max_seats" value="<%=this_show.getMaxSeats()%>">
-                                        <input type="hidden" name="curr_seats" value="<%=this_show.getCurrAvailableSeats()%>">
-                                        <input type="hidden" name="is_ended" value="<%=this_show.getIsEnded()%>">
-                                        <h5 class="card-title">Prenotazione <%=i%> </h5>
-                                        <div>ShowID: <%=this_show.getShowID()%></div>
-                                        <div>showName: <%=this_show.getShowName()%></div>
-                                        <div>showDate: <%=this_show.getShowDate()%></div>
-                                        <div>maxSeats: <%=this_show.getMaxSeats()%></div>
-                                        <div>currAvailableSeats in server : <%=this_show.getCurrAvailableSeats()%></div>
-                                        <div>isEnded: <%=this_show.getIsEnded()%></div>
+                                        <h5 class="card-title"> <%=this_show.getShowName()%> </h5>
+                                        <div>Date: <%=this_show.getShowDate()%></div>
+                                        <div>Max Seats: <%=this_show.getMaxSeats()%></div>
+                                        <div>Available Seats according to main server : <%=this_show.getCurrAvailableSeats()%></div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary m-3">Enter</button>
+                                    <% if (!this_show.getIsEnded()) %>
+                                        <button type="submit" class="btn btn-primary m-3">Enter</button>
                                 </div>
                             </form>
                     <%
-                        }
+                            } // end if (showObj instanceof Show this_show)
+                        } // end for
                     }
                     %>
                 </div>

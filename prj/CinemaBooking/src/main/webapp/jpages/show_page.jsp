@@ -1,14 +1,8 @@
-<%@ page import="dto.Cinema" %>
-<%@ page import="dto.Customer" %>
-<%@ page import="dto.CustomerBooking" %>
-<%@ page import="dto.Show" %>
-<%@ page import="dto.ShowExpanded" %>
-<%@ page import="dto.ShowExpandedList" %>
-<%@ page import="dto.ShowList" %>
-<%@ page import="dto.ShowWithBookings" %>
-<%@ page import="dto.ShowWithBookingsList" %>
+
 <%@ page import="java.util.List" %>
 <%@ page import="java.io.OutputStream" %>
+<%@ page import="org.example.CinemaBooking.dto.ShowWithBookings" %>
+<%@ page import="org.example.CinemaBooking.dto.CustomerBooking" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
@@ -48,12 +42,12 @@
                 <div class="p-4 d-flex flex-wrap" id="changes_form_parent">
 
                 <%
-                    String is_a_cinema = request.getSession().getAttribute("is_a_cinema");
+                    String is_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
 
                     if(is_a_cinema == "true" ){
                         List<CustomerBooking> committedBookingsList = this_showWithBookings.getCommittedBookingsList();
                         List<CustomerBooking> waitingBookingsList = this_showWithBookings.getWaitingForCommitList();
-                        List<Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
+                        List<ShowWithBookings.Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
 
                 %>
                     <h4 class="d-flex justify-content-center p-3" id="comBookings">Triplet listings : </h4>

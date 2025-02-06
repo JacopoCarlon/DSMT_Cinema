@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.example.CinemaBooking.dto.Cinema;
 import org.example.CinemaBooking.dto.Show;
 
 
@@ -25,12 +26,17 @@ public class CinemaPageServlet extends HttpServlet  {
         System.out.println("DoGet CinemaPageServlet");
 
         Long cinemaID = Long.parseLong(request.getParameter("cinemaID"));
-        String clientUsername = (String) request.getSession().getAttribute("username");
         boolean is_a_cinema = Boolean.parseBoolean((String) request.getSession().getAttribute("is_a_cinema"));
         System.out.println("DoGet CinemaPageServlet : try to get shows of cinema : " + cinemaID + " which is cinema ? : " + is_a_cinema);
         try {
-            List<Show> showList = new JE_CommunicationHandler().get_shows_by_cinema(request.getSession(), cinemaID );
-            request.setAttribute("showList", showList);
+            JE_CommunicationHandler jec = new JE_CommunicationHandler();
+            Cinema cinemaInfo = jec.getCinema(request.getSession(), cinemaID);
+            request.setAttribute("cinemaInfo", cinemaInfo);
+
+            if (cinemaInfo != null) {
+                List<Show> showList = jec.get_shows_by_cinema(request.getSession(), cinemaID);
+                request.setAttribute("showList", showList);
+            }
             // request.getSession().setAttribute("showList", showList);
         } catch (OtpErlangExit | OtpErlangDecodeException e) {
             e.printStackTrace();

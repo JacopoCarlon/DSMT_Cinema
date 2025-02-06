@@ -51,6 +51,12 @@ public class JE_CommunicationHandler {
     // -----------------------------------------------------------------------------------------------
     // CINEMA PAGE + ACTIONS --------------------------------------------------------------------------------------- :
 
+    public Cinema getCinema(HttpSession session, Long cinemaID) throws OtpErlangDecodeException, OtpErlangExit {
+        System.out.println("Trying to perform get__cinema");
+        send(session, serverRegisteredPID, new OtpErlangAtom("get_cinema"), new OtpErlangLong(cinemaID) );
+        return receiveCinema(session);
+    }
+
     // get_shows_by_cinema(cinemaID) -> List<Show> --> {id, name, date, cinemaId, cinemaName, cinemaLocation, maxSeats, availSeats, isEnded}
     public List<Show> get_shows_by_cinema(HttpSession session, Long cinemaID ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform get_shows_by_cinema");
@@ -318,6 +324,21 @@ public class JE_CommunicationHandler {
      */
 
 
+    public Cinema receiveCinema(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+        OtpErlangAtom status;
+        OtpErlangObject message = receive_setup(session, receiveFetchMS);
+        System.out.println("Receiving request result... ");
+        System.out.println("DEBUG: received " + message);
+        if(message instanceof OtpErlangTuple){
+            // OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
+            OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
+            status = (OtpErlangAtom) (resulTuple).elementAt(0);
+            if (status.toString().equals("false"))
+                return null;
+            return Cinema.decodeFromErlangList((OtpErlangList) (resulTuple).elementAt(1));
+        }
+        return null;
+    }
 
 
     public List<Cinema> receiveListOfCinemas(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {

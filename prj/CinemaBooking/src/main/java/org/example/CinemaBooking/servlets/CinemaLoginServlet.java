@@ -53,7 +53,7 @@ public class CinemaLoginServlet extends HttpServlet {
         if (isLoginOkay) {
             // cinemas have username used as cinemaID (since they will insert cinemaID for login).
             request.getSession().setAttribute("is_a_cinema", "true");
-            request.getSession().setAttribute("username", cinemaID.toString());
+            request.getSession().setAttribute("username", cinemaID);
             request.getSession().removeAttribute("loginStatus");
             System.out.println("Login success");
             response.sendRedirect(request.getContextPath() + "/CinemaPageServlet?cinemaID=" + cinemaID);
