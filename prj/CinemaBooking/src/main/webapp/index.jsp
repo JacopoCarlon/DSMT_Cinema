@@ -14,7 +14,7 @@
                     <form method="POST" action="<%=request.getContextPath()%>/LoginServlet">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" name="username" id="username" placeholder="Pippo1234" pattern="^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$" required>
+                            <input type="text" class="form-control" name="username" id="username" placeholder="Pippo1234" pattern="^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Username</label>

@@ -7,14 +7,13 @@ import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 
 // todo
 
-@ServerEndpoint(value = "/show_page_endpoint/{username}", decoders = ShowWithBookingsListDecoder.class, encoders = ShowWithBookingsListEncoder.class)
+@ServerEndpoint(value = "/show_page_endpoint/{username}", decoders = ShowWithBookingsDecoder.class, encoders = ShowWithBookingsEncoder.class)
 public class ShowPageEndpoint {
 
     // todo :
@@ -38,10 +37,10 @@ public class ShowPageEndpoint {
     TODO: check this
     */
     @OnMessage
-    public void onMessage(Session session, ShowWithBookingsList showWithBookingsList) throws IOException, EncodeException {
+    public void onMessage(Session session, ShowWithBookings showWithBookings) throws IOException, EncodeException {
         System.out.println("[UserPageEndpoint] OnMessage");
         System.out.println("[UserPageEndpoint] Bookings list is going to be broadcast");
-        broadcast(showWithBookingsList);
+        broadcast(showWithBookings);
     }
 
 
@@ -61,12 +60,12 @@ public class ShowPageEndpoint {
     /*
     TODO: check this
     */
-    private static void broadcast(ShowWithBookingsList showWithBookingsList) throws IOException, EncodeException {
+    private static void broadcast(ShowWithBookings showWithBookings) throws IOException, EncodeException {
         showPagesEndpoints.forEach(endpoint -> {
             synchronized (endpoint) {
                 try {
                     endpoint.session.getBasicRemote()
-                            .sendObject(showWithBookingsList);
+                            .sendObject(showWithBookings);
                 } catch (IOException | EncodeException e) {
                     e.printStackTrace();
                 }

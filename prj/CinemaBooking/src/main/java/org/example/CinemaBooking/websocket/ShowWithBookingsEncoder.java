@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import jakarta.websocket.*;
 import org.example.CinemaBooking.dto.ShowWithBookings;
 
-public class ShowWithBookingsListEncoder implements Encoder.Text<ShowWithBookings> {
+public class ShowWithBookingsEncoder implements Encoder.Text<ShowWithBookings> {
     private static Gson gson = new Gson();
 
     @Override

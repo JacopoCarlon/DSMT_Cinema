@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import jakarta.websocket.*;
 import org.example.CinemaBooking.dto.ShowWithBookings;
 
-public class ShowWithBookingsListDecoder implements Decoder.Text<ShowWithBookings> {
+public class ShowWithBookingsDecoder implements Decoder.Text<ShowWithBookings> {
 
     private static Gson gson = new Gson();
 
