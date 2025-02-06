@@ -24,11 +24,9 @@ public class CinemaPageServlet extends HttpServlet  {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("DoGet CinemaPageServlet");
 
-        // get active shows of cinema :
-        // todo : add check is cinema not user
-        // String username = request.getParameter("username");
-        Long cinemaID = (Long) request.getSession().getAttribute("username");
-        String is_a_cinema = request.getParameter("is_a_cinema");
+        Long cinemaID = Long.parseLong(request.getParameter("cinemaID"));
+        String clientUsername = (String) request.getSession().getAttribute("username");
+        boolean is_a_cinema = Boolean.parseBoolean((String) request.getSession().getAttribute("is_a_cinema"));
         System.out.println("DoGet CinemaPageServlet : try to get shows of cinema : " + cinemaID + " which is cinema ? : " + is_a_cinema);
         try {
             List<Show> showList = new JE_CommunicationHandler().get_shows_by_cinema(request.getSession(), cinemaID );
@@ -38,7 +36,7 @@ public class CinemaPageServlet extends HttpServlet  {
             e.printStackTrace();
         }
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/pages/cinema_page.jsp");
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/jpages/cinema_page.jsp");
         requestDispatcher.forward(request, response);
     }
 

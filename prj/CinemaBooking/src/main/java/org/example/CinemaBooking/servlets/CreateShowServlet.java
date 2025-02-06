@@ -23,7 +23,7 @@ public class CreateShowServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // arrive here from A_jump from cinema_page.jsp ... -> just load the page bro
-        String targetJSP = "/pages/create_show.jsp";
+        String targetJSP = "/jpages/create_show.jsp";
         request.getSession().removeAttribute("showCreationStatus");
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
         requestDispatcher.forward(request, response);
@@ -73,12 +73,12 @@ public class CreateShowServlet extends HttpServlet{
             request.getSession().setAttribute("showCreationStatus", "success");
             // request.getSession().setAttribute("createdShow", updatedShow);
             // request.getSession().setAttribute("currentShowPid", pid);
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/pages/cinema_page.jsp");
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/jpages/cinema_page.jsp");
             requestDispatcher.forward(request, response);
         } else {
             System.out.println("Show creation failed");
             request.getSession().setAttribute("showCreationStatus", "error");
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/pages/create_show.jsp");
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/jpages/create_show.jsp");
             requestDispatcher.forward(request, response);
         }
     }

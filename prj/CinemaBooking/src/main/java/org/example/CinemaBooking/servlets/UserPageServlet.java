@@ -38,7 +38,7 @@ public class UserPageServlet extends HttpServlet{
             e.printStackTrace();
         }
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/pages/user_page.jsp");
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/jpages/user_page.jsp");
         requestDispatcher.forward(request, response);
     }
 

@@ -242,8 +242,7 @@ public class JE_CommunicationHandler {
             status = (OtpErlangAtom) (resulTuple).elementAt(0);
             if (status.toString().equals("false"))
                 return null;
-            OtpErlangList list = (OtpErlangList) (resulTuple).elementAt(1);
-            return (OtpErlangPid) (list).elementAt(0);
+            return (OtpErlangPid) (resulTuple).elementAt(1);
         }
         return null;
     }
@@ -259,8 +258,7 @@ public class JE_CommunicationHandler {
             status = (OtpErlangAtom) (resulTuple).elementAt(0);
             if (status.toString().equals("false"))
                 return -1L;
-            OtpErlangList list = (OtpErlangList) (resulTuple).elementAt(1);
-            return ((OtpErlangLong) (list).elementAt(0)).longValue();
+            return ((OtpErlangLong) (resulTuple).elementAt(1)).longValue();
         }
         return -1L;
     }

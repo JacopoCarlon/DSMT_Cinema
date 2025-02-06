@@ -32,7 +32,7 @@ public class BrowseShowsPageServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/pages/browse_shows_page.jsp");
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/jpages/browse_shows_page.jsp");
         requestDispatcher.forward(request, response);
     }
 

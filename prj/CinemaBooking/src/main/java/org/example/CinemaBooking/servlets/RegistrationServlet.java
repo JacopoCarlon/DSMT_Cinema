@@ -29,26 +29,17 @@ public class RegistrationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        boolean is_a_cinema = Boolean.parseBoolean( request.getParameter("is_cinema") );
 
         System.out.println("DoPost Registration");
-        System.out.println("username: " + username + "password: " + password + "is_a_cinema: " + is_a_cinema);
+        System.out.println("username: " + username + "password: " + password);
 
         boolean isSignUpOkay = false;
-        if(is_a_cinema) {
-            String cinemaAddr = request.getParameter("cinemaLocation");
-            try {
-                isSignUpOkay = (new JE_CommunicationHandler().registerNewCinema(request.getSession(), username, password, cinemaAddr) >= 0);
-            } catch (OtpErlangDecodeException | OtpErlangExit e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                isSignUpOkay = new JE_CommunicationHandler().registerNewCustomer(request.getSession(), username, password);
-            } catch (OtpErlangDecodeException | OtpErlangExit e) {
-                e.printStackTrace();
-            }
+        try {
+            isSignUpOkay = new JE_CommunicationHandler().registerNewCustomer(request.getSession(), username, password);
+        } catch (OtpErlangDecodeException | OtpErlangExit e) {
+            e.printStackTrace();
         }
+
         if (isSignUpOkay){
             System.out.println("Registration success");
             response.sendRedirect(request.getContextPath() + "/LoginServlet");
@@ -56,7 +47,7 @@ public class RegistrationServlet extends HttpServlet {
             System.out.println("Sign in failed");
             // show error in html
             request.getSession().setAttribute("registrationStatus", "error");
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/registration.jsp");
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/registration.jsp");
             requestDispatcher.forward(request, response);
         }
     }

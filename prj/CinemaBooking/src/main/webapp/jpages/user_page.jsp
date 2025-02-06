@@ -1,7 +1,6 @@
-<%@ page import="dto.Cinema" %>
-<%@ page import="dto.Show" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.io.OutputStream" %>
+<%@ page import="org.example.CinemaBooking.dto.ShowWithBookings" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
@@ -39,15 +38,11 @@
                             <form class="card w-25" action="<%=request.getContextPath()%>/UserPageServlet" method="post">
                                 <div class="card-body d-flex flex-column justify-content-between p-3">
                                     <div>
-                                        <input type="hidden" name="username" value="<%=this_booking.getUsername()%>">
                                         <input type="hidden" name="showID" value="<%=this_booking.getShowID()%>">
-                                        <input type="hidden" name="showName" value="<%=this_booking.showName()%>">
-                                        <input type="hidden" name="showDate" value="<%=this_booking.showDate()%>">
-                                        <input type="hidden" name="cinemaName" value="<%=this_booking.cinemaName()%>">
                                         <h5 class="card-title">Prenotazione <%=i%> </h5>
-                                        <div>showName: <%=this_booking.showName()%></div>
-                                        <div>cinemaName: <%=this_booking.cinemaName()%></div>
-                                        <div>showDate: <%=this_booking.showDate()%></div>
+                                        <div>showName: <%=this_booking.getShowName()%></div>
+                                        <div>cinemaName: <%=this_booking.getCinemaName()%></div>
+                                        <div>showDate: <%=this_booking.getShowDate()%></div>
                                         <div>number booked seats by you registered in server: <%=this_committed_bookings%></div>
                                     </div>
                                     <button type="submit" class="btn btn-primary m-3">Enter</button>

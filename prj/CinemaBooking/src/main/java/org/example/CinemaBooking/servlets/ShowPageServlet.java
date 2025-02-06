@@ -91,7 +91,7 @@ public class ShowPageServlet extends HttpServlet{
 
         request.getSession().removeAttribute("bookingUpdateStatus");
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/show_page.jsp");
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/show_page.jsp");
         requestDispatcher.forward(request, response);
     }
 
@@ -160,7 +160,7 @@ public class ShowPageServlet extends HttpServlet{
                 response.sendRedirect(request.getContextPath() + "/ShowPageServlet");
             } else {
                 request.getSession().setAttribute("bookingUpdateStatus", "error");
-                RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/show_page.jsp");
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/show_page.jsp");
                 requestDispatcher.forward(request, response);
             }
         }

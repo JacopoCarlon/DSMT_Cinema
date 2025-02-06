@@ -1,5 +1,4 @@
-<%@ page import="dto.Cinema" %>
-<%@ page import="dto.Show" %>
+<%@ page import="org.example.CinemaBooking.dto.Show" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.io.OutputStream" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -27,7 +26,7 @@
                 </h3>
                 <div class="p-4 d-flex flex-wrap" id="parent_cinema_list">
                     <%
-                    List<Shows> showsList = (List<Shows>) request.getAttribute("showsList");
+                    List<Show> showsList = (List<Show>) request.getAttribute("showsList");
                     if(showsList == null || showsList.size() == 0){
                     %>
                         <h5 class="d-flex justify-content-center p-3" id="noShows">Nothing to Show<h5>
