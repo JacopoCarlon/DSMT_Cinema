@@ -152,7 +152,7 @@ public class JE_CommunicationHandler {
 
     public OtpErlangPid getShowPidFromId(HttpSession session, Long showId) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to get show pid");
-        send(session, serverRegisteredPID, new OtpErlangAtom("getShowPidFromBooking"), new OtpErlangLong(showId));
+        send(session, serverRegisteredPID, new OtpErlangAtom("get_show_pid"), new OtpErlangLong(showId));
         return receiveShowPid(session);
     }
 
