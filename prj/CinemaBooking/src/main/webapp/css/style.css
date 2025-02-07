@@ -1,7 +1,35 @@
-#img_scorsese{
-    background-image: url("/images/ScorseseCinema.png");
+/*
+div#img_cinema{
+    max-width: 60%;
 }
 
-#img_abs_scorsese{
-    background-image: url("/images/ScorseseAbsoluteCinema.png");
+img{
+    max-width: 30%;
+    background: red;
+    margin: 10px;
+    padding: 15px;
 }
+*/
+
+/* Target the div with ID "img_cinema" */
+div#img_cinema {
+    /* Styles for the div */
+    width: 100%; /* Example: Make the div take full width */
+    height: fit-content;
+    block-size: fit-content;
+    text-align: center; /* Center the image horizontally */
+    padding: 10px; /* Add some padding */
+    background-color: #f0f0f0; /* Background color for the div */
+    border: 1px solid #ccc; /* Add a border */
+}
+
+/* Target the img inside the div with ID "img_cinema" */
+div#img_cinema img {
+    /* Styles for the image */
+    max-width: 100%; /* Ensure the image is responsive and doesn't overflow */
+    width: auto; /* Maintain aspect ratio */
+    max-height: 70%;
+    border-radius: 8px; /* Add rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow */
+}
+

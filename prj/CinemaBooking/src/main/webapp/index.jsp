@@ -6,7 +6,9 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
-        <link href="text/css" rel="stylesheet" src="<%=request.getContextPath()%>/css/style.css">
+<link href="${pageContext.request.contextPath}/css/style.css">
+        <link href="<%=request.getContextPath()%>/css/style.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
         </head>
     <body>
         <div class="container">
@@ -48,9 +50,11 @@
                             here
                         </a>
                     </div>
-                    <div id="img_scorsese">
-                    </div>
+
                 </div>
+            </div>
+            <div id="img_cinema">
+                <img src="images/ScorseseCinema.png" alt="Scorsese : cinema" >
             </div>
         </div>
     </body>
