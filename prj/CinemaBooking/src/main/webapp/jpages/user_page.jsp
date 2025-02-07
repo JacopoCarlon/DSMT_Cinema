@@ -13,7 +13,7 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/user_page_websocket.js"></script>
     </head>
     <body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>', '<%=request.getSession().getAttribute("is_cinema")%>' );">
-        <jsp:include page="${pageContext.request.contextPath}/includes/header.jsp" />
+        <jsp:include page="../includes/header.jsp" />
         <div class="container">
             <div class="d-flex d-flex justify-content-between p-3">
                 <a href="<%=request.getContextPath()%>/LoginServlet" class="btn btn-danger">Logout</a>
