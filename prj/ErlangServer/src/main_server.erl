@@ -201,7 +201,7 @@ do_show_backup(ShowId, UpdateMap, AvailableSeats, EndOfLife) ->
 
 restore_show(ShowId, PidHandler) ->
   case gen_server:call(main_server, {update_show_pid, ShowId, PidHandler}) of
-    {atomic, BookingBackup} -> PidHandler ! {self(), restore_backup, BookingBackup};
+    {atomic, {SeatsBackup, BookingBackup}} -> PidHandler ! {self(), restore_backup, SeatsBackup, BookingBackup};
     _ -> {false}
   end.
 

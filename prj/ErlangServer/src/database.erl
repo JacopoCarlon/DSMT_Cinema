@@ -282,7 +282,7 @@ get_show_pid(ShowId) ->
         io:format("[DATABASE] Searching for show \"~p\"~n", [ShowId]),
         Match = #show{show_id='$1', pid='$2', _='_'},
         Guard = [{'==', '$1', ShowId}],
-        Result = [['$2']], %% return pid
+        Result = ['$2'], %% return pid
         mnesia:select(show, [{Match, Guard, Result}])
       end,
   mnesia:transaction(F).
@@ -362,7 +362,7 @@ update_show_pid(ShowId, NewPid) ->
     io:format("[DATABASE] Updating pid of show ~p to ~p~n", [ShowId, NewPid]),
     [Show] = mnesia:wread({show, ShowId}),
     mnesia:write(Show#show{pid = NewPid}),
-    Show#show.bookings
+    {Show#show.curr_avail_seats, Show#show.bookings}
   end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of update show pid to customer is ~p~n", [Result]),

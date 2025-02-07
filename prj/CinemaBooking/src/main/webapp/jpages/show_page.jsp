@@ -1,6 +1,5 @@
 
 <%@ page import="java.util.List" %>
-<%@ page import="java.io.OutputStream" %>
 <%@ page import="org.example.CinemaBooking.dto.ShowWithBookings" %>
 <%@ page import="org.example.CinemaBooking.dto.CustomerBooking" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -28,23 +27,21 @@
                 <h3 class="d-flex justify-content-center p-3">
                     this show :
                 </h3>
-                <h5 class="d-flex justify-content-center">
-                    <div id="des_showID"        > showID : <%=this_showWithBookings.getShowID()%></div>
+                <div class="d-flex justify-content-center">
                     <div id="des_showName"      > showName : <%=this_showWithBookings.getShowName()%></div>
                     <div id="des_showDate"      > showDate : <%=this_showWithBookings.getShowDate()%></div>
-                    <div id="des_cinemaID"      > cinemaID : <%=this_showWithBookings.getCinemaID()%></div>
                     <div id="des_cinemaName"     > cinemaName : <%=this_showWithBookings.getCinemaName()%></div>
                     <div id="des_cinemaLocation" > cinemaLocation : <%=this_showWithBookings.getCinemaLocation()%></div>
                     <div id="maxSeats" > maxSeats : <%=this_showWithBookings.getMaxSeats()%></div>
                     <div id="currAvailableSeats" > currAvailableSeats : <%=this_showWithBookings.getCurrAvailableSeats()%></div>
                     <div id="isEnded" > isEnded : <%=this_showWithBookings.getIsEnded()%></div>
-                </h5>
+                </div>
                 <div class="p-4 d-flex flex-wrap" id="changes_form_parent">
 
                 <%
                     String is_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
 
-                    if(is_a_cinema == "true" ){
+                    if("true".equals(is_a_cinema)){
                         List<CustomerBooking> committedBookingsList = this_showWithBookings.getCommittedBookingsList();
                         List<CustomerBooking> waitingBookingsList = this_showWithBookings.getWaitingForCommitList();
                         List<ShowWithBookings.Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
@@ -62,10 +59,7 @@
                         <\thead>
                         <tbody>
                         <%
-                            for(int i=0; i<tripleList.size(); i++){
-                                CustomerBooking this_triple = tripleList.get(i);
-                                String custName = this_booking.getCustomer();
-                                Long custCommittedSeats = this_booking.getBookedSeats();
+                            for(ShowWithBookings.Triple this_triple : tripleList){
                         %>
                             <tr>
                                 <td> <%=this_triple.getUsername()%> <\td>
@@ -90,7 +84,7 @@
                         <%
                         }
                 %>
-                    <h4 class="d-flex justify-content-center p-3" id="comBookings">Waiting for Commit Bookings :<h5>
+                    <h4 class="d-flex justify-content-center p-3" id="comBookings">Waiting for Commit Bookings :</h4>
                 <%
                         for(int i=0; i<waitingBookingsList.size(); i++){
                             CustomerBooking this_booking = waitingBookingsList.get(i);
@@ -105,30 +99,29 @@
                         Long your_committed_booking = this_showWithBookings.getFirstCommittedBooking();
                         Long your_waiting_booking = this_showWithBookings.getFirstWaitingBooking();
                 %>
-                    <h5 class="d-flex justify-content-center">
-                        <div id="des_showID"        > your_committed_booking : <%=your_committed_booking%></div>
-                        <div id="des_showName"      > your_waiting_booking : <%=your_waiting_booking%></div>
-                    </h5>
-                        <form action="<%=request.getContextPath()%>/ShowPageServlet" method="post" oninput='check_valid_booking()'>
-                            <div class="d-flex justify-content-between mb-3">
-                                <div class="mb-3">
-                                    <label for="new_booking_number" class="form-label">Enter your new_booking_number</label>
-                                    <input type="number"
-                                        class="form-control"
-                                        name="new_booking_number"
-                                        id="new_booking_number"
-                                        min="0"
-                                        max="144000000"
-                                        aria-describedby="bid"
-                                        required>
-                                </div>
-                                </div>
-                                    <button type="submit" class="btn btn-primary mx-2 px-4" <%=(this_show_expanded.getUsername().equals(request.getSession().getAttribute("username"))) ? "disabled" : ""%>> Set this as new booking </button>
-                                </div>
+                    <div class="d-flex justify-content-center">
+                        <div id="des_committed_booking"        > your_committed_booking : <%=your_committed_booking%></div>
+                        <div id="des_waiting_booking"      > your_waiting_booking : <%=your_waiting_booking%></div>
+                    </div>
+                    <form action="<%=request.getContextPath()%>/ShowPageServlet" method="post" oninput='check_valid_booking()'>
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="mb-3">
+                                <label for="new_booking_number" class="form-label">Enter your new_booking_number</label>
+                                <input type="number"
+                                    class="form-control"
+                                    name="new_booking_number"
+                                    id="new_booking_number"
+                                    min="0"
+                                    max="144000000"
+                                    aria-describedby="bid"
+                                    required>
                             </div>
-                        </form>
+                            <div>
+                                <button type="submit" class="btn btn-primary mx-2 px-4"> Set this as new booking </button>
+                            </div>
+                        </div>
+                    </form>
                 <%
-
                     }
                 %>
                 </div>

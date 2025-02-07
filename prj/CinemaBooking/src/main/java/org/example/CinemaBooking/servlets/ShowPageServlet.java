@@ -33,12 +33,9 @@ public class ShowPageServlet extends HttpServlet{
 
         String username = "";
         Long cinemaID = -1L;
-        String is_a_cinema = request.getParameter("is_a_cinema");
+        boolean is_a_cinema = "true".equals(request.getSession().getAttribute("is_a_cinema"));
 
-        // does the query arrive from a cinema or a user ?
-        boolean session_this_is_a_cinema = Objects.equals(is_a_cinema, "true");
-
-        if(session_this_is_a_cinema){
+        if(is_a_cinema){
             cinemaID = (Long) request.getSession().getAttribute("username");
         }else{
             username = (String) request.getSession().getAttribute("username");
@@ -64,7 +61,7 @@ public class ShowPageServlet extends HttpServlet{
             ShowWithBookings gottenSWB = null;
             try {
                 // we get the updated show data
-                if (session_this_is_a_cinema){
+                if (is_a_cinema){
                     gottenSWB = new JE_CommunicationHandler().getShowWithBookingsForCinema(request.getSession(), pid, cinemaID);
                 }else{
                     gottenSWB = new JE_CommunicationHandler().getShowWithBookingsForCustomer(request.getSession(), pid, username);

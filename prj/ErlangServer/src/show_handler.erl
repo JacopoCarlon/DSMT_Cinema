@@ -47,14 +47,14 @@ init_show_handler(ShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocati
 show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
     receive
         {Client, get_data_for_customer, Username} ->
-            io:format(" [SHOW HANDLER] Customer '~p' asked for show data~n", Username),
+            io:format(" [SHOW HANDLER] Customer '~p' asked for show data~n", [Username]),
             Client ! construct_msg_for_customer(
-                Username, StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings
+                true, Username, StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings
             ),
             show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings);
         
         {Client, get_data_for_cinema, CinemaId} ->
-            io:format(" [SHOW HANDLER] Cinema with ID ~p asked for show data~n", CinemaId),
+            io:format(" [SHOW HANDLER] Cinema with ID ~p asked for show data~n", [CinemaId]),
             Client ! construct_message(
                 StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings
             ),
@@ -69,14 +69,11 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
             LastCommittedSeats = maps:get(Username, CommittedBookings, 0),
             {Success, NewAvailableSeats, NewWaitingBookings} = 
                 do_new_booking(Username, NewBookedSeats, LastCommittedSeats, WaitingBookings, AvailableSeats),
-            case Success of
-                false -> Client ! {self(), {false}};
-                true ->
-                    Client ! construct_msg_for_customer(
-                        Username, StaticInfo, NewAvailableSeats, CommittedBookings, NewWaitingBookings
-                    )%,
-                    % ?J_LISTENER ! {self(), update_show_state, NewShowInfo, ViewingCustomers, false}
-            end,    
+            
+            Client ! construct_msg_for_customer(
+                Success, Username, StaticInfo, NewAvailableSeats, CommittedBookings, NewWaitingBookings
+            ),
+            % ?J_LISTENER ! {self(), update_show_state, NewShowInfo, ViewingCustomers, false}
             show_loop(StaticInfo, NewAvailableSeats, CommittedBookings, NewWaitingBookings);
         
         {Sender, restore_backup, SeatsBackup, BookingBackup} ->
@@ -105,8 +102,8 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
                 do_backup(maps:get(show_id, StaticInfo), CommittedBookings,  AvailableSeats, WaitingBookings, false),
             show_loop(StaticInfo, AvailableSeats, NewCommittedMap, maps:new());
         
-        _ ->
-            io:format("[SHOW HANDLER] Received unrecognized message. Ignoring it...~n"),
+        Message ->
+            io:format("[SHOW HANDLER] Received unrecognized message: ~p~n. Ignoring it...~n", [Message]),
             show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings)
     end.
 
@@ -149,7 +146,7 @@ do_new_booking(_, _, _, WaitingBookingMap, AvailableSeats) ->
 
 %%% MESSAGE UTILITIES
 % message for customers
-construct_msg_for_customer(Username, StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingMap) ->
+construct_msg_for_customer(ResponseCode, Username, StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingMap) ->
     CommittedValue = maps:get(Username, CommittedBookings, 0),
     MessageList = [
         maps:get(show_id, StaticInfo),
@@ -163,26 +160,29 @@ construct_msg_for_customer(Username, StaticInfo, AvailableSeats, CommittedBookin
         [{Username, CommittedValue}]
     ],
     case maps:get(Username, WaitingBookingMap, none) of
-        none -> {self(), MessageList};
-        UncommittedValue -> {self(), lists:append(MessageList, [[{Username, UncommittedValue}]])}
+        none -> {self(), {ResponseCode, MessageList}};
+        UncommittedValue -> {self(), {ResponseCode, lists:append(MessageList, [[{Username, UncommittedValue}]])}}
     end.
 
 % message for others
 construct_message(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingMap) ->
     {
         self(),
-        [
-            maps:get(show_id, StaticInfo),
-            maps:get(show_name, StaticInfo),
-            maps:get(show_date, StaticInfo),
-            maps:get(cinema_id, StaticInfo), 
-            maps:get(cinema_name, StaticInfo), 
-            maps:get(cinema_location, StaticInfo),
-            maps:get(max_seats, StaticInfo),
-            AvailableSeats,
-            maps:to_list(CommittedBookings),
-            maps:to_list(WaitingBookingMap)
-        ]
+        {
+            true,
+            [
+                maps:get(show_id, StaticInfo),
+                maps:get(show_name, StaticInfo),
+                maps:get(show_date, StaticInfo),
+                maps:get(cinema_id, StaticInfo), 
+                maps:get(cinema_name, StaticInfo), 
+                maps:get(cinema_location, StaticInfo),
+                maps:get(max_seats, StaticInfo),
+                AvailableSeats,
+                maps:to_list(CommittedBookings),
+                maps:to_list(WaitingBookingMap)
+            ]
+        }
     }.
 
 %%% BACKUP UTILITIES
