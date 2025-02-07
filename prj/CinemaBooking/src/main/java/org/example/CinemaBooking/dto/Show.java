@@ -70,6 +70,7 @@ public class Show {
         this.isEnded = otherShow.isEnded;
     }
 
+
     public Show(
             String showName,
             String showDate,
@@ -121,14 +122,12 @@ public class Show {
         // Map only necessary info
         return new OtpErlangMap(
             new OtpErlangObject[]{
-                    new OtpErlangString("show_id"),
                     new OtpErlangString("show_name"),
                     new OtpErlangString("show_date"),
                     new OtpErlangString("cinema_id"),
                     new OtpErlangString("max_seats")
             },
             new OtpErlangObject[]{
-                    new OtpErlangLong(showID),
                     new OtpErlangString(showName),
                     new OtpErlangString(showDate),
                     new OtpErlangLong(cinemaID),
@@ -154,7 +153,7 @@ public class Show {
         String  cinemaLocation = ((OtpErlangString) list.elementAt(5)).stringValue();
         long    maxSeats = ((OtpErlangLong) list.elementAt(6)).longValue();
         long    currAvailableSeats = ((OtpErlangLong) list.elementAt(7)).longValue();
-        Boolean isEnded = ((OtpErlangBoolean) list.elementAt(8)).booleanValue();
+        Boolean isEnded = (list.elementAt(8)).toString().equals("true");
 
         return new Show(showID, showName, showDate, cinemaID, cinemaName, cinemaLocation, maxSeats, currAvailableSeats, isEnded);
     }

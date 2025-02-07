@@ -16,52 +16,66 @@
     </head>
     <body>
         <div class="container">
-            <div class="d-flex p-3">
-                <a href="<%=request.getContextPath()%>/MainMenuServlet" class="btn btn-danger">Back</a>
-            </div>
-            <div class="card">
-                <h3 class="d-flex justify-content-center p-3">
-                    Create a new Show !!!
-                </h3>
-                <div class="card-body">
-                    <form action="<%=request.getContextPath()%>/CreateShowServlet" method="post" id="create_show_form">
-                        <div class="mb-3">
-                            <label for="showName" class="form-label">showName</label>
-                            <input type="text" class="form-control" name="showName" placeholder="Enter showName" aria-describedby="showName" id="showName" required>
-                        </div>
-                        <div class="mb-e">
-                            <label for="showDate">Start date:</label>
-                            <input type="datetime-local" id="showDate" name="showDate" value="2025-11-11T11:11" min="2025-01-01T00:01" max="2150-12-31T11:59" required/>
-                        </div>
-                        <div class="mb-3">
-                            <label for="maxSeats" class="form-label">Maximum Seats</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" name="maxSeats" min="0" max="144000000"  id="maxSeats" required>
-                                <div class="input-group-append">
-                                    <span class="input-group-text">s</span>
+            <%
+            if (request.getSession().getAttribute("is_a_cinema") == "true") {
+                Long cinemaID = (Long) request.getSession().getAttribute("username");
+            %>
+                <div class="d-flex p-3">
+                    <a href="<%=request.getContextPath()%>/CinemaPageServlet?cinemaID=<%=cinemaID%>" class="btn btn-danger">Back</a>
+                </div>
+                <div class="card">
+                    <h3 class="d-flex justify-content-center p-3">
+                        Create a new Show !!!
+                    </h3>
+                    <div class="card-body">
+                        <form action="<%=request.getContextPath()%>/CreateShowServlet" method="post" id="create_show_form">
+                            <div class="mb-3">
+                                <label for="showName" class="form-label">Show Name</label>
+                                <input type="text" class="form-control" name="showName" placeholder="Enter showName" aria-describedby="showName" id="showName" required>
+                            </div>
+                            <div class="mb-e">
+                                <label for="showDate">Show Date and Time:</label>
+                                <input type="datetime-local" id="showDate" name="showDate" value="2025-11-11T11:11" min="2025-01-01T00:01" max="2150-12-31T11:59" required/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="maxSeats" class="form-label">Maximum Seats</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="maxSeats" min="0" max="144000000"  id="maxSeats" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">s</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <%
-                            String registrationStatus = (String) request.getSession().getAttribute("showCreationStatus");
-                            if(registrationStatus != null && registrationStatus.equals("error")) {
-                        %>
-                                <div class="alert alert-danger" role="alert">
-                                    There was an unexpected error, please retry later.
-                                </div>
-                        <%
+                            <%
+                                String registrationStatus = (String) request.getSession().getAttribute("showCreationStatus");
+                                if(registrationStatus != null && registrationStatus.equals("error")) {
+                            %>
+                            <div class="alert alert-danger" role="alert">
+                                Something went wrong during Show creation, please retry later.
+                            </div>
+                            <%
                             }else if(registrationStatus != null && registrationStatus.equals("success")){
-                        %>
-                                <div class="alert alert-danger" role="alert">
-                                    The show has been properly created!!!
-                                </div>
-                        <%
-                            }
-                        %>
-                        <button type="submit" class="btn btn-primary m-3">Create Show !!! </button>
-                    </form>
+                            %>
+                            <div class="alert alert-danger" role="alert">
+                                The show has been properly created!!!
+                            </div>
+                            <%
+                                }
+                            %>
+                            <button type="submit" class="btn btn-primary m-3">Create Show !!! </button>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            <%
+            } // end if (request.getSession().getAttribute("is_a_cinema") == "true")
+            else {
+            %>
+                <div class="alert alert-danger" role="alert">
+                    You shouldn't be here!
+                </div>
+            <%
+            }
+            %>
         </div>
     </body>
 </html>

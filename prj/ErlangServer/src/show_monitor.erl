@@ -20,11 +20,15 @@ start_show_monitor() ->
 
 show_monitor_loop(MonitoredProcesses) ->
     receive
-        {add_show_monitor, Pid, ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats} ->
+        {add_show_monitor, Pid, ShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxNumOfSeats} ->
             io:format("[SHOW MONITOR] Received request for monitoring ~p \"~s\"~n", [Pid, ShowName]),
             Result = monitor(process, Pid),
             io:format("[SHOW MONITOR] Monitor request returned ~p~n", [Result]),
-            NewMonitoredProcesses = maps:put(Pid, {ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats}, MonitoredProcesses),
+            NewMonitoredProcesses = maps:put(
+                Pid, 
+                {ShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxNumOfSeats}, 
+                MonitoredProcesses
+            ),
             show_monitor_loop(NewMonitoredProcesses);
         
         {'DOWN', MonitorRef, process, Pid, normal} ->
@@ -39,15 +43,15 @@ show_monitor_loop(MonitoredProcesses) ->
             Tuple = maps:get(Pid, MonitoredProcesses, absent),
             io:format(" [SHOW MONITOR] The process to respawn is ~p~n", [Tuple]),
             case Tuple of
-                {ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats} ->
+                {ShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxNumOfSeats} ->
                     PidHandler = spawn( fun() -> 
-                        show_handler:init_show_handler(ShowId, ShowName, CinemaId, CinemaName, Date, MaxNumOfSeats)
+                        show_handler:init_show_handler(ShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxNumOfSeats)
                     end),
                     io:format(" [SHOW MONITOR] Process respawned with pid ~p~n", [PidHandler]),
                     MainEndpoint = whereis(main_server_endpoint),
                     MainEndpoint ! {respawned_handler, ShowId, PidHandler},
                     NewMonitoredProcesses = maps:remove(Pid, MonitoredProcesses),
-                    self() ! {add_show_monitor, ShowId, ShowName, Date, MaxNumOfSeats},
+                    self() ! {add_show_monitor, PidHandler, ShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxNumOfSeats},
                     show_monitor_loop(NewMonitoredProcesses);
                 absent ->
                     io:format(" [SHOW MONITOR] Error: Could not respawn process with pid ~p~n", [Pid]),

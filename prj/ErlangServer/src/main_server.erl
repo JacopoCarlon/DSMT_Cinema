@@ -51,6 +51,11 @@ server_loop() ->
       Ret = login_cinema(CinemaId, Password),
       ClientPid ! {self(), Ret};
 
+    {ClientPid, get_cinema, CinemaId} ->
+      io:format("[MAIN SERVER] Received a get cinema message~n"),
+      Ret = get_cinema(CinemaId),
+      ClientPid ! {self(), Ret};
+
     {ClientPid, find_cinema_by_name, CinemaName} ->
       io:format("[MAIN SERVER] Received a find_cinema_by_name message~n"),
       Ret = find_cinema(CinemaName),
@@ -83,12 +88,12 @@ server_loop() ->
       Ret = get_list_of_shows(IncludeOldShows),
       ClientPid ! {self(), Ret};
 
-    {ClientPid, add_show, CinemaId, ShowMap} ->
+    {ClientPid, add_show, ShowMap} ->
       io:format("[MAIN SERVER] Received an add show message~n"),
       Ret = add_new_show(
-        CinemaId, 
         maps:get("show_name", ShowMap),
         maps:get("show_date", ShowMap),
+        maps:get("cinema_id", ShowMap),
         maps:get("max_seats", ShowMap)
       ),
       ClientPid ! {self(), Ret};
@@ -128,6 +133,13 @@ login_cinema(CinemaId, Password) ->
     _ -> {false}
   end.
 
+get_cinema(CinemaId) ->
+  case gen_server:call(main_server, {get_cinema, CinemaId}) of
+    {atomic, [CinemaTuple | _]} ->
+      {true, lists:delete(lists:nth(2, CinemaTuple), CinemaTuple)};
+    _ -> {false}
+  end.
+
 find_cinema(CinemaName) ->
   Debug = gen_server:call(main_server, {find_cinema, CinemaName}),
   io:format("[DEBUG] Found ~p~n", [Debug]),
@@ -140,7 +152,9 @@ get_cinema_shows(CinemaId) ->
   Debug = gen_server:call(main_server, {get_cinema_shows, CinemaId}),
   io:format("[DEBUG] Found ~p~n", [Debug]),
   case Debug of
-    {atomic, TupleList} -> {true, TupleList}; 
+    {atomic, TupleList} -> 
+      io:format("[DEBUG] TupleList: ~p~n", [TupleList]),
+      {true, TupleList}; 
     _ -> {false}
   end.
 
@@ -170,9 +184,9 @@ get_list_of_shows(IncludeOldShows) ->
     _ -> {false}
   end.
 
-add_new_show(CinemaId, ShowName, ShowDate, MaxSeats) ->
-  case gen_server:call(main_server, {new_show, CinemaId, ShowName, ShowDate, MaxSeats}) of
-    {atomic, NewShowId, PidHandler} -> {true, NewShowId, PidHandler};
+add_new_show(ShowName, ShowDate, CinemaId, MaxSeats) ->
+  case gen_server:call(main_server, {new_show, ShowName, ShowDate, CinemaId, MaxSeats, is_old_date(ShowDate)}) of
+    {atomic, NewShowId} -> {true, NewShowId};
     _ -> {false}
   end.
 
@@ -199,7 +213,7 @@ init([]) ->
   database:start_database(),
   {ok, []}.
 
-%% cinema CRUD
+%%%%%%%%%%% cinema CRUD
 handle_call({add_cinema, CinemaName, Password, CinemaAddress}, _From, _ServerState) ->
   Ret = database:add_cinema(CinemaName, Password, CinemaAddress),
   {reply, Ret, []};
@@ -212,7 +226,7 @@ handle_call({find_cinema, CinemaName}, _From, _ServerState) ->
   Ret = database:find_cinema_by_name(CinemaName),
   {reply, Ret, []};
 
-% customer CRUD
+%%%%%%%%%%% customer CRUD
 handle_call({add_customer, Username, Password}, _From, _ServerState) ->
   Ret = database:add_customer(Username, Password),
   {reply, Ret, []};
@@ -225,7 +239,7 @@ handle_call({get_customer_bookings, Username}, _From, _ServerState) ->
   Ret = database:get_customer_bookings(Username, false),
   {reply, Ret, []};
 
-% show CRUD
+%%%%%%%%%%% show CRUD
 handle_call({get_shows_list, IncludeOldShows}, _From, _ServerState) ->
   Ret = database:get_shows_list(IncludeOldShows),
   {reply, Ret, []};
@@ -234,27 +248,37 @@ handle_call({get_cinema_shows, CinemaId}, _From, _ServerState) ->
   Ret = database:get_cinema_shows(CinemaId),
   {reply, Ret, []};
 
-handle_call({new_show, CinemaId, ShowName, ShowDate, MaxSeats}, _From, _ServerState) ->
-  AddRet = database:add_show(CinemaId, ShowName, ShowDate, MaxSeats),
-  case AddRet of
-    {atomic, NewShowId, CinemaName, CinemaLocation, false} -> 
-      PidHandler = spawn(fun() -> 
-        show_handler:init_show_handler(NewShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxSeats) 
-      end),
-      case database:update_show_pid(NewShowId, PidHandler) of 
-        {atomic, _BookingMap} ->
-          ShowMonitorPid = whereis(show_monitor),
-          ShowMonitorPid ! {add_show_monitor, PidHandler, NewShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxSeats},
-          {reply, {atomic, NewShowId}, []};
-        _ ->
-          io:format("[MAIN SERVER] Failed association of Show with Process. Rollback...~n"),
-          exit(PidHandler, kill),
-          database:remove_show(NewShowId),
-          {reply, {false}, []}
+handle_call({new_show, ShowName, ShowDate, CinemaId, MaxSeats, OldShow}, _From, _ServerState) ->
+  % check if cinema exists
+  case database:get_cinema(CinemaId) of
+    {atomic, [CinemaTuple | _]} ->
+      CinemaName = lists:nth(3, CinemaTuple),
+      CinemaLocation = lists:nth(4, CinemaTuple),
+
+      % try creating show
+      case database:add_show(ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxSeats, OldShow) of
+        {atomic, NewShowId} -> 
+          case OldShow of
+            true -> {reply, NewShowId, []};
+            false -> 
+              spawn_process_for_new_show(
+                NewShowId, 
+                ShowName, 
+                ShowDate, 
+                CinemaId, 
+                CinemaName,
+                CinemaLocation,
+                MaxSeats
+              )
+          end;
+        % failed show creation  
+        _ -> {reply, {false}, []}
       end;
-    {atomic, NewShowId, _CinemaName, _CinemaLocation, true} -> {reply, {atomic, NewShowId}, []};
+    % cinema does not exists
     _ -> {reply, {false}, []}
   end;
+
+  
 
 handle_call({get_show_pid, ShowId}, _From, _ServerState) ->
   Ret = database:get_show_pid(ShowId),
@@ -272,3 +296,40 @@ handle_call({update_show_pid, ShowId, PidHandler}, _From, _ServerState) ->
 
 handle_cast(reset, ServerState) ->
   {noreply, ServerState}.           % general format: {noreply, NewState}
+
+
+
+%%%===================================================================
+%%% Utility functions
+%%%===================================================================
+is_old_date(Date) ->
+  {{YY, MM, DD}, {H, M, _S}} = calendar:now_to_datetime(erlang:timestamp()),
+  CurrentTime = lists:flatten(io_lib:format("~4w-~2..0w-~2..0wT~2..0w:~2..0w", [YY, MM, DD, H, M])),
+  io:format("Current time: ~p~n", [CurrentTime]),
+  CurrentTime > Date.
+
+spawn_process_for_new_show(NewShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxSeats) ->
+  PidHandler = spawn(fun() -> 
+    show_handler:init_show_handler(NewShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxSeats) 
+  end),
+  case database:update_show_pid(NewShowId, PidHandler) of 
+    {atomic, _BookingMap} ->
+      ShowMonitorPid = whereis(show_monitor),
+      ShowMonitorPid ! {
+        add_show_monitor, 
+        PidHandler, 
+        NewShowId, 
+        ShowName, 
+        ShowDate, 
+        CinemaId, 
+        CinemaName, 
+        CinemaLocation, 
+        MaxSeats
+      },
+      {reply, {atomic, NewShowId}, []};
+    _ ->
+      io:format("[MAIN SERVER] Failed association of Show with Process. Rollback...~n"),
+      exit(PidHandler, kill),
+      database:remove_show(NewShowId),
+      {reply, {false}, []}
+  end.

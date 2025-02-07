@@ -15,7 +15,7 @@
 -export([
   add_cinema/3, get_cinema/1, find_cinema_by_name/1,
   add_customer/2, get_customer/1, get_customer_bookings/2,
-  get_shows_list/1, add_show/4, remove_show/1, get_show/1, get_show_pid/1, 
+  get_shows_list/1, add_show/7, remove_show/1, get_show/1, get_show_pid/1, 
   get_cinema_shows/1, update_show_bookings/4, update_show_pid/2
 ]).
 
@@ -60,26 +60,6 @@ compose_customer(Username, Password, BookingSet) ->
     bookings = BookingSet
   }.
 
-compose_show(ShowId, ShowName, ShowDate, Cinema, MaxSeats, CurrAvailSeats, OldShow, Pid, BookingMap) ->
-  #show{
-    show_id          = ShowId,
-    show_name        = ShowName,
-    show_date        = ShowDate,
-    cinema_id        = Cinema#cinema.cinema_id,
-    cinema_name      = Cinema#cinema.name,
-    cinema_location  = Cinema#cinema.address,
-    max_seats        = MaxSeats,
-    curr_avail_seats = CurrAvailSeats,
-    old_show         = OldShow,
-    pid              = Pid,
-    bookings         = BookingMap
-  }.
-
-is_old_date(Date) ->
-  {{YY, MM, DD}, {H, M, _S}} = calendar:now_to_datetime(erlang:timestamp()),
-  CurrentTime = io_lib:format("~4w-~2..0w-~2..0wT~2..0w:~2..0w", [YY, MM, DD, H, M]),
-  CurrentTime > Date.
-
 %% @doc Create Mnesia database
 %% disc_copies means that records are stored also on disk
 create_database() ->
@@ -91,7 +71,7 @@ create_database() ->
   mnesia:create_table(customer,
     [{attributes, record_info(fields, customer)}, {disc_copies, [node()]}]),
   mnesia:create_table(show,
-    [{attributes, record_info(fields, show)}, {type, ordered_set}, {index, [cinema_id]}, {disc_copies, [node()]}]).
+    [{attributes, record_info(fields, show)}, {type, ordered_set}, {index, [#show.cinema_id]}, {disc_copies, [node()]}]).
 
 
 %% @doc Start an existing Mnesia server
@@ -206,30 +186,30 @@ get_customer_bookings(Username, IncludeOldShows) ->
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SHOW
-add_show(CinemaId, ShowName, ShowDate, MaxSeats) ->
+add_show(ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxSeats, OldShow) ->
   F = fun() ->
-    [Cinema] = mnesia:read(cinema, CinemaId),
     io:format("[DATABASE] Shearching last assigned Show ID~n"),
     LastId = mnesia:last(show),
     io:format("[DATABASE] Check returned ~p~n", [LastId]),
     NewShowId = case LastId of
       '$end_of_table' -> 1;
-      _               -> LastId +1
+      _               -> LastId + 1
     end,
     io:format("[DATABASE] New ShowId is ~p~n", [NewShowId]),
-    OldShow = is_old_date(ShowDate),
-    mnesia:write(compose_show(
-        NewShowId, 
-        ShowName, 
-        ShowDate, 
-        Cinema, 
-        MaxSeats, 
-        MaxSeats, 
-        OldShow, 
-        0, 
-        maps:new()
-    )),
-    {NewShowId, Cinema#cinema.name, Cinema#cinema.address, OldShow}
+    mnesia:write(#show{
+      show_id          = NewShowId,
+      show_name        = ShowName,
+      show_date        = ShowDate,
+      cinema_id        = CinemaId,
+      cinema_name      = CinemaName,
+      cinema_location  = CinemaLocation,
+      max_seats        = MaxSeats,
+      curr_avail_seats = MaxSeats,
+      old_show         = OldShow,
+      pid              = 0,
+      bookings         = #{}
+    }),
+    NewShowId
   end,
   Result = mnesia:transaction(F),
   io:format("[DATABASE] Final result of add show is ~p~n", [Result]),
@@ -323,7 +303,7 @@ get_cinema_shows(CinemaId) ->
       _='_'
     },
     Guard = [{'==', '$4', CinemaId}],
-    Result = [['$1', '$2', '$3', '$5']], %% return list of {ID, name, show_date, max_seats}
+    Result = ['$$'], %% return list of {ID, name, show_date, max_seats}
     mnesia:select(show, [{Match, Guard, Result}])
   end,
   mnesia:transaction(F).

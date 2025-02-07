@@ -75,9 +75,9 @@ public class JE_CommunicationHandler {
      */
 
     // createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> {false} / {true, newShowID}
-    public Long createNewShowForCinema(HttpSession session, Long cinemaID, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
+    public Long createNewShowForCinema(HttpSession session, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform createNewShowForCinema");
-        send(session, serverRegisteredPID, new OtpErlangAtom("add_show"), new OtpErlangLong(cinemaID) , trg_show.toOtpErlangMap());
+        send(session, serverRegisteredPID, new OtpErlangAtom("add_show"), trg_show.toOtpErlangMap());
         return receiveNumericID(session);
     }
 
@@ -272,13 +272,14 @@ public class JE_CommunicationHandler {
 
     public List<Show> receiveListOfShows(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         List<Show> showList = new ArrayList<>();
-        OtpErlangAtom status = new OtpErlangAtom("");
         OtpErlangObject message = receive_setup(session, receiveFetchMS);
         System.out.println("Receiving request result... ");
         if(message instanceof OtpErlangTuple){
-            OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
+            // OtpErlangPid serverPID = (OtpErlangPid) ((OtpErlangTuple) message).elementAt(0);
             OtpErlangTuple resulTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
-            status = (OtpErlangAtom) (resulTuple).elementAt(0);
+            OtpErlangAtom status = (OtpErlangAtom) (resulTuple).elementAt(0);
+            if (!status.toString().equals("true"))
+                return null;
             OtpErlangList resultList = (OtpErlangList) (resulTuple).elementAt(1);
 
             for(OtpErlangObject result : resultList){
