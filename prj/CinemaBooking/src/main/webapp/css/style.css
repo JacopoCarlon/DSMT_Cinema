@@ -14,13 +14,17 @@ img{
 /* Target the div with ID "img_cinema" */
 div#img_cinema {
     /* Styles for the div */
-    width: 100%; /* Example: Make the div take full width */
+    width: 70%; /* Example: Make the div take full width */
     height: fit-content;
     block-size: fit-content;
     text-align: center; /* Center the image horizontally */
     padding: 10px; /* Add some padding */
     background-color: #f0f0f0; /* Background color for the div */
     border: 1px solid #ccc; /* Add a border */
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 /* Target the img inside the div with ID "img_cinema" */
