@@ -9,9 +9,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="small show_handler fix">
+    <list default="true" id="d74a93c4-7793-4458-8b3c-6f6428a2f0f0" name="Changes" comment="testing web.xml catalina filters 6.0">
+      <change afterPath="$PROJECT_DIR$/src/main/webapp/includes/header.jsp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/browse_shows_page.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/browse_shows_page.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/cinema_page.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/cinema_page.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/create_show.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/create_show.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/jpages/user_page.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/jpages/user_page.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +25,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Jsp File" />
         <option value="Class" />
+        <option value="Jsp File" />
       </list>
     </option>
   </component>
@@ -338,7 +342,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738851260764</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="testing web.xml catalina filters 6.0">
+      <option name="closed" value="true" />
+      <created>1738947813799</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1738947813799</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -358,7 +370,8 @@
     <MESSAGE value="comm_handler small fix" />
     <MESSAGE value="fix to make local tomcat work" />
     <MESSAGE value="small show_handler fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="small show_handler fix" />
+    <MESSAGE value="testing web.xml catalina filters 6.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing web.xml catalina filters 6.0" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
