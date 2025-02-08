@@ -29,7 +29,8 @@
                     Object showListObject = request.getAttribute("allShowsList");
                     List<Show> showsList = null;
                     // safely cast list of shows
-                    if (showListObject instanceof List<?> objList) {
+                    if (showListObject instanceof List<?>) {
+                        List<?> objList = (List<?>) showListObject;
                         showsList = objList.stream().filter(obj -> obj instanceof Show).map(obj -> (Show) obj).toList();
                     }
                     if(showsList == null || showsList.isEmpty()){

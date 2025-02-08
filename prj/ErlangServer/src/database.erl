@@ -365,5 +365,5 @@ update_show_pid(ShowId, NewPid) ->
     {Show#show.curr_avail_seats, Show#show.bookings}
   end,
   Result = mnesia:transaction(F),
-  io:format("[DATABASE] Final result of update show pid to customer is ~p~n", [Result]),
+  io:format("[DATABASE] Final result of update show pid is ~p~n", [Result]),
   Result.

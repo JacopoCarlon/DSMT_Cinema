@@ -1,6 +1,7 @@
 let ws;
 
 function connect(ctx) {
+    /*
     let host = document.location.host;
     const url = "ws://" +host  + ctx + "/browse_shows_endpoint";
     console.log("Connecting to UserPageEndpoint with url: " + url);
@@ -14,6 +15,7 @@ function connect(ctx) {
         console.log(showListObject.showList);
         updateShowList(ctx, showListObject.showList, auctionListObject.active);
     };
+     */
 }
 
 function updateShowList(ctx, showList){
