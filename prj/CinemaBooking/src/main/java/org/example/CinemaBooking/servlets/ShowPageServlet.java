@@ -101,29 +101,14 @@ public class ShowPageServlet extends HttpServlet{
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String is_this_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
-        String sender_Name = (String) request.getSession().getAttribute("username");
-
-        ShowExpanded old_show_expanded = (ShowExpanded) request.getSession().getAttribute("currentShowExpanded");
-        long old_showID = old_show_expanded.getShowID();
-        String old_showName = old_show_expanded.getShowName();
-        String old_showDate = old_show_expanded.getShowDate();
-        long old_maxSeats = old_show_expanded.getMaxSeats();
-        long old_currAvailableSeats = old_show_expanded.getCurrAvailableSeats();
-        boolean old_isEnded = old_show_expanded.getIsEnded();
-        String old_cinemaName = old_show_expanded.getCinemaName();
-        String old_cinemaLocation = old_show_expanded.getCinemaLocation();
-
-        long old_num_seats = old_show_expanded.getCommittedBooking();
-
         if (Objects.equals(is_this_a_cinema, "true")) {
-            System.out.println("Show booking failed : requested by a cinema : cname " + old_cinemaName);
+            System.out.println("Show booking failed : requested by a cinema");
             return;
         }
 
-        // the only thing that a customer can change is the number of seats !!!
-
+        // retrieve necessary data
+        String sender_Name = (String) request.getSession().getAttribute("username");
         long new_booking_number = Long.parseLong(request.getParameter("new_booking_number"));
-
 
         CustomerBooking newBooking = new CustomerBooking(sender_Name, new_booking_number);
 
@@ -132,40 +117,27 @@ public class ShowPageServlet extends HttpServlet{
 
 
         // now we try to execute the new booking
-
-        JE_CommunicationHandler communicationHandler = new JE_CommunicationHandler();
-        OtpErlangPid pid = null;
+        OtpErlangPid pid = (OtpErlangPid) request.getSession().getAttribute("currentShowPid");
+        ShowWithBookings newState = null;
         try {
-            pid = communicationHandler.getShowPidFromId(request.getSession(), old_showID);
+            // we send the new booking
+            newState = new JE_CommunicationHandler().send_booking_by_Customer(request.getSession(), pid, newBooking);
         } catch (OtpErlangDecodeException | OtpErlangExit e) {
             e.printStackTrace();
         }
 
-
-        if (pid != null) {
-            System.out.println("POST Show pid got: " + pid.toString());
-            // request.getSession().setAttribute("currentShowPid", pid);
-
-            boolean updateBookingStatusResult = false;
-            try {
-                // we send the new booking
-                ShowWithBookings newState = new JE_CommunicationHandler().send_booking_by_Customer(request.getSession(), pid, newBooking);
-                updateBookingStatusResult = newState != null;
-                // TODO: change the page to conform to new state
-
-            } catch (OtpErlangDecodeException | OtpErlangExit e) {
-                e.printStackTrace();
-            }
-
-            if (updateBookingStatusResult) {
-                request.getSession().setAttribute("bookingUpdateStatus", "success");
-                response.sendRedirect(request.getContextPath() + "/ShowPageServlet");
-            } else {
-                request.getSession().setAttribute("bookingUpdateStatus", "error");
-                RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/show_page.jsp");
-                requestDispatcher.forward(request, response);
-            }
+        if (newState != null) {
+            // update state
+            request.getSession().setAttribute("bookingUpdateStatus", "success");
+            request.getSession().removeAttribute("currentSWB");
+            request.getSession().setAttribute("currentSWB", newState);
+        } else {
+            request.getSession().setAttribute("bookingUpdateStatus", "error");
         }
+
+        // return to page
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/show_page.jsp");
+        requestDispatcher.forward(request, response);
     }
 
 }

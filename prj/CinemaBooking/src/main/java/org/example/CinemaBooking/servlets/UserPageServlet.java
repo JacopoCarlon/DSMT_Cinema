@@ -64,7 +64,7 @@ public class UserPageServlet extends HttpServlet{
 
         // we go straight to a get in the ShowServlet of show_page.jsp !
         System.out.println("go to show page");
-        response.sendRedirect(request.getContextPath() + "/ShowServlet");
+        response.sendRedirect(request.getContextPath() + "/ShowPageServlet");
         return;
     }
 

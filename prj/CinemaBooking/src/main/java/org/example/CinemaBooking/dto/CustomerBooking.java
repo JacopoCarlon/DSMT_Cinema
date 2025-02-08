@@ -30,7 +30,7 @@ public class CustomerBooking {
 
     public OtpErlangMap toOtpErlangMap() {
         return new OtpErlangMap(
-                new OtpErlangObject[]{ new OtpErlangString("customer"), new OtpErlangString("num_seats")},
+                new OtpErlangObject[]{ new OtpErlangString("username"), new OtpErlangString("num_seats")},
                 new OtpErlangObject[]{ new OtpErlangString(customer), new OtpErlangLong(bookedSeats) }
         );
     }

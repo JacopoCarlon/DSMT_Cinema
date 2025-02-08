@@ -26,8 +26,8 @@ public class BrowseShowsPageServlet extends HttpServlet {
         System.out.println("DoGet BrowseShowsPageServlet : try to get list of available shows");
         try {
             List<Show> showList = new JE_CommunicationHandler().getListOfShows(request.getSession(), includeOldShows);
-            request.getSession().removeAttribute("allShowsList");
-            request.getSession().setAttribute("allShowsList", showList);
+            request.removeAttribute("allShowsList");
+            request.setAttribute("allShowsList", showList);
         } catch (OtpErlangExit | OtpErlangDecodeException e) {
             e.printStackTrace();
         }
@@ -46,6 +46,6 @@ public class BrowseShowsPageServlet extends HttpServlet {
 
         // we go straight to a get in the ShowServlet of show_page.jsp !
         System.out.println("go to show page");
-        response.sendRedirect(request.getContextPath() + "/ShowServlet");
+        response.sendRedirect(request.getContextPath() + "/ShowPageServlet");
     }
 }

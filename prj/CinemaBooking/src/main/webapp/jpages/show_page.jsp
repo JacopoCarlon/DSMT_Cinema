@@ -72,32 +72,9 @@
                         %>
                         </tbody>
                     </table>
-<!--
-                    <h4 class="d-flex justify-content-center p-3" id="comBookings">Committed Bookings : </h4>
                 <%
-                        for(int i=0; i<committedBookingsList.size(); i++){
-                            CustomerBooking this_booking = committedBookingsList.get(i);
-                            String custName = this_booking.getCustomer();
-                            Long custCommittedSeats = this_booking.getBookedSeats();
-                %>
-                            <div > custName : <%=custName%></div>
-                            <div > custCommittedSeats : <%=custCommittedSeats%></div>
-                        <%
-                        }
-                %>
-                    <h4 class="d-flex justify-content-center p-3" id="comBookings">Waiting for Commit Bookings :</h4>
-                <%
-                        for(int i=0; i<waitingBookingsList.size(); i++){
-                            CustomerBooking this_booking = waitingBookingsList.get(i);
-                            String custName = this_booking.getCustomer();
-                            Long custWaitingForCommitSeats = this_booking.getBookedSeats();
-                %>
-                            <div > custName : <%=custName%></div>
-                            <div > custWaitingForCommitSeats : <%=custWaitingForCommitSeats%></div>
--->
-                <%
-                        }
-                    } else {
+                    } // end if("true".equals(is_a_cinema))
+                    else {
                         Long your_committed_booking = this_showWithBookings.getFirstCommittedBooking();
                         Long your_waiting_booking = this_showWithBookings.getFirstWaitingBooking();
                 %>
