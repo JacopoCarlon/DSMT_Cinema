@@ -18,6 +18,7 @@ import org.example.CinemaBooking.dto.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @WebServlet(name = "UserPageServlet", value = "/UserPageServlet")
 public class UserPageServlet extends HttpServlet{
@@ -25,21 +26,31 @@ public class UserPageServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("DoGet UserPageServlet");
-        // todo : add check is user not cinema
-        // get active bookings of user :
-        String username = (String) request.getSession().getAttribute("username");
         String is_a_cinema = request.getParameter("is_a_cinema");
-        System.out.println("DoGet UserPageServlet : try to get shows of user : " + username + " which is cinema ? : " + is_a_cinema);
-        try {
-            List<ShowWithBookings> showWithBookingsList = new JE_CommunicationHandler().get_shows_by_Customer(request.getSession(), username );
-            request.setAttribute("showWithBookingsList", showWithBookingsList);
-            // request.getSession().setAttribute("bookingList", bookingList);
-        } catch (OtpErlangExit | OtpErlangDecodeException e) {
-            e.printStackTrace();
-        }
+        if (Objects.equals(is_a_cinema, "true")) {
+            // if it is a cinema, should NOT go to user personal page, is sent back to own cinema page!
+            Long cinemaID = (Long) request.getSession().getAttribute("username");
+            response.sendRedirect(request.getContextPath() + "/CinemaPageServlet?cinemaID=" + cinemaID);
+        }else if (Objects.equals(is_a_cinema, "false")) {
+            // get active bookings of user :
+            String username = (String) request.getSession().getAttribute("username");
+            System.out.println("DoGet UserPageServlet : try to get shows of user : " + username + " which is cinema ? : " + is_a_cinema);
+            try {
+                List<ShowWithBookings> showWithBookingsList = new JE_CommunicationHandler().get_shows_by_Customer(request.getSession(), username );
+                request.setAttribute("showWithBookingsList", showWithBookingsList);
+                // request.getSession().setAttribute("bookingList", bookingList);
+            } catch (OtpErlangExit | OtpErlangDecodeException e) {
+                e.printStackTrace();
+            }
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/jpages/user_page.jsp");
+            requestDispatcher.forward(request, response);
+        }else{
+            request.getSession().setAttribute("errorMsg", "ERROR: is_a_cinema parameter is wrong");
 
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "/jpages/user_page.jsp");
-        requestDispatcher.forward(request, response);
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/error.jsp");
+            requestDispatcher.forward(request, response);
+        }
+        return;
     }
 
 

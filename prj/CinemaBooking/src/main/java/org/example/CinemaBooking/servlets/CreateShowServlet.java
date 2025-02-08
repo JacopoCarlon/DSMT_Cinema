@@ -22,10 +22,26 @@ public class CreateShowServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // arrive here from A_jump from cinema_page.jsp ... -> just load the page bro
-        String targetJSP = "/jpages/create_show.jsp";
-        request.getSession().removeAttribute("showCreationStatus");
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
-        requestDispatcher.forward(request, response);
+        System.out.println("DoGet CreateShowServlet");
+        String is_a_cinema = request.getParameter("is_a_cinema");
+
+        // MUST BE A CINEMA
+        if (Objects.equals(is_a_cinema, "true")) {
+            // is a cinema : OK
+            request.getSession().removeAttribute("showCreationStatus");
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/create_show.jsp");
+            requestDispatcher.forward(request, response);
+        }else if(Objects.equals(is_a_cinema, "false")){
+            // is a user -> back to user page
+            Long cinemaID = (Long) request.getSession().getAttribute("username");
+            response.sendRedirect(request.getContextPath() + "/UserPageServlet");
+        }else{
+            // error : unlogged, or smt bad happened >:-/
+            request.getSession().setAttribute("errorMsg", "ERROR: is_a_cinema parameter is wrong");
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/error.jsp");
+            requestDispatcher.forward(request, response);
+        }
+        return;
     }
 
     @Override
