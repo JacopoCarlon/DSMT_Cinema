@@ -17,7 +17,7 @@
 
   <!-- Button 3: Always redirect to login_page.jsp -->
   <button onclick="window.location.href='${pageContext.request.contextPath}/LoginServlet'">
-    Go to My Browser
+    Logout
   </button>
 
 </div>

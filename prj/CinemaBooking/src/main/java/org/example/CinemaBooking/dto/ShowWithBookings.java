@@ -91,8 +91,8 @@ public class ShowWithBookings extends Show {
         }
 
         List<CustomerBooking> waitingForCommitList = null;
-        if (list.elementAt(9) != null) {
-            OtpErlangObject[] waitingTupleList = ((OtpErlangList) list.elementAt(9)).elements();
+        if (list.elementAt(10) != null) {
+            OtpErlangObject[] waitingTupleList = ((OtpErlangList) list.elementAt(10)).elements();
             waitingForCommitList = Arrays.stream(waitingTupleList)
                     .map(tuple -> CustomerBooking.decodeFromOtpErlangTuple((OtpErlangTuple) tuple))
                     .toList();
@@ -136,15 +136,18 @@ public class ShowWithBookings extends Show {
         for (CustomerBooking cBooking : this.committedBookingsList) {
             map.put(cBooking.customer, new Triple(cBooking.customer, cBooking.bookedSeats, cBooking.bookedSeats));
         }
-        // Process waitingForCommitList
-        for (CustomerBooking wBooking : this.waitingForCommitList) {
-            if (map.containsKey(wBooking.customer)) {
-                // If the username exists in the map, update the waitingBooking
-                Triple this_triple = map.get(wBooking.customer);
-                this_triple.waitingBooking = wBooking.bookedSeats;
-            } else {
-                // If the username does not exist in the map, add a new Triple with storedBooking as 0
-                map.put(wBooking.customer, new Triple(wBooking.customer, 0L, wBooking.bookedSeats));
+
+        if(this.waitingForCommitList != null) {
+            // Process waitingForCommitList
+            for (CustomerBooking wBooking : this.waitingForCommitList) {
+                if (map.containsKey(wBooking.customer)) {
+                    // If the username exists in the map, update the waitingBooking
+                    Triple this_triple = map.get(wBooking.customer);
+                    this_triple.waitingBooking = wBooking.bookedSeats;
+                } else {
+                    // If the username does not exist in the map, add a new Triple with storedBooking as 0
+                    map.put(wBooking.customer, new Triple(wBooking.customer, 0L, wBooking.bookedSeats));
+                }
             }
         }
         // Convert the map to a List<Triple>
@@ -152,5 +155,19 @@ public class ShowWithBookings extends Show {
     }
 
 
-
+    @Override
+    public String toString(){
+        return "Show{showID: " + showID.toString() +
+                ", showName: " + showName +
+                ", showDate: " + showDate +
+                ", cinemaID: " + cinemaID.toString() +
+                ", cinemaName: " + cinemaName +
+                ", cinemaLocation: " + cinemaLocation +
+                ", maxSeats: " + maxSeats.toString() +
+                ", currAvailableSeats: " + currAvailableSeats.toString() +
+                ", isEnded: " + isEnded.toString() +
+                ", committedBookingsList: " + (committedBookingsList != null ? committedBookingsList.toString() : "[]") +
+                ", waitingForCommitList: " + (waitingForCommitList != null ? waitingForCommitList.toString() : "[]") +
+                "}\n";
+    }
 }

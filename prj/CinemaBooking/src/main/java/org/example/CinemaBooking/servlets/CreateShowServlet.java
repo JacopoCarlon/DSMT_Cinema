@@ -23,7 +23,7 @@ public class CreateShowServlet extends HttpServlet{
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // arrive here from A_jump from cinema_page.jsp ... -> just load the page bro
         System.out.println("DoGet CreateShowServlet");
-        String is_a_cinema = request.getParameter("is_a_cinema");
+        String is_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
 
         // MUST BE A CINEMA
         if (Objects.equals(is_a_cinema, "true")) {

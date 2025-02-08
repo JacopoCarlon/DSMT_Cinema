@@ -43,8 +43,6 @@
                     String is_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
 
                     if("true".equals(is_a_cinema)){
-                        List<CustomerBooking> committedBookingsList = this_showWithBookings.getCommittedBookingsList();
-                        List<CustomerBooking> waitingBookingsList = this_showWithBookings.getWaitingForCommitList();
                         List<ShowWithBookings.Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
 
                 %>

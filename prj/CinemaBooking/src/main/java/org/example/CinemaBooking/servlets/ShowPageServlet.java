@@ -77,14 +77,13 @@ public class ShowPageServlet extends HttpServlet{
             if(good_to_move ){
                 request.getSession().removeAttribute("currentSWB");
                 request.getSession().setAttribute("currentSWB", gottenSWB);
-                System.out.println("GET can properly load show page");
+                System.out.println("DEBUG: gottenSWB: " + gottenSWB);
 
                 request.getSession().removeAttribute("bookingUpdateStatus");
                 RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/show_page.jsp");
                 requestDispatcher.forward(request, response);
             }
             else {
-                System.out.println("GET something went wrong in ShowPageServlet.java ");
                 request.getSession().removeAttribute("currentShowPid");
                 request.getSession().removeAttribute("currentSWB");
                 request.getSession().removeAttribute("bookingUpdateStatus");

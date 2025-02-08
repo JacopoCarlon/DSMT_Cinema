@@ -26,7 +26,7 @@ public class UserPageServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("DoGet UserPageServlet");
-        String is_a_cinema = request.getParameter("is_a_cinema");
+        String is_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
         if (Objects.equals(is_a_cinema, "true")) {
             // if it is a cinema, should NOT go to user personal page, is sent back to own cinema page!
             Long cinemaID = (Long) request.getSession().getAttribute("username");

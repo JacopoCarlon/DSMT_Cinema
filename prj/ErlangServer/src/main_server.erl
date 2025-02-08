@@ -78,7 +78,7 @@ server_loop() ->
       ClientPid ! {self(), Ret};
 
     {ClientPid, get_customer_bookings, Username} ->
-      io:format("[MAIN SERVER] Received a get_customer_bookings message"),
+      io:format("[MAIN SERVER] Received a get_customer_bookings message~n"),
       Ret = customer_bookings(Username),
       ClientPid ! {self(), Ret};
 
@@ -132,9 +132,7 @@ register_cinema(CinemaName, Password, CinemaAddress) ->
   end.
 
 login_cinema(CinemaId, Password) ->
-  Debug = gen_server:call(main_server, {get_cinema, CinemaId}),
-  io:format("[DEBUG] Found ~p~n", [Debug]),
-  case Debug of
+  case gen_server:call(main_server, {get_cinema, CinemaId}) of
     {atomic, [CinemaTuple | _]} -> {lists:nth(2, CinemaTuple) == Password}; 
     _ -> {false}
   end.
@@ -147,19 +145,14 @@ get_cinema(CinemaId) ->
   end.
 
 find_cinema(CinemaName) ->
-  Debug = gen_server:call(main_server, {find_cinema, CinemaName}),
-  io:format("[DEBUG] Found ~p~n", [Debug]),
-  case Debug of
+  case gen_server:call(main_server, {find_cinema, CinemaName}) of
     {atomic, TupleList} -> {true, TupleList};
     _ -> {false}
   end.
 
 get_cinema_shows(CinemaId) ->
-  Debug = gen_server:call(main_server, {get_cinema_shows, CinemaId}),
-  io:format("[DEBUG] Found ~p~n", [Debug]),
-  case Debug of
+  case gen_server:call(main_server, {get_cinema_shows, CinemaId}) of
     {atomic, TupleList} -> 
-      io:format("[DEBUG] TupleList: ~p~n", [TupleList]),
       {true, TupleList}; 
     _ -> {false}
   end.
@@ -185,8 +178,6 @@ customer_bookings(Username) ->
 
 %% Show Functions
 get_list_of_shows(IncludeOldShows) ->
-  Debug = gen_server:call(main_server, {get_shows_list, IncludeOldShows}),
-  io:format("[DEBUG] Found list: ~p~n", [Debug]),
   case gen_server:call(main_server, {get_shows_list, IncludeOldShows}) of
     {atomic, ShowList} -> {true, ShowList};
     _ -> {false}

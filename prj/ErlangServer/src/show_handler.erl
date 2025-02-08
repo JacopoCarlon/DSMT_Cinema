@@ -13,6 +13,9 @@
 -include("macros.hrl").
 
 
+-define(BACKUP_PERIOD, 1 * 60 * 1000).
+
+
 init_show_handler(ShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxNumOfSeats) ->
     CurrentTimeSeconds = calendar:datetime_to_gregorian_seconds(calendar:now_to_datetime(erlang:timestamp())),
     DateSeconds = timestring_to_seconds(ShowDate),
@@ -22,8 +25,7 @@ init_show_handler(ShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocati
             % TIMERS
             DeathTimerDuartion = (DateSeconds - CurrentTimeSeconds)*1000,
             erlang:send_after(DeathTimerDuartion, self(), {self(), kill_auction_suicide}),
-            BackupClockDuration = 15 * 60 * 1000,
-            erlang:send_after(BackupClockDuration, self(), {backup_clock}),
+            erlang:send_after(?BACKUP_PERIOD, self(), {backup_clock}),
             
             % LOOP
             show_loop(
@@ -69,7 +71,7 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
             LastCommittedSeats = maps:get(Username, CommittedBookings, 0),
             {Success, NewAvailableSeats, NewWaitingBookings} = 
                 do_new_booking(Username, NewBookedSeats, LastCommittedSeats, WaitingBookings, AvailableSeats),
-            
+
             Client ! construct_msg_for_customer(
                 Success, Username, StaticInfo, NewAvailableSeats, CommittedBookings, NewWaitingBookings
             ),
@@ -100,6 +102,7 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
         {backup_clock} ->
             NewCommittedMap = 
                 do_backup(maps:get(show_id, StaticInfo), CommittedBookings, WaitingBookings, AvailableSeats, false),
+            erlang:send_after(?BACKUP_PERIOD, self(), {backup_clock}),
             show_loop(StaticInfo, AvailableSeats, NewCommittedMap, maps:new());
         
         %% TESTING
@@ -115,34 +118,34 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
 
 
 %%% BOOKING UTILITIES
-% Cancel booking, no committed value
-do_new_booking(Username, 0, 0, WaitingBookingMap, AvailableSeats) ->
-    case maps:take(Username, WaitingBookingMap) of
-        error -> {false, AvailableSeats, WaitingBookingMap};
-        {OldBookedSeats, NewMap} -> {true, AvailableSeats + OldBookedSeats, NewMap}
+% Update booking
+do_new_booking(Username, NewBookedSeats, LastCommittedSeats, WaitingBookingMap, AvailableSeats) 
+  when is_number(NewBookedSeats), NewBookedSeats > 0 ->
+    
+    OldRelevantValue = case maps:get(Username, WaitingBookingMap, none) of
+        none -> LastCommittedSeats;
+        TempValue -> TempValue
+    end,
+    SeatsDelta = NewBookedSeats - OldRelevantValue,
+    case SeatsDelta =< AvailableSeats of 
+        false -> {false, AvailableSeats, WaitingBookingMap};
+        true -> {true, AvailableSeats - SeatsDelta, maps:put(Username, NewBookedSeats, WaitingBookingMap)}
     end;
 
 % Cancel booking, committed value
 do_new_booking(Username, 0, LastCommittedSeats, WaitingBookingMap, AvailableSeats) 
-  when is_number(LastCommittedSeats) and LastCommittedSeats > 0 ->
-
+  when LastCommittedSeats > 0 ->
+    
     case maps:get(Username, WaitingBookingMap, none) of
         none -> {true, AvailableSeats + LastCommittedSeats, maps:put(Username, 0, WaitingBookingMap)};
         OldValue -> {true, AvailableSeats + OldValue, maps:put(Username, 0, WaitingBookingMap)}
     end;
 
-% Update booking
-do_new_booking(Username, NewBookedSeats, LastCommittedSeats, WaitingBookingMap, AvailableSeats) 
-  when is_number(NewBookedSeats) and NewBookedSeats and is_number(LastCommittedSeats) and LastCommittedSeats > 0 ->
-    
-    OldRelevantValue = case WaitingBookingMap = maps:get(Username, WaitingBookingMap, none) of
-        none -> LastCommittedSeats;
-        TempValue -> TempValue
-    end,
-    SeatsDelta = NewBookedSeats - OldRelevantValue,
-    case SeatsDelta < AvailableSeats of 
-        false -> {false, AvailableSeats, WaitingBookingMap};
-        true -> {true, AvailableSeats - SeatsDelta, maps:put(Username, NewBookedSeats, WaitingBookingMap)}
+% Cancel booking, no committed value
+do_new_booking(Username, 0, 0, WaitingBookingMap, AvailableSeats) ->
+    case maps:take(Username, WaitingBookingMap) of
+        error -> {false, AvailableSeats, WaitingBookingMap};
+        {OldBookedSeats, NewMap} -> {true, AvailableSeats + OldBookedSeats, NewMap}
     end;
 
 % Do nothing
@@ -163,6 +166,7 @@ construct_msg_for_customer(ResponseCode, Username, StaticInfo, AvailableSeats, C
         maps:get(cinema_location, StaticInfo),
         maps:get(max_seats, StaticInfo),
         AvailableSeats,
+        false,
         [{Username, CommittedValue}]
     ],
     case maps:get(Username, WaitingBookingMap, none) of
@@ -185,6 +189,7 @@ construct_message(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingM
                 maps:get(cinema_location, StaticInfo),
                 maps:get(max_seats, StaticInfo),
                 AvailableSeats,
+                false,
                 maps:to_list(CommittedBookings),
                 maps:to_list(WaitingBookingMap)
             ]
