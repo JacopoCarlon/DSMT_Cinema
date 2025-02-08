@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Objects;
 
 @WebFilter(filterName = "CheckLoginFilter", urlPatterns = {"/BrowseShowsPageServlet", "/CinemaPageServlet", "/CreateShowServlet", "/ShowPageServlet", "/UserPageServlet" })
 public class LoginFilter implements Filter {
@@ -35,6 +36,11 @@ public class LoginFilter implements Filter {
         // - A session exists (session != null)
         // - The session contains a "username" attribute (session.getAttribute("username") != null)
         boolean LEGAL_loggedIn = session != null && session.getAttribute("username") != null && session.getAttribute("is_a_cinema") != null;
+        if (LEGAL_loggedIn) {
+            String is_cinema = (String) session.getAttribute("is_a_cinema");
+            // // LEGAL_loggedIn = LEGAL_loggedIn && (Objects.equals(is_cinema, "true") || Objects.equals(is_cinema, "false"));
+            LEGAL_loggedIn = Objects.equals(is_cinema, "true") || Objects.equals(is_cinema, "false");
+        }
 
         // Check if the current request is for the login page itself (either customer or cinema)
         boolean loginCustomerRequest = request.getRequestURI().equals(loginCustomerURI);
