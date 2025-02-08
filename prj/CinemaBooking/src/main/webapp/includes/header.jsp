@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: jacopo
-  Date: 07/02/25
-  Time: 19:55
-  To change this template use File | Settings | File Templates.
---%>
 <!-- includes/header.jsp -->
 <div style="background-color: #f0f0f0; padding: 10px; text-align: center;">
 
@@ -21,4 +14,10 @@
   <button onclick="window.location.href='${pageContext.request.contextPath}/BrowseShowsServlet'">
     Go to My Browser
   </button>
+
+  <!-- Button 3: Always redirect to login_page.jsp -->
+  <button onclick="window.location.href='${pageContext.request.contextPath}/LoginServlet'">
+    Go to My Browser
+  </button>
+
 </div>
