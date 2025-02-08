@@ -92,14 +92,14 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
                     io:format("[SHOW HANDLER] Kill request ignored...~n"),
                     show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings);
                 true ->
-                    do_backup(maps:get(show_id, StaticInfo), CommittedBookings,  AvailableSeats, WaitingBookings, true),
+                    do_backup(maps:get(show_id, StaticInfo), CommittedBookings, WaitingBookings, AvailableSeats, true),
                     %% ?J_LISTENER ! {self(), update_show_state, ShowInfo, ViewingCustomers, true},
                     io:format(" [SHOW HANDLER] Suicide: ~p killed...~n", [self()])
             end;
         
         {backup_clock} ->
             NewCommittedMap = 
-                do_backup(maps:get(show_id, StaticInfo), CommittedBookings,  AvailableSeats, WaitingBookings, false),
+                do_backup(maps:get(show_id, StaticInfo), CommittedBookings, WaitingBookings, AvailableSeats, false),
             show_loop(StaticInfo, AvailableSeats, NewCommittedMap, maps:new());
         
         Message ->

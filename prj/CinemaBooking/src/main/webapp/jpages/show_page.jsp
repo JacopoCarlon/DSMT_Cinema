@@ -50,29 +50,29 @@
                 %>
                     <h4 class="d-flex justify-content-center p-3" id="comBookings">Triplet listings : </h4>
 
-                    <table width="80%" border="1">
+                    <table>
                         <thead>
                             <tr>
-                                <td>UserName<\td>
-                                <td>ConfirmedBooking<\td>
-                                <td>WaitingBooking<\td>
-                            <\tr>
-                        <\thead>
+                                <th>UserName</th>
+                                <th>ConfirmedBooking</th>
+                                <th>WaitingBooking</th>
+                            </tr>
+                        </thead>
                         <tbody>
                         <%
                             for(ShowWithBookings.Triple this_triple : tripleList){
                         %>
                             <tr>
-                                <td> <%=this_triple.getUsername()%> <\td>
-                                <td> <%=this_triple.getStoredBooking()%> <\td>
-                                <td> <%=this_triple.getWaitingBooking()%> <\td>
-                            <\tr>
+                                <td> <%=this_triple.getUsername()%> </td>
+                                <td> <%=this_triple.getStoredBooking()%> </td>
+                                <td> <%=this_triple.getWaitingBooking()%> </td>
+                            </tr>
                             <%
                             }
                         %>
-                        <\tbody>
+                        </tbody>
                     </table>
-
+<!--
                     <h4 class="d-flex justify-content-center p-3" id="comBookings">Committed Bookings : </h4>
                 <%
                         for(int i=0; i<committedBookingsList.size(); i++){
@@ -94,6 +94,7 @@
                 %>
                             <div > custName : <%=custName%></div>
                             <div > custWaitingForCommitSeats : <%=custWaitingForCommitSeats%></div>
+-->
                 <%
                         }
                     } else {
@@ -123,7 +124,7 @@
                         </div>
                     </form>
                 <%
-                    }
+                    } // end else
                 %>
                 </div>
             </div>

@@ -78,18 +78,23 @@ public class ShowPageServlet extends HttpServlet{
                 request.getSession().removeAttribute("currentSWB");
                 request.getSession().setAttribute("currentSWB", gottenSWB);
                 System.out.println("GET can properly load show page");
-                response.sendRedirect(request.getContextPath() + "/ShowServlet");
-            }else {
+
+                request.getSession().removeAttribute("bookingUpdateStatus");
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/show_page.jsp");
+                requestDispatcher.forward(request, response);
+            }
+            else {
                 System.out.println("GET something went wrong in ShowPageServlet.java ");
                 request.getSession().removeAttribute("currentShowPid");
                 request.getSession().removeAttribute("currentSWB");
+                request.getSession().removeAttribute("bookingUpdateStatus");
+
+                request.getSession().setAttribute("errorMsg", "ERROR: could not find Show data");
+
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/error.jsp");
+                requestDispatcher.forward(request, response);
             }
         }
-
-        request.getSession().removeAttribute("bookingUpdateStatus");
-
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jpages/show_page.jsp");
-        requestDispatcher.forward(request, response);
     }
 
 
