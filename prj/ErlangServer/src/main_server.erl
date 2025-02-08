@@ -111,6 +111,12 @@ server_loop() ->
     {respawned_handler, ShowId, PidHandler} ->
       io:format("[MAIN SERVER] Received a respawned_handler message~n"),
       _Ret = restore_show(ShowId, PidHandler);
+    
+    %% TESTING
+    {test_kill_button} ->
+      io:format("[MAIN SERVER - TEST] Received a test_kill_button message. Performing crashing operation...~n"),
+      CrashList = [],
+      io:format("~p", CrashList);
 
     %% DEFAULT
     _ -> io:format("[MAIN SERVER] Received an unrecognized message~n")
@@ -179,6 +185,8 @@ customer_bookings(Username) ->
 
 %% Show Functions
 get_list_of_shows(IncludeOldShows) ->
+  Debug = gen_server:call(main_server, {get_shows_list, IncludeOldShows}),
+  io:format("[DEBUG] Found list: ~p~n", [Debug]),
   case gen_server:call(main_server, {get_shows_list, IncludeOldShows}) of
     {atomic, ShowList} -> {true, ShowList};
     _ -> {false}

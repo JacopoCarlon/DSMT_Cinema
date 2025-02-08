@@ -102,6 +102,12 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
                 do_backup(maps:get(show_id, StaticInfo), CommittedBookings, WaitingBookings, AvailableSeats, false),
             show_loop(StaticInfo, AvailableSeats, NewCommittedMap, maps:new());
         
+        %% TESTING
+        {test_kill_button} ->
+            io:format("[SHOW HANDLER - TEST] Received a test_kill_button message. Performing crashing operation...~n"),
+            CrashList = [],
+            io:format("~p", CrashList);
+
         Message ->
             io:format("[SHOW HANDLER] Received unrecognized message: ~p~n. Ignoring it...~n", [Message]),
             show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings)

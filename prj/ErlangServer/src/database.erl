@@ -249,7 +249,7 @@ get_shows_list(IncludeOldShows) ->
     },
     Guard = case IncludeOldShows of
       true -> [];
-      false -> [{'==', '$1', false}]
+      false -> [{'==', '$9', false}]
     end,
     Result = ['$$'], %% return all fields
     mnesia:select(show, [{Match, Guard, Result}])
