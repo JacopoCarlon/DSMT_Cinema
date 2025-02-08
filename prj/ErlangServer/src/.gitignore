@@ -1,3 +1,5 @@
 *.beam
 test*
+Mnesia.server@localhost
 Mnesia.server@localhost/
+Mnesia.server@localhost/**
