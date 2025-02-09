@@ -77,8 +77,10 @@
                         Long your_waiting_booking = this_showWithBookings.getFirstWaitingBooking();
                 %>
                     <div class="d-flex justify-content-center">
-                        <div id="des_committed_booking"        > your_committed_booking : <%=your_committed_booking%></div>
-                        <div id="des_waiting_booking"      > your_waiting_booking : <%=your_waiting_booking%></div>
+                        <div id="des_committed_booking"        > Committed Bookings: <%=your_committed_booking%></div>
+                        <% if (your_waiting_booking != null) {%>
+                            <div id="des_waiting_booking"      > New value waiting to be committed: <%=your_waiting_booking%></div>
+                        <% } %>
                     </div>
                     <form action="<%=request.getContextPath()%>/ShowPageServlet" method="post" oninput='check_valid_booking()'>
                         <div class="d-flex justify-content-between mb-3">

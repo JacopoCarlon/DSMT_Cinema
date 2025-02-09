@@ -74,8 +74,9 @@
                                         <div>Max Seats: <%=this_show.getMaxSeats()%></div>
                                         <div>Available Seats according to main server : <%=this_show.getCurrAvailableSeats()%></div>
                                     </div>
-                                    <% if (!this_show.getIsEnded()) %>
+                                    <% if (!this_show.getIsEnded()){ %>
                                         <button type="submit" class="btn btn-primary m-3">Enter</button>
+                                    <% } %>
                                 </div>
                             </form>
                     <%

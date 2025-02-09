@@ -17,13 +17,14 @@
 
 
 init_show_handler(ShowId, ShowName, ShowDate, CinemaId, CinemaName, CinemaLocation, MaxNumOfSeats) ->
-    CurrentTimeSeconds = calendar:datetime_to_gregorian_seconds(calendar:now_to_datetime(erlang:timestamp())),
+    CurrentTimeSeconds = calendar:datetime_to_gregorian_seconds(calendar:now_to_local_time(erlang:timestamp())),
     DateSeconds = timestring_to_seconds(ShowDate),
     case CurrentTimeSeconds > DateSeconds of
         true -> io:format("[SHOW HANDLER] Invalid date at initialization~n");
         false ->
             % TIMERS
             DeathTimerDuartion = (DateSeconds - CurrentTimeSeconds)*1000,
+            io:format("[DEBUG- HANDLER]: Show will kill itself in ~p milliseconds~n.", [DeathTimerDuartion]),
             erlang:send_after(DeathTimerDuartion, self(), {self(), kill_auction_suicide}),
             erlang:send_after(?BACKUP_PERIOD, self(), {backup_clock}),
             
@@ -197,14 +198,9 @@ construct_message(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingM
     }.
 
 %%% BACKUP UTILITIES
-% No changes
-do_backup(ShowId, CommittedBookings, #{}, _AvailableSeats, false) ->
-    %% DO NOTHING
-    io:format("[SHOW HANDLER] Backup of Show ~p is already up to date.~n", [ShowId]),
-    CommittedBookings;
-
 % Changes and/or end of life
-do_backup(ShowId, CommittedBookings, WaitingBookings,  AvailableSeats, EndOfLife) ->
+do_backup(ShowId, CommittedBookings, WaitingBookings,  AvailableSeats, EndOfLife) 
+  when EndOfLife == true; WaitingBookings /= #{} -> 
     %% Notify main server
     MainServerPid = whereis(main_server_endpoint),
     io:format("[SHOW HANDLER] Handler of Show ~p sending end_of_life update to ~p.~n", [ShowId, MainServerPid]),
@@ -214,7 +210,13 @@ do_backup(ShowId, CommittedBookings, WaitingBookings,  AvailableSeats, EndOfLife
     maps:filter(
         fun(_Key, Value) -> Value > 0 end, 
         maps:merge(CommittedBookings, WaitingBookings)
-    ).
+    );
+
+% No changes
+do_backup(ShowId, CommittedBookings, #{}, _AvailableSeats, false) ->
+    %% DO NOTHING
+    io:format("[SHOW HANDLER] Backup of Show ~p is already up to date.~n", [ShowId]),
+    CommittedBookings.
 
 %%% OTHER UTILITIES
 timestring_to_seconds(String) ->

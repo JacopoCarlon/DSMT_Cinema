@@ -74,7 +74,7 @@ public class ShowWithBookings extends Show {
 
     public Long getFirstWaitingBooking() {
         if (waitingForCommitList == null || waitingForCommitList.isEmpty())
-            return 0L;
+            return null;
         return waitingForCommitList.getFirst().bookedSeats;
     }
 

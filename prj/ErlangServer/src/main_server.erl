@@ -111,12 +111,6 @@ server_loop() ->
     {respawned_handler, ShowId, PidHandler} ->
       io:format("[MAIN SERVER] Received a respawned_handler message~n"),
       _Ret = restore_show(ShowId, PidHandler);
-    
-    %% TESTING
-    {test_kill_button} ->
-      io:format("[MAIN SERVER - TEST] Received a test_kill_button message. Performing crashing operation...~n"),
-      CrashList = [],
-      io:format("~p", CrashList);
 
     %% DEFAULT
     _ -> io:format("[MAIN SERVER] Received an unrecognized message~n")
@@ -284,7 +278,8 @@ handle_call({get_show_pid, ShowId}, _From, _ServerState) ->
   {reply, Ret, []};
 
 handle_call({update_show_bookings, ShowId, UpdateMap, AvailableSeats, EndOfLife}, _From, _ServerState) ->
-  database:update_show_bookings(ShowId, UpdateMap, AvailableSeats, EndOfLife);
+  Ret = database:update_show_bookings(ShowId, UpdateMap, AvailableSeats, EndOfLife),
+  {reply, Ret, []};
 
 handle_call({update_show_pid, ShowId, PidHandler}, _From, _ServerState) ->
   Ret = database:update_show_pid(ShowId, PidHandler),
