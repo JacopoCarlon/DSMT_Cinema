@@ -160,11 +160,10 @@ get_customer_bookings(Username, IncludeOldShows) ->
     [Show] = mnesia:read(show, ShowId),
     case (Show#show.old_show == false) or IncludeOldShows of
       true -> BookedSeats = maps:get(Username, Show#show.bookings, 0), 
-        {true, {
+        {true, [
           ShowId, 
           Show#show.show_name,
-          Show#show.cinema_name,
-          Show#show.show_date, 
+          Show#show.show_date,
           Show#show.cinema_id,
           Show#show.cinema_name,
           Show#show.cinema_location,
@@ -172,7 +171,7 @@ get_customer_bookings(Username, IncludeOldShows) ->
           Show#show.curr_avail_seats,
           Show#show.old_show,
           [{Username, BookedSeats}]
-        }};
+        ]};
       false -> false
     end
   end,
