@@ -6,49 +6,60 @@ import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 
 // todo
 
-@ServerEndpoint(value = "/show_page_endpoint/{username}", decoders = ShowWithBookingsDecoder.class, encoders = ShowWithBookingsEncoder.class)
+@ServerEndpoint(value = "/show_page_endpoint/{showID}/{user_type}/{user_identifier}",
+        decoders = ShowWithBookingsDecoder.class,
+        encoders = ShowWithBookingsEncoder.class)
 public class ShowPageEndpoint {
-
-    // todo :
-    //  need userendpointpair + cinemaendpoint pair ???
-    // need more study theory
-
-    private Session session ;
-    private static final Set<ShowPageEndpoint> showPagesEndpoints = new CopyOnWriteArraySet<ShowPageEndpoint>();
-    private static HashMap<String, String> users = new HashMap<String, String>();
+    private Session session;
+    private static final ConcurrentMap<String, Set<UserEndpointTuple>> clientEndpointsOfShow = new ConcurrentHashMap<>();
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("username") String username) throws IOException, EncodeException {
-        System.out.println("[UserPageEndpoint] OnOpen");
-        this.session = session;
-        showPagesEndpoints.add(this);
-        users.put(session.getId(), username);
+    public void onOpen(
+            Session session,
+            @PathParam("showID") String showIdString,
+            @PathParam("user_type") String userType,
+            @PathParam("user_identifier") String userIdentifier
+    ) throws IOException, EncodeException {
+        System.out.println("[SHOW PAGE ENDPOINT] OnOpen of show: " + showIdString + ", from " + userType + ": " + userIdentifier);
+        if (!clientEndpointsOfShow.containsKey(showIdString)) {
+            Set<UserEndpointTuple> userEndpointTupleSet = new CopyOnWriteArraySet<>();
+            userEndpointTupleSet.add(new UserEndpointTuple(userIdentifier, userType, this));
+            clientEndpointsOfShow.put(showIdString, userEndpointTupleSet);
+        }
+        else {
+            clientEndpointsOfShow.get(showIdString).add(new UserEndpointTuple(userIdentifier, userType, this));
+        }
         printEndpointStatus();
     }
 
-    /*
-    TODO: check this
-    */
+
     @OnMessage
     public void onMessage(Session session, ShowWithBookings showWithBookings) throws IOException, EncodeException {
-        System.out.println("[UserPageEndpoint] OnMessage");
-        System.out.println("[UserPageEndpoint] Bookings list is going to be broadcast");
+        System.out.println("[SHOW PAGE ENDPOINT] OnMessage");
         broadcast(showWithBookings);
     }
 
 
     @OnClose
-    public void onClose(Session session) throws IOException, EncodeException {
-        System.out.println("[UserPageEndpoint] OnClose: " + users.get(session.getId()) + " is exiting");
-        showPagesEndpoints.remove(this);
-        users.remove(session.getId());
+    public void onClose(
+            Session session,
+            @PathParam("showID") String showIdString,
+            @PathParam("user_type") String userType,
+            @PathParam("user_identifier") String userIdentifier
+    ) throws IOException, EncodeException {
+        System.out.println("[SHOW PAGE ENDPOINT] OnClose of show: " + showIdString + ", from " + userType + ": " + userIdentifier);
+        Set<UserEndpointTuple> showEndpointsSet = clientEndpointsOfShow.get(showIdString);
+        boolean result = showEndpointsSet.remove(new UserEndpointTuple(userIdentifier, userType, this));
+        System.out.println("[SHOW PAGE ENDPOINT] OnClose result: " + result);
         printEndpointStatus();
     }
 
@@ -57,27 +68,33 @@ public class ShowPageEndpoint {
         // Do error handling here
     }
 
-    /*
-    TODO: check this
-    */
+
     private static void broadcast(ShowWithBookings showWithBookings) throws IOException, EncodeException {
-        showPagesEndpoints.forEach(endpoint -> {
-            synchronized (endpoint) {
-                try {
-                    endpoint.session.getBasicRemote()
-                            .sendObject(showWithBookings);
-                } catch (IOException | EncodeException e) {
-                    e.printStackTrace();
-                }
+        System.out.println("[SHOW PAGE ENDPOINT] Broadcasting state of show: " + showWithBookings.getShowID());
+        Collection<UserEndpointTuple> userEndpointsSet = clientEndpointsOfShow.get(showWithBookings.getShowID().toString());
+        userEndpointsSet.forEach(userEndpointTuple -> {
+            ShowWithBookings showToSend = userEndpointTuple.getUserType().equals("customer") ?
+                    showWithBookings.getPersonalizedCopy(userEndpointTuple.getUserID()) :
+                    showWithBookings;
+
+            System.out.println(userEndpointTuple.getUserType() + " " + userEndpointTuple.getUserID() + " will receive a message");
+            try {
+                userEndpointTuple.getEndpoint().session.getBasicRemote().sendObject(showToSend);
+            } catch (IOException | EncodeException e) {
+                e.printStackTrace();
             }
         });
     }
 
 
     private static void printEndpointStatus(){
-        System.out.println("[UserPageEndpoint] User connected:");
-        for(String user: users.values()){
-            System.out.println(" user : " + user);
+        System.out.println("[SHOW PAGE ENDPOINT] Show Endpoint status");
+        for (String showID : clientEndpointsOfShow.keySet()) {
+            Collection<UserEndpointTuple> userEndpointsSet = clientEndpointsOfShow.get(showID);
+
+            for (UserEndpointTuple userEndpointTuple : userEndpointsSet) {
+                System.out.println("[Show " + showID + "] " + userEndpointTuple.getUserType() + ": " + userEndpointTuple.getUserID());
+            }
         }
     }
 

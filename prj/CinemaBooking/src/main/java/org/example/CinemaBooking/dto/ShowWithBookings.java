@@ -102,7 +102,25 @@ public class ShowWithBookings extends Show {
     }
 
 
-    public class Triple{
+    public ShowWithBookings getPersonalizedCopy(String username) {
+        List<CustomerBooking> myCommittedBookings = null;
+        List<CustomerBooking> myWaitingBookings = null;
+
+        if (committedBookingsList != null)
+            myCommittedBookings = committedBookingsList.stream().filter(cb -> username.equals(cb.getCustomer())).toList();
+
+        if (waitingForCommitList != null)
+            myWaitingBookings = waitingForCommitList.stream().filter(cb -> username.equals(cb.getCustomer())).toList();
+
+        return new ShowWithBookings(
+            this,
+            myCommittedBookings,
+            myWaitingBookings
+        );
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    public static class Triple{
         String username;
         Long storedBooking;
         Long waitingBooking;

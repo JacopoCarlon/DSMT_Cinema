@@ -58,7 +58,7 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
         
         {Client, get_data_for_cinema, CinemaId} ->
             io:format(" [SHOW HANDLER] Cinema with ID ~p asked for show data~n", [CinemaId]),
-            Client ! construct_message(
+            Client ! construct_message_for_cinema(
                 StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings
             ),
             show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings);
@@ -76,7 +76,9 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
             Client ! construct_msg_for_customer(
                 Success, Username, StaticInfo, NewAvailableSeats, CommittedBookings, NewWaitingBookings
             ),
-            % ?J_LISTENER ! {self(), update_show_state, NewShowInfo, ViewingCustomers, false}
+            ?J_LISTENER ! construct_message_for_listener(
+                StaticInfo, NewAvailableSeats, false, CommittedBookings, NewWaitingBookings
+            ),
             show_loop(StaticInfo, NewAvailableSeats, CommittedBookings, NewWaitingBookings);
         
         {Sender, restore_backup, SeatsBackup, BookingBackup} ->
@@ -95,14 +97,22 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
                     io:format("[SHOW HANDLER] Kill request ignored...~n"),
                     show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings);
                 true ->
-                    do_backup(maps:get(show_id, StaticInfo), CommittedBookings, WaitingBookings, AvailableSeats, true),
-                    %% ?J_LISTENER ! {self(), update_show_state, ShowInfo, ViewingCustomers, true},
+                    NewCommittedMap = do_backup(
+                        maps:get(show_id, StaticInfo), CommittedBookings, WaitingBookings, AvailableSeats, true
+                    ),
+                    ?J_LISTENER ! construct_message_for_listener(
+                        StaticInfo, AvailableSeats, true, NewCommittedMap, #{}
+                    ),
                     io:format(" [SHOW HANDLER] Suicide: ~p killed...~n", [self()])
             end;
         
         {backup_clock} ->
-            NewCommittedMap = 
-                do_backup(maps:get(show_id, StaticInfo), CommittedBookings, WaitingBookings, AvailableSeats, false),
+            NewCommittedMap = do_backup(
+                maps:get(show_id, StaticInfo), CommittedBookings, WaitingBookings, AvailableSeats, false
+            ),
+            ?J_LISTENER ! construct_message_for_listener(
+                StaticInfo, AvailableSeats, false, NewCommittedMap, #{}
+            ),
             erlang:send_after(?BACKUP_PERIOD, self(), {backup_clock}),
             show_loop(StaticInfo, AvailableSeats, NewCommittedMap, maps:new());
         
@@ -175,8 +185,8 @@ construct_msg_for_customer(ResponseCode, Username, StaticInfo, AvailableSeats, C
         UncommittedValue -> {self(), {ResponseCode, lists:append(MessageList, [[{Username, UncommittedValue}]])}}
     end.
 
-% message for others
-construct_message(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingMap) ->
+% message for cinemas
+construct_message_for_cinema(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingMap) ->
     {
         self(),
         {
@@ -195,6 +205,26 @@ construct_message(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingM
                 maps:to_list(WaitingBookingMap)
             ]
         }
+    }.
+
+% message for listener
+construct_message_for_listener(StaticInfo, AvailableSeats, IsEnded, CommittedBookings, WaitingBookingMap) ->
+    {
+        self(),
+        update_show_state,
+        [
+            maps:get(show_id, StaticInfo),
+            maps:get(show_name, StaticInfo),
+            maps:get(show_date, StaticInfo),
+            maps:get(cinema_id, StaticInfo), 
+            maps:get(cinema_name, StaticInfo), 
+            maps:get(cinema_location, StaticInfo),
+            maps:get(max_seats, StaticInfo),
+            AvailableSeats,
+            IsEnded,
+            maps:to_list(CommittedBookings),
+            maps:to_list(WaitingBookingMap)
+        ]
     }.
 
 %%% BACKUP UTILITIES

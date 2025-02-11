@@ -96,7 +96,9 @@ server_loop() ->
         maps:get("cinema_id", ShowMap),
         maps:get("max_seats", ShowMap)
       ),
-      ClientPid ! {self(), Ret};
+      ClientPid ! {self(), Ret},
+      AvailableShowsListResult = get_list_of_shows(false),
+      ?J_LISTENER ! {self(), available_shows_list, AvailableShowsListResult};
 
     {ClientPid, get_show_pid, ShowId} ->
       io:format("[MAIN SERVER] Received a get_show_pid message~n"),
@@ -106,7 +108,13 @@ server_loop() ->
     %% Messages from show monitor and handlers
     {show_backup, ShowId, UpdateMap, AvailableSeats, EndOfLife} ->
       io:format("[MAIN SERVER] Received a show_backup message~n"),
-      _Ret = do_show_backup(ShowId, UpdateMap, AvailableSeats, EndOfLife);
+      _Ret = do_show_backup(ShowId, UpdateMap, AvailableSeats, EndOfLife),
+      case EndOfLife of
+        false -> do_nothing;
+        true -> 
+          AvailableShowsListResult = get_list_of_shows(false),
+          ?J_LISTENER ! {self(), available_shows_list, AvailableShowsListResult}
+      end;
 
     {respawned_handler, ShowId, PidHandler} ->
       io:format("[MAIN SERVER] Received a respawned_handler message~n"),
