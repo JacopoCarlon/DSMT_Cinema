@@ -38,9 +38,9 @@
                     <div id="des_showDate"      > showDate : <%=this_showWithBookings.getShowDate()%></div>
                     <div id="des_cinemaName"     > cinemaName : <%=this_showWithBookings.getCinemaName()%></div>
                     <div id="des_cinemaLocation" > cinemaLocation : <%=this_showWithBookings.getCinemaLocation()%></div>
-                    <div id="maxSeats" > maxSeats : <%=this_showWithBookings.getMaxSeats()%></div>
-                    <div id="currAvailableSeats" > currAvailableSeats : <%=this_showWithBookings.getCurrAvailableSeats()%></div>
-                    <div id="isEnded" > isEnded : <%=this_showWithBookings.getIsEnded()%></div>
+                    <div id="des_maxSeats" > maxSeats : <%=this_showWithBookings.getMaxSeats()%></div>
+                    <div id="des_currAvailableSeats" > currAvailableSeats : <%=this_showWithBookings.getCurrAvailableSeats()%></div>
+                    <div id="des_isEnded" > isEnded : <%=this_showWithBookings.getIsEnded()%></div>
                 </div>
                 <div class="p-4 d-flex flex-wrap" id="changes_form_parent">
                 <%
@@ -75,6 +75,7 @@
                 <%
                     } // end if("true".equals(is_a_cinema))
                     else {
+                        // you are a Customer
                         Long your_committed_booking = this_showWithBookings.getFirstCommittedBooking();
                         Long your_waiting_booking = this_showWithBookings.getFirstWaitingBooking();
                 %>

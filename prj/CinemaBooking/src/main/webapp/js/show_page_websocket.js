@@ -13,20 +13,18 @@ function check_valid_booking(){
 
     des_maxSeats = document.querySelector('#des_maxSeats');
     des_currAvSt = document.querySelector('#des_currAvailableSeats');
-    des_prvBookN = document.querySelector('#des_num_seats');
+    // des_commBokN = document.querySelector('#des_committed_booking');
+    // des_prvBookN = document.querySelector('#des_waiting_booking');
     trg_newBookN = document.querySelector('#new_booking_number');
 
     maxSeats = parseInt(des_maxSeats.value);
     currAvSt = parseInt(des_currAvSt.value);
-    prvBookN = parseInt(des_prvBookN.value);
     newBookN = parseInt(trg_newBookN.value);
 
     if( currAvSt > maxSeats ||
-        prvBookN > maxSeats ||
-        newBookN > maxSeats ||
         maxSeats < 1 ||
         currAvSt < 0 ||
-        // prvBookN < 0 ||
+        newBookN > maxSeats ||
         newBookN < 0
     ){
         all_is_good = false;
