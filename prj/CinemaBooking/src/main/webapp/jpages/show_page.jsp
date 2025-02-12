@@ -16,7 +16,12 @@
     <%
       ShowWithBookings this_showWithBookings = (ShowWithBookings) request.getSession().getAttribute("currentSWB");
     %>
-    <body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>', '<%=request.getSession().getAttribute("is_cinema")%>' );">
+    <body onload="connect(
+                    '<%=request.getContextPath()%>',
+                    '<%=this_showWithBookings.getShowID()%>',
+                    '<%=request.getSession().getAttribute("is_cinema")%>',
+                    '<%=request.getSession().getAttribute("username")%>'
+    );">
         <jsp:include page="../includes/header.jsp" />
         <div class="container">
             <div class="d-flex d-flex justify-content-between p-3">
@@ -24,12 +29,11 @@
                 <h4 id="h4username"> UserName: <%=request.getSession().getAttribute("username")%></h4>
                 <h4 id="h4isCinema"> Is_A_Cinema: <%=request.getSession().getAttribute("is_a_cinema")%></h4>
             </div>
-            <div class="card" id="current_bookings_card">
+            <div class="card" id="current_show_card">
                 <h3 class="d-flex justify-content-center p-3">
-                    this show :
+                    <%=this_showWithBookings.getShowName()%>
                 </h3>
                 <div class="d-flex justify-content-center">
-                    <div id="des_showName"      > showName : <%=this_showWithBookings.getShowName()%></div>
                     <div id="des_showDate"      > showDate : <%=this_showWithBookings.getShowDate()%></div>
                     <div id="des_cinemaName"     > cinemaName : <%=this_showWithBookings.getCinemaName()%></div>
                     <div id="des_cinemaLocation" > cinemaLocation : <%=this_showWithBookings.getCinemaLocation()%></div>

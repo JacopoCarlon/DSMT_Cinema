@@ -1,21 +1,18 @@
 let ws;
 
-function connect(ctx) {
-    /*
+function connect(ctx, is_a_cinema, userIdentifier) {
+    let type = is_a_cinema ? "cinema" : "customer";
     let host = document.location.host;
-    const url = "ws://" +host  + ctx + "/browse_shows_endpoint";
+    const url = "ws://" + host + ctx + "/browse_shows_endpoint/" + type + "/" + userIdentifier;
     console.log("Connecting to UserPageEndpoint with url: " + url);
     ws = new WebSocket(url);
 
     ws.onmessage = function(event) {
-        //Logic to remove message
-        console.log("Arrived new booking list")
-        var showListObject = JSON.parse(event.data);
-        console.log(showListObject);
-        console.log(showListObject.showList);
-        updateShowList(ctx, showListObject.showList, auctionListObject.active);
+        console.log("Arrived new show list")
+        let showList = JSON.parse(event.data);
+        console.log(showList);
+        updateShowList(ctx, showList);
     };
-     */
 }
 
 function updateShowList(ctx, showList){
@@ -41,7 +38,7 @@ function createShowCard(ctx, show) {
     form.setAttribute("method", "post");
 
     const main_div = document.createElement("div");
-    main_div.classList.add("card-body",  "d-flex",  "flex-column", "justify-content-between", "p-3")
+    main_div.classList.add("card-body",  "d-flex",  "flex-column", "justify-content-between", "p-3");
 
     const mid_div = document.createElement("div");
 

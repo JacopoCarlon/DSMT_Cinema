@@ -1,24 +1,3 @@
-let ws;
-
-function connect(ctx, username, is_cinema) {
-    /*
-    let host = document.location.host;
-    const url = "ws://" +host  + ctx + "/show_page_endpoint/" + username ;
-    console.log("Connecting to UserPageEndpoint with url: " + url);
-    ws = new WebSocket(url);
-
-    ws.onmessage = function(event) {
-        //Logic to remove message
-        console.log("Arrived new booking list")
-        var bookingsListObject = JSON.parse(event.data);
-        console.log(bookingsListObject);
-        // idk if we will dynamically recreate the lists of bookings, we'll see
-    };
-     */
-}
-
-
-
 function check_valid_booking(){
     var all_is_good = true;
 
@@ -62,4 +41,52 @@ function check_valid_booking(){
     bid.setCustomValidity((all_is_good)? "bad choice of number buddy" : "");
     bid.reportValidity();
 
+}
+
+///////
+let ws;
+
+function connect(ctx, showID, is_a_cinema, userIdentifier) {
+    let userType = is_a_cinema ? "cinema" : "customer";
+    let host = document.location.host;
+    const url = "ws://" + host + ctx +
+        "/show_page_endpoint/" + showID + "/" +
+        userType + "/" + userIdentifier;
+    console.log("Connecting to UserPageEndpoint with url: " + url);
+    ws = new WebSocket(url);
+
+    ws.onmessage = function(event) {
+        console.log("Arrived updated show state")
+        let showState = JSON.parse(event.data);
+        console.log(showState);
+        updateShowState(ctx, is_a_cinema, userIdentifier, showState)
+    };
+}
+
+function updateShowState(ctx, is_a_cinema, userIdentifier, showState) {
+    const availableSeats = document.querySelector('#currAvailableSeats');
+    availableSeats.value = showState.currAvailableSeats;
+
+    const isEnded = document.querySelector('#isEnded');
+    isEnded.value = showState.isEnded;
+
+    const parentNode = document.querySelector('#changes_form_parent');
+    while (parentNode.firstChild) { parentNode.removeChild(parentNode.firstChild); }
+
+    parentNode.append( is_a_cinema ?
+        createElementsForCinema(showState) :
+        createElementsForCustomer(userIdentifier, showState)
+    );
+}
+
+
+function createElementsForCinema(showState) {
+    const tableTitle = document.createElement("h4");
+    tableTitle.classList.add("d-flex", "justify-content-center", "p-3");
+
+
+}
+
+function createElementsForCustomer(userIdentifier, showState) {
+    // TODO: do
 }

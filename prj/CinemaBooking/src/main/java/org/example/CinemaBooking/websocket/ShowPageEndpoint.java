@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 // todo
 
-@ServerEndpoint(value = "/show_page_endpoint/{showID}/{user_type}/{user_identifier}",
+@ServerEndpoint(value = "/show_page_endpoint/{show_id}/{user_type}/{user_identifier}",
         decoders = ShowWithBookingsDecoder.class,
         encoders = ShowWithBookingsEncoder.class)
 public class ShowPageEndpoint {
@@ -25,7 +25,7 @@ public class ShowPageEndpoint {
     @OnOpen
     public void onOpen(
             Session session,
-            @PathParam("showID") String showIdString,
+            @PathParam("show_id") String showIdString,
             @PathParam("user_type") String userType,
             @PathParam("user_identifier") String userIdentifier
     ) throws IOException, EncodeException {
@@ -52,7 +52,7 @@ public class ShowPageEndpoint {
     @OnClose
     public void onClose(
             Session session,
-            @PathParam("showID") String showIdString,
+            @PathParam("show_id") String showIdString,
             @PathParam("user_type") String userType,
             @PathParam("user_identifier") String userIdentifier
     ) throws IOException, EncodeException {

@@ -27,24 +27,29 @@ public class ErlangMessageTask implements Runnable {
     @Override
     public void run() {
         if(message instanceof OtpErlangTuple){
-            //{self(), destinationAtom, {ResultTuple}}
+            //{self(), destinationAtom, Result}
             OtpErlangAtom destination_atom = (OtpErlangAtom) ((OtpErlangTuple) message).elementAt(1);
-            OtpErlangTuple resultTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(2);
 
             if (destination_atom.equals("available_shows_list")){
                 System.out.println("[JAVA LISTENER] Refresh show list");
-                // resultTuple = {true, showList}
+                // Result = {true, showList}
+                OtpErlangTuple resultTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(2);
                 OtpErlangList resultList = (OtpErlangList) resultTuple.elementAt(1);
                 refreshBrowseShowsPage(resultList);
             }
-
+            else if (destination_atom.equals("update_show_state")){
+                System.out.println("[JAVA LISTENER] Refresh show state");
+                // Result = [show data]
+                OtpErlangList resultList = (OtpErlangList) ((OtpErlangTuple) message).elementAt(2);
+                refreshShowState(resultList);
+            }
         }
     }
 
     private void refreshBrowseShowsPage(OtpErlangList resultList) {
         WebsocketClientEndpoint clientEndpoint = null;
         try {
-            clientEndpoint = new WebsocketClientEndpoint(new URI("ws://" + base_uri + "/browse_shows_endpoint/listener"));
+            clientEndpoint = new WebsocketClientEndpoint(new URI("ws://" + base_uri + "/browse_shows_endpoint/listener/listener"));
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

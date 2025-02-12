@@ -11,7 +11,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/browse_shows_websocket.js"></script>
 </head>
-<body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>', '<%=request.getSession().getAttribute("is_cinema")%>' );">
+<body onload="connect(
+            '<%=request.getContextPath()%>',
+            '<%=request.getSession().getAttribute("is_cinema")%>',
+            '<%=request.getSession().getAttribute("username")%>'
+);">
     <jsp:include page="../includes/header.jsp" />
     <div class="container">
         <div class="d-flex d-flex justify-content-between p-3">
