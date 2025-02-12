@@ -15,9 +15,9 @@ import java.util.ArrayList;
 
 public class ErlangMessageTask implements Runnable {
     private OtpErlangObject message;
-
-    // todo : test something
-    private static final String base_uri = "localhost:8080/CinemaBooking";
+    //TODO FOR LOCAL CONF:  change with "localhost:8080/CinemaBooking"
+    //TODO FOR REMOTE CONF: change with "172.17.0.2:8080/CinemaBooking"
+    private static final String base_uri = "172.17.0.2:8080/CinemaBooking";
 
 
     public ErlangMessageTask(OtpErlangObject inputErlangMsg) {

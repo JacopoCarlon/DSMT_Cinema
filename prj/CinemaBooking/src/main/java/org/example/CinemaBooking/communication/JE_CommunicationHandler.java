@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JE_CommunicationHandler {
-    private static final String serverNode = "server@localhost";
+    //TODO FOR LOCAL:  "server@localhost"
+    //TODO FOR REMOTE: "server@172.17.0.3"
+    private static final String serverNode = "server@172.17.0.3";
     private static final String serverRegisteredPID = "main_server_endpoint";
     private static final int receiveTimeoutMS = 5000;
     private static final int receiveFetchMS = 100;

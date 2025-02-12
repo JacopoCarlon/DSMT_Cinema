@@ -7,9 +7,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
-    private static final String node_name = "listener@localhost";
+    //TODO FOR LOCAL CONF: "listener@localhost"
+    //TODO FOR REMOTE CONF: "listener@172.17.0.3"
+    private static final String node_name = "listener@172.17.0.3";
     private static final String cookie = "abcde";
-    private static final String mailbox = "E_mailbox";
+    private static final String mailbox = "mbox";
     private static final int THREAD_POOL_SIZE = 5;
 
     public static void main(String[] args) throws IOException, OtpErlangDecodeException, OtpErlangExit {
