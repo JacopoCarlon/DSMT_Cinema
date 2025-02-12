@@ -14,7 +14,7 @@ function check_valid_booking(){
     des_maxSeats = document.querySelector('#des_maxSeats');
     des_currAvSt = document.querySelector('#des_currAvailableSeats');
     des_prvBookN = document.querySelector('#des_num_seats');
-    trg_newBookN = document.querySelector('new_booking_number');
+    trg_newBookN = document.querySelector('#new_booking_number');
 
     maxSeats = parseInt(des_maxSeats.value);
     currAvSt = parseInt(des_currAvSt.value);
@@ -38,8 +38,8 @@ function check_valid_booking(){
         As long as the error message is not empty, the form will not pass validation and will not be submitted.
     */
 
-    bid.setCustomValidity((all_is_good)? "bad choice of number buddy" : "");
-    bid.reportValidity();
+    trg_newBookN.setCustomValidity((all_is_good)? "bad choice of number buddy" : "");
+    trg_newBookN.reportValidity();
 
 }
 

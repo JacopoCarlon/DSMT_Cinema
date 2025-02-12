@@ -92,9 +92,10 @@
                                     class="form-control"
                                     name="new_booking_number"
                                     id="new_booking_number"
+                                    aria-describedby="new_booking_number"
+                                    placeholder="0"
                                     min="0"
                                     max="144000000"
-                                    aria-describedby="bid"
                                     required>
                             </div>
                             <div>
