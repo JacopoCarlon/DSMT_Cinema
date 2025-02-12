@@ -93,7 +93,7 @@ public class ShowPageEndpoint {
             Collection<UserEndpointTuple> userEndpointsSet = clientEndpointsOfShow.get(showID);
 
             for (UserEndpointTuple userEndpointTuple : userEndpointsSet) {
-                System.out.println("[Show " + showID + "] " + userEndpointTuple.getUserType() + ": " + userEndpointTuple.getUserID());
+                System.out.println("\t[Show " + showID + "] " + userEndpointTuple.getUserType() + ": " + userEndpointTuple.getUserID());
             }
         }
     }

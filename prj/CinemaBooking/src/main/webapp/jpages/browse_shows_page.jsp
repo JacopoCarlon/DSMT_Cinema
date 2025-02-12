@@ -18,12 +18,6 @@
 );">
     <jsp:include page="../includes/header.jsp" />
     <div class="container">
-        <div class="d-flex d-flex justify-content-between p-3">
-            <a href="<%=request.getContextPath()%>/LoginServlet" class="btn btn-danger">Logout</a>
-            <h4 id="h4username"> Username: <%=request.getSession().getAttribute("username")%></h4>
-            <h4 id="h4isCinema"> Is_A_Cinema: <%=request.getSession().getAttribute("is_a_cinema")%></h4>
-        </div>
-
         <div class="card" id="list_of_shows_card">
             <h3 class="d-flex justify-content-center p-3">
                 List of Shows

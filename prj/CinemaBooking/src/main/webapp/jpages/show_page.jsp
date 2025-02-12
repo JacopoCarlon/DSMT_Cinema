@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="org.example.CinemaBooking.dto.ShowWithBookings" %>
 <%@ page import="org.example.CinemaBooking.dto.CustomerBooking" %>
+<%@ page import="com.google.gson.Gson" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
@@ -42,7 +43,6 @@
                     <div id="isEnded" > isEnded : <%=this_showWithBookings.getIsEnded()%></div>
                 </div>
                 <div class="p-4 d-flex flex-wrap" id="changes_form_parent">
-
                 <%
                     String is_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
 
@@ -50,8 +50,6 @@
                         List<ShowWithBookings.Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
 
                 %>
-                    <h4 class="d-flex justify-content-center p-3" id="comBookings">Triplet listings : </h4>
-
                     <table>
                         <thead>
                             <tr>
