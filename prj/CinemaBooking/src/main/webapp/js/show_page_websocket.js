@@ -80,6 +80,42 @@ function updateShowState(ctx, is_a_cinema, userIdentifier, showState) {
 }
 
 
+
+// execute full outer join (modified) on two lists A and B of type <Key, value>
+// where it is possible to match KeyA with KeyB
+function fullOuterJoin(A, B) {
+    const merged = new Map(); // Key: string -> { Key, valueA, valueB }
+
+    // Process list A
+    for (const item of A) {
+        merged.set(item.Key, {
+            Key: item.Key,
+            valueA: item.value,
+            valueB: item.value // now set to ValueA, if exists in listB, will be updated
+        });
+    }
+
+    // Process list B
+    for (const item of B) {
+        if (merged.has(item.Key)) {
+            // If the key exists in listB, update valueB
+            merged.get(item.Key).valueB = item.value;
+        } else {
+            // If the key doesn't exist in listB, add it with valueA = 0
+            merged.set(item.Key, {
+                Key: item.Key,
+                valueA: 0,
+                valueB: item.value
+            });
+        }
+    }
+    return merged;
+}
+
+
+
+
+
 function createElementsForCinema(showState) {
     const tableTitle = document.createElement("h4");
     tableTitle.classList.add("d-flex", "justify-content-center", "p-3");
