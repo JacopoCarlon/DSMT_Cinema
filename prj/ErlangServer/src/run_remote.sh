@@ -1,1 +1,1 @@
-echo "my_supervisor:start_link()." | nohup erl -name 'server@172.17.0.3' -setcookie "abcde" &
+echo "main_supervisor:start_link()." | nohup erl -name 'server@172.17.0.3' -setcookie "abcde" &
