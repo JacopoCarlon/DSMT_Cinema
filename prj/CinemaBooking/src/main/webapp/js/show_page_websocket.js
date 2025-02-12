@@ -80,6 +80,33 @@ function updateShowState(ctx, is_a_cinema, userIdentifier, showState) {
 }
 
 
+/*
+example of expected input :
+const A = [
+    { Key: "user1", value: 10 },
+    { Key: "user2", value: 20 },
+    { Key: "user3", value: 30 },
+    { Key: "user4", value: 3000 }
+];
+
+const B = [
+    { Key: "user2", value: 200 },
+    { Key: "user3", value: 300 },
+    { Key: "user5", value: 4000 }
+];
+
+ouotput :
+const result = fullOuterJoin(A, B);
+console.log(result);
+
+Map(5) {
+  'user1' => { Key: 'user1', valueA: 10, valueB: 10 },
+  'user2' => { Key: 'user2', valueA: 20, valueB: 200 },
+  'user3' => { Key: 'user3', valueA: 30, valueB: 300 },
+  'user4' => { Key: 'user4', valueA: 3000, valueB: 3000 },
+  'user5' => { Key: 'user5', valueA: 0, valueB: 4000 }
+}
+*/
 
 // execute full outer join (modified) on two lists A and B of type <Key, value>
 // where it is possible to match KeyA with KeyB
