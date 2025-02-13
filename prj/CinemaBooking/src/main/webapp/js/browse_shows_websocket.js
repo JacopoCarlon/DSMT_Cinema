@@ -9,9 +9,10 @@ function connect(ctx, is_a_cinema, userIdentifier) {
 
     ws.onmessage = function(event) {
         console.log("Arrived new show list")
-        let showList = JSON.parse(event.data);
-        console.log(showList);
-        updateShowList(ctx, showList);
+        let showListObject = JSON.parse(event.data);
+        console.log(showListObject);
+        console.log(showListObject.showsList);
+        updateShowList(ctx, showListObject.showsList);
     };
 }
 
@@ -20,14 +21,12 @@ function updateShowList(ctx, showList){
 
     while (parentNode.firstChild) { parentNode.removeChild(parentNode.firstChild); }
 
-    showList.forEach(
-        show => {
+    showList.forEach(show=> {
             console.log("Single show: ");
             console.log(show)
             const form = createShowCard(ctx, show);
             parentNode.append(form)
-        }
-    )
+    });
 }
 
 
