@@ -60,16 +60,8 @@ public class UserPageServlet extends HttpServlet{
         // arrive here by pressing on a show from userPage -> want to see the show page
         System.out.println("doPost UserPageServlet");
 
-        // String username = request.getParameter("username");
         Long showID = Long.parseLong( request.getParameter("showID") );
-        /*
-        String showName = request.getParameter("showName");
-        String cinemaName = request.getParameter("cinemaName");
-        String showDate = request.getParameter("showDate");
-        long num_seats = Long.parseLong( request.getParameter("num_seats") ) ;
-        String session_is_this_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
-        String session_name = (String) request.getSession().getAttribute("username");
-        */
+
         request.getSession().removeAttribute("getShowID");
         request.getSession().setAttribute("getShowID", showID);
 

@@ -54,14 +54,10 @@ public class CreateShowServlet extends HttpServlet{
 
         Long cinemaID = (Long) request.getSession().getAttribute("username");
 
-        // # __showID will be given by server
-        // # __showName
         String showName = request.getParameter("showName");
-        // # __maxSeats
         // // <input type="datetime-local" id="showDate" name="showDate" value="2025-11-11T11:11" min="2025-01-01T00:01" max="2150-12-31T11:59" required/>
         // -> date string format is : "yyyy-mm-ddThh:mm" .
         String showDate = request.getParameter("showDate");
-        // # __maxSeats
         long maxSeats = Long.parseLong( request.getParameter("maxSeats") ) ;
 
         Show newShow = new Show(showName, showDate, cinemaID, maxSeats);

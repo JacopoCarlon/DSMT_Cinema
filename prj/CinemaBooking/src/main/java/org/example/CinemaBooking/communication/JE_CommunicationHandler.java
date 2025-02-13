@@ -67,14 +67,13 @@ public class JE_CommunicationHandler {
     }
 
     /*
-    // TODO: valutare se tenere o no
     // deleteShowFromCinema(cinemaID, showID) -> booleanResult, erroMsg
     public boolean deleteShowFromCinema(HttpSession session, String cinemaID , String showID ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform deleteShowFromCinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("deleteShowFromCinema"), new OtpErlangString(cinemaID) , new OtpErlangString(showID) );
         return receiveRequestResult(session);
     }
-     */
+    */
 
     // createNewShowForCinema(cinemaID, showName, showDate, maxSeats,) -> {false} / {true, newShowID}
     public Long createNewShowForCinema(HttpSession session, Show trg_show) throws OtpErlangDecodeException, OtpErlangExit {
@@ -126,31 +125,6 @@ public class JE_CommunicationHandler {
 
     // -----------------------------------------------------------------------------------------------
     // SHOW PAGE --------------------------------------------------------------------------------------- :
-/*
-    // get_show_data(showID, userName) -> showID, show_name, timestamp, num_occupati, num_massimo, posti_bookati_da_utente
-    public Booking get_customer_show_booking_data(HttpSession session, Show trg_show, Customer trg_customer) throws OtpErlangDecodeException, OtpErlangExit {
-        System.out.println("Trying to perform get_booking_by_Customer");
-        // TODO: change Pid
-        send(session, serverRegisteredPID, new OtpErlangAtom("createUpdateBookingByCustomer"), trg_show.showIDtoOtpErlangMap(), trg_customer.customerNameToOtpErlangMap() );
-        List<Booking> bookings_user_showID =  receiveBookingsListOfCustomer(session);
-        if( bookings_user_showID.size() == 1 ){
-            return bookings_user_showID.get(0);
-        }
-        if ( bookings_user_showID.isEmpty() ){
-            return null;
-        }
-        return null;
-    }
-*/
-
-    // getShowPidFromBooking
-    /* TODO: better remove this
-    public OtpErlangPid getShowPidFromBooking(HttpSession session, ShowExpanded trg_booking) throws OtpErlangDecodeException, OtpErlangExit {
-        System.out.println("Trying to get show pid");
-        send(session, serverRegisteredPID, new OtpErlangAtom("getShowPidFromBooking"), new OtpErlangLong(trg_booking.getShowID()));
-        return receiveShowPid(session);
-    }
-     */
 
     public OtpErlangPid getShowPidFromId(HttpSession session, Long showId) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to get show pid");

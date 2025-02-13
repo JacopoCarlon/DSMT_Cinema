@@ -55,14 +55,7 @@ public class CinemaPageServlet extends HttpServlet  {
 
         // String username = request.getParameter("username");
         Long showID = Long.parseLong( request.getParameter("showID") );
-        /*
-        String showName = request.getParameter("showName");
-        String cinemaName = request.getParameter("cinemaName");
-        String showDate = request.getParameter("showDate");
-        long num_seats = Long.parseLong( request.getParameter("num_seats") ) ;
-        String session_is_this_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
-        String session_name = (String) request.getSession().getAttribute("username");
-        */
+
         request.getSession().removeAttribute("getShowID");
         request.getSession().setAttribute("getShowID", showID);
 
