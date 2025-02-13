@@ -14,6 +14,7 @@
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <failOnMissingWebXml>false</failOnMissingWebXml>
+        <jakartaee>9.0.0-RC3</jakartaee>
     </properties>
     
     <dependencies>
@@ -35,14 +36,29 @@
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>websocket-jakarta-server</artifactId>
-            <version>12.0.6</version>
+            <version>11.0.24</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>12.0.6</version>
+            <version>11.0.24</version>
         </dependency>
         -->
+
+        <!--
+            from here : https://blogs.oracle.com/javamagazine/post/how-to-build-applications-with-the-websocket-api-for-java-ee-and-jakarta-ee
+        -->
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.tyrus.bundles</groupId>
+            <artifactId>tyrus-standalone-client</artifactId>
+            <version>2.0.0-M3</version>
+        </dependency>
+
 
         <!-- Existing dependencies -->
         <dependency>
