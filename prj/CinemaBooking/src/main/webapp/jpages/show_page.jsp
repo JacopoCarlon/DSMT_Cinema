@@ -110,6 +110,16 @@
                             <div>
                                 <button type="submit" class="btn btn-primary mx-2 px-4"> Set this as new booking </button>
                             </div>
+                            <%
+                                String newBookingRequestStatus = (String) request.getSession().getAttribute("bookingUpdateStatus");
+                                if(newBookingRequestStatus != null && newBookingRequestStatus.equals("error")) {
+                            %>
+                            <div id="bookingRequestAlert" class="alert alert-danger" role="alert">
+                                Something went wrong. Retry later.
+                            </div>
+                            <%
+                                }
+                            %>
                         </div>
                     </form>
                 <%
