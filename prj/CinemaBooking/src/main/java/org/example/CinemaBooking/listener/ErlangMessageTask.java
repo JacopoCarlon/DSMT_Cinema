@@ -30,14 +30,14 @@ public class ErlangMessageTask implements Runnable {
             //{self(), destinationAtom, Result}
             OtpErlangAtom destination_atom = (OtpErlangAtom) ((OtpErlangTuple) message).elementAt(1);
 
-            if (destination_atom.equals("available_shows_list")){
+            if (destination_atom.atomValue().equals("available_shows_list")){
                 System.out.println("[JAVA LISTENER] Refresh show list");
                 // Result = {true, showList}
                 OtpErlangTuple resultTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(2);
                 OtpErlangList resultList = (OtpErlangList) resultTuple.elementAt(1);
                 refreshBrowseShowsPage(resultList);
             }
-            else if (destination_atom.equals("update_show_state")){
+            else if (destination_atom.atomValue().equals("update_show_state")){
                 System.out.println("[JAVA LISTENER] Refresh show state");
                 // Result = [show data]
                 OtpErlangList resultList = (OtpErlangList) ((OtpErlangTuple) message).elementAt(2);

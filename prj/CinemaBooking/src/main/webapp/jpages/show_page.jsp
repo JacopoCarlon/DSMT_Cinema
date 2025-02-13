@@ -47,8 +47,8 @@
                     String is_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
 
                     if("true".equals(is_a_cinema)){
+                        // you are a cinema
                         List<ShowWithBookings.Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
-
                 %>
                     <table>
                         <thead>
@@ -80,8 +80,10 @@
                         Long your_waiting_booking = this_showWithBookings.getFirstWaitingBooking();
                 %>
                     <div class="d-flex justify-content-center">
+                        <br>
                         <div id="des_committed_booking"        > Committed Bookings: <%=your_committed_booking%></div>
                         <% if (your_waiting_booking != null) {%>
+                            <br>
                             <div id="des_waiting_booking"      > New value waiting to be committed: <%=your_waiting_booking%></div>
                         <% } %>
                     </div>
