@@ -35,7 +35,6 @@ public class JE_CommunicationHandler {
     }
 
     // registerNewCinema ( cinemaName, cinemaPassword, address ) -> {false} / {true, newCinemaID}
-    // TODO: change return value
     public Long registerNewCinema(HttpSession session, String cinemaName, String cinemaPwd, String cinemaAddress ) throws OtpErlangDecodeException, OtpErlangExit {
         System.out.println("Trying to perform registerNewCinema");
         send(session, serverRegisteredPID, new OtpErlangAtom("register_cinema"), new OtpErlangString(cinemaName), new OtpErlangString(cinemaPwd), new OtpErlangString(cinemaAddress) );

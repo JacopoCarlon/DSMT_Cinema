@@ -12,10 +12,9 @@ public class ShowWithBookingsDecoder implements Decoder.Text<ShowWithBookings> {
     @Override
     public ShowWithBookings decode(String s) throws DecodeException {
         System.out.println("[BookingListDecoder] Received: " + s);
+        // choice was : < showExpanded or ShowWithBookings > in the ShowPage
         ShowWithBookings SWBList = gson.fromJson(s, ShowWithBookings.class);
-        // todo : decide if we want to use showExpanded or ShowWithBookings in the ShowPage !!!
-        // for(ShowExpanded t_swb: SWBList.getShowsList())
-        //     System.out.println(t_swb.toString());
+        // for(ShowExpanded t_swb: SWBList.getShowsList()){ System.out.println(t_swb.toString()); }
         return SWBList;
     }
 
