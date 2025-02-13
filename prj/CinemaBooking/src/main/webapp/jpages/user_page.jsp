@@ -15,7 +15,6 @@
         <jsp:include page="../includes/header.jsp" />
         <div class="container">
             <div class="d-flex d-flex justify-content-between p-3">
-                <a href="<%=request.getContextPath()%>/LoginServlet" class="btn btn-danger">Logout</a>
                 <h4 id="h4username"> UserName: <%=request.getSession().getAttribute("username")%></h4>
                 <h4 id="h4isCinema"> Is_A_Cinema: <%=request.getSession().getAttribute("is_a_cinema")%></h4>
             </div>

@@ -18,14 +18,31 @@
         <div class="container">
             <div class="d-flex d-flex justify-content-between p-3">
 
-                <a href="<%=request.getContextPath()%>/LoginServlet" class="btn btn-danger">Logout</a>
                 <%
                 Object cinemaObj = request.getAttribute("cinemaInfo");
                 if (cinemaObj instanceof Cinema) {
                     Cinema cinema = (Cinema) cinemaObj;
                 %>
-
+                    <%
+                        long reqID = cinema.getCinemaID();
+                        boolean isCinema = request.getSession().getAttribute("username").equals("true");
+                    %>
+                        <br>
+                        <h4 id="h4isCinema"> Is a cinema : <%=isCinema%></h4>
+                    <%
+                        if ( isCinema ){
+                            long sesID = (Long) request.getSession().getAttribute("username");
+                            if( sesID == reqID) {
+                        %>
+                            <br>
+                            <h4 id="h4cinemaID"> Cinema ID: <%= sesID %></h4>
+                        <%
+                            }
+                        }
+                        %>
+                    <br>
                     <h4 id="cinemaName"> Cinema Name: <%=cinema.getCinemaName()%></h4>
+                    <br>
                     <h4 id="cinemaLocation"> Address: <%=cinema.getCinemaLocation()%></h4>
                     <%
                     if (
@@ -36,8 +53,6 @@
                         <a href="<%=request.getContextPath()%>/CreateShowServlet" class="btn btn-primary">CreateShow for this Cinema !</a>
                     <%
                     }
-                    %>
-                <%
                 } // end if (cinemaObj instanceof Cinema)
                 else {
                 %>

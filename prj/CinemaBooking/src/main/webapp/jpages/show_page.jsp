@@ -26,7 +26,6 @@
         <jsp:include page="../includes/header.jsp" />
         <div class="container">
             <div class="d-flex d-flex justify-content-between p-3">
-                <a href="<%=request.getContextPath()%>/LoginServlet" class="btn btn-danger">Logout</a>
                 <h4 id="h4username"> UserName: <%=request.getSession().getAttribute("username")%></h4>
                 <h4 id="h4isCinema"> Is_A_Cinema: <%=request.getSession().getAttribute("is_a_cinema")%></h4>
             </div>
@@ -35,12 +34,19 @@
                     <%=this_showWithBookings.getShowName()%>
                 </h3>
                 <div class="d-flex justify-content-center">
-                    <div id="des_showDate"      > showDate : <%=this_showWithBookings.getShowDate()%></div>
-                    <div id="des_cinemaName"     > cinemaName : <%=this_showWithBookings.getCinemaName()%></div>
+                    <br>
+                    <div id="des_showDate" > showDate : <%=this_showWithBookings.getShowDate()%></div>
+                    <br>
+                    <div id="des_cinemaName"  > cinemaName : <%=this_showWithBookings.getCinemaName()%></div>
+                    <br>
                     <div id="des_cinemaLocation" > cinemaLocation : <%=this_showWithBookings.getCinemaLocation()%></div>
+                    <br>
                     <div id="des_maxSeats" > maxSeats : <%=this_showWithBookings.getMaxSeats()%></div>
+                    <br>
                     <div id="des_currAvailableSeats" > currAvailableSeats : <%=this_showWithBookings.getCurrAvailableSeats()%></div>
+                    <br>
                     <div id="des_isEnded" > isEnded : <%=this_showWithBookings.getIsEnded()%></div>
+                    <br>
                 </div>
                 <div class="p-4 d-flex flex-wrap" id="changes_form_parent">
                 <%
