@@ -10,8 +10,8 @@ import java.util.List;
 
 public class JE_CommunicationHandler {
     //TODO FOR LOCAL:  "server@localhost"
-    //TODO FOR REMOTE: "server@172.17.0.3"
-    private static final String serverNode = "server@172.17.0.3";
+    //TODO FOR REMOTE: "server@10.2.1.41"
+    private static final String serverNode = "server@10.2.1.41";
     private static final String serverRegisteredPID = "main_server_endpoint";
     private static final int receiveTimeoutMS = 5000;
     private static final int receiveFetchMS = 100;

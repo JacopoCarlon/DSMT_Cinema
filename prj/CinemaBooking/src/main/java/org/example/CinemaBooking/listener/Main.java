@@ -8,8 +8,8 @@ import java.util.concurrent.Executors;
 
 public class Main {
     //TODO FOR LOCAL CONF: "listener@localhost"
-    //TODO FOR REMOTE CONF: "listener@172.17.0.3"
-    private static final String node_name = "listener@172.17.0.3";
+    //TODO FOR REMOTE CONF: "listener@10.2.1.41"
+    private static final String node_name = "listener@10.2.1.41";
     private static final String cookie = "abcde";
     private static final String mailbox = "mbox";
     private static final int THREAD_POOL_SIZE = 5;
