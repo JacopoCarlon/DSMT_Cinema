@@ -1,2 +1,5 @@
 .vscode
+
+# Ignore data inside .idea folder
 .idea/workspace.xml
+.idea/vcs.xml
