@@ -110,9 +110,13 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
             NewCommittedMap = do_backup(
                 maps:get(show_id, StaticInfo), CommittedBookings, WaitingBookings, AvailableSeats, false
             ),
-            ?J_LISTENER ! construct_message_for_listener(
-                StaticInfo, AvailableSeats, false, NewCommittedMap, #{}
-            ),
+            case NewCommittedMap /= CommittedBookings of
+                true ->
+                    ?J_LISTENER ! construct_message_for_listener(
+                        StaticInfo, AvailableSeats, false, NewCommittedMap, #{}
+                    );
+                false -> do_nothing
+            end,
             erlang:send_after(?BACKUP_PERIOD, self(), {backup_clock}),
             show_loop(StaticInfo, AvailableSeats, NewCommittedMap, maps:new());
         
