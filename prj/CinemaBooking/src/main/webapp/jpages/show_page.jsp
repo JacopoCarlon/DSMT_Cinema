@@ -55,7 +55,7 @@
                     //todo : from showPage to cinemaPage ..?
 
                     if("true".equals(is_a_cinema)){
-                        // you are a cinema
+                        // page requested from a Cinema
                         List<ShowWithBookings.Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
                 %>
                     <table>
@@ -83,7 +83,7 @@
                 <%
                     } // end if("true".equals(is_a_cinema))
                     else {
-                        // you are a Customer
+                        // page requested from a Customer
                         Long your_committed_booking = this_showWithBookings.getFirstCommittedBooking();
                         Long your_waiting_booking = this_showWithBookings.getFirstWaitingBooking();
                 %>
@@ -116,9 +116,9 @@
                                 String newBookingRequestStatus = (String) request.getSession().getAttribute("bookingUpdateStatus");
                                 if(newBookingRequestStatus != null && newBookingRequestStatus.equals("error")) {
                             %>
-                            <div id="bookingRequestAlert" class="alert alert-danger" role="alert">
-                                Something went wrong. Retry later.
-                            </div>
+                                    <div id="bookingRequestAlert" class="alert alert-danger" role="alert">
+                                        Something went wrong. Retry later.
+                                    </div>
                             <%
                                 }
                             %>
