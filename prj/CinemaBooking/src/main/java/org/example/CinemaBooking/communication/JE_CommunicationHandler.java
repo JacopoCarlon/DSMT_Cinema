@@ -239,7 +239,7 @@ public class JE_CommunicationHandler {
     }
 
 
-    // todo
+
     public OtpErlangPid receiveShowPid(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangAtom status;
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
@@ -255,7 +255,7 @@ public class JE_CommunicationHandler {
         return null;
     }
 
-    // todo
+
     public Long receiveNumericID(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangAtom status;
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);

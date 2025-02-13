@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 
-// todo
 
 @ServerEndpoint(value = "/show_page_endpoint/{show_id}/{user_type}/{user_identifier}",
         decoders = ShowWithBookingsDecoder.class,
@@ -63,9 +62,11 @@ public class ShowPageEndpoint {
         printEndpointStatus();
     }
 
+
     @OnError
     public void onError(Session session, Throwable throwable) {
         // Do error handling here
+        System.err.println("WebSocket error: " + throwable.getMessage());
     }
 
 

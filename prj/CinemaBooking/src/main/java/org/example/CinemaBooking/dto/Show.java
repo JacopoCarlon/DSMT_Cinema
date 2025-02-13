@@ -117,7 +117,7 @@ public class Show {
                 ", isEnded: " + isEnded.toString() + "}\n";
     }
 
-    // todo
+
     public OtpErlangMap toOtpErlangMap(){
         // Map only necessary info
         return new OtpErlangMap(
@@ -143,7 +143,7 @@ public class Show {
         );
     }
 
-    // todo
+
     public static Show decodeFromErlangList(OtpErlangList list){
         long    showID   = ((OtpErlangLong) list.elementAt(0)).longValue();
         String  showName = ((OtpErlangString) list.elementAt(1)).stringValue();
