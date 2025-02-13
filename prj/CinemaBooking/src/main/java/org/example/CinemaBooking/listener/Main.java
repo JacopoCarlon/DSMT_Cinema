@@ -26,17 +26,20 @@ public class Main {
             // exchange messages with erlang :
             // https://www.erlang.org/docs/27/apps/jinterface/assets/java/com/ericsson/otp/erlang/otpmbox
             OtpMbox otpMbox = otpNode.createMbox(mailbox);
+            final OtpNode finalOtpNode = otpNode;
 
-
-            /*
+            // Add a shutdown hook to clean up resources
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                System.out.println("Begin application shutdown.");
                 thPool.shutdown();
-                if (otpNode != null) {
-                    otpNode.close();
+                try {
+                    finalOtpNode.close();
+                } catch (Exception e) {
+                    System.err.println("Error closing OtpNode: " + e.getMessage());
                 }
                 System.out.println("Application shutdown complete.");
             }));
-            */
+
 
             while (true) {
                 try {
