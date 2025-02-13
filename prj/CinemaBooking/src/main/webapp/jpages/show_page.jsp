@@ -52,6 +52,8 @@
                 <%
                     String is_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
 
+                    //todo : from showPage to cinemaPage ..?
+
                     if("true".equals(is_a_cinema)){
                         // you are a cinema
                         List<ShowWithBookings.Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
