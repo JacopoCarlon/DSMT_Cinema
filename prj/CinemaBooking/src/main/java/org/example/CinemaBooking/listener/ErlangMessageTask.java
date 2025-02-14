@@ -43,6 +43,10 @@ public class ErlangMessageTask implements Runnable {
                 OtpErlangList resultList = (OtpErlangList) ((OtpErlangTuple) message).elementAt(2);
                 refreshShowState(resultList);
             }
+            else {
+                System.out.println("[JAVA LISTENER] weird message : " + destination_atom.atomValue() + " . ");
+                return;
+            }
         }
     }
 
