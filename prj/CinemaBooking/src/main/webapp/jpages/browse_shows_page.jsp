@@ -13,7 +13,7 @@
 </head>
 <body onload="connect(
             '<%=request.getContextPath()%>',
-            '<%=request.getSession().getAttribute("is_cinema")%>',
+            <%=request.getSession().getAttribute("is_a_cinema")%>,
             '<%=request.getSession().getAttribute("username")%>'
 );">
     <jsp:include page="../includes/header.jsp" />

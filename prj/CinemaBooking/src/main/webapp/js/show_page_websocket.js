@@ -1,30 +1,21 @@
 function check_valid_booking(){
-    var all_is_good = true;
+    const des_maxSeats = document.querySelector('#des_maxSeats');
+    const des_currAvSt = document.querySelector('#des_currAvailableSeats');
+    const des_waiting_booking = document.querySelector('#des_waiting_booking');
+    const trg_newBookN = document.querySelector('#new_booking_number');
 
-    des_testUN0 = document.querySelector('#des_testUN0');
-    des_testUN1 = document.querySelector('#des_testUN1');
+    const maxSeats = parseInt(des_maxSeats.innerHTML);
+    const currAvSt = parseInt(des_currAvSt.innerHTML);
+    const oldBookN = parseInt(des_waiting_booking.innerHTML);
+    const newBookN = parseInt(trg_newBookN.value);
 
-    testUN0 = des_testUN0.value;
-    testUN1 = des_testUN1.value;
-    if(testUN0 != testUN1){
-        all_is_good = false;
-        alert("mmmmm sus transaction (you are not you)");
-    }
+    const offset = newBookN - oldBookN;
 
-    des_maxSeats = document.querySelector('#des_maxSeats');
-    des_currAvSt = document.querySelector('#des_currAvailableSeats');
-    // des_commBokN = document.querySelector('#des_committed_booking');
-    // des_prvBookN = document.querySelector('#des_waiting_booking');
-    trg_newBookN = document.querySelector('#new_booking_number');
-
-    maxSeats = parseInt(des_maxSeats.value);
-    currAvSt = parseInt(des_currAvSt.value);
-    newBookN = parseInt(trg_newBookN.value);
-
+    let all_is_good = true;
     if( currAvSt > maxSeats ||
         maxSeats < 1 ||
         currAvSt < 0 ||
-        newBookN > maxSeats ||
+        offset > currAvSt ||
         newBookN < 0
     ){
         all_is_good = false;
@@ -35,10 +26,8 @@ function check_valid_booking(){
     /* It's vital to set the message to an empty string if there are no errors.
         As long as the error message is not empty, the form will not pass validation and will not be submitted.
     */
-
-    trg_newBookN.setCustomValidity((all_is_good)? "bad choice of number buddy" : "");
+    trg_newBookN.setCustomValidity((!all_is_good)? "bad choice of number buddy" : "");
     trg_newBookN.reportValidity();
-
 }
 
 ///////
@@ -70,6 +59,8 @@ function updateShowState(ctx, is_a_cinema, showState) {
     title.classList.add("d-flex", "justify-content-center", "p-3");
     title.innerHTML = showState.showName;
 
+    const br = document.createElement("br");
+
     const info_div = document.createElement("div");
     info_div.classList.add("d-flex", "justify-content-center");
 
@@ -85,14 +76,17 @@ function updateShowState(ctx, is_a_cinema, showState) {
     const cinemaLocation = document.createElement("div");
     cinemaLocation.innerHTML = showState.cinemaLocation;
 
-    const availableSeats = document.createElement("div");
-    availableSeats.innerHTML = "Available Seats: " + showState.currAvailableSeats + "/" + showState.maxSeats;
+    const seatsDiv = document.createElement("div");
+    const availableSpan = "<span id=id=\"des_currAvailableSeats\">" + showState.currAvailableSeats + "</span>";
+    const maxSpan = "<span id=id=\"des_maxSeats\">" + showState.maxSeats + "</span>";
+    seatsDiv.innerHTML = "Available Seats: " + availableSpan + "/" + maxSpan;
 
     const bookingDetails = (is_a_cinema) ?
         createElementsForCinema(showState):
-        createElementsForCustomer(showState);
+        createElementsForCustomer(ctx, showState);
 
-    showCard.append(title, showDate, cinemaName, cinemaLocation, availableSeats)
+    info_div.append(br, showDate, br, cinemaName, br, cinemaLocation, br, seatsDiv, br)
+    showCard.append(title, info_div, bookingDetails)
 }
 
 // Create table of bookings
@@ -138,29 +132,35 @@ function createElementsForCinema(showState) {
     return parentNode;
 }
 
-function createElementsForCustomer(showState) {
+function createElementsForCustomer(ctx, showState) {
     const parentNode = document.createElement("div");
     parentNode.classList.add("p-4", "d-flex", "flex-wrap");
 
     const first_div = document.createElement("div")
     first_div.classList.add("d-flex","justify-content-center");
+    first_div.append(document.createElement("br"));
 
     // committed bookings
     const committed_div =  document.createElement("div");
+    let committed_value = 0;
     if (showState.committedBookingsList != null && showState.committedBookingsList > 0) {
-        committed_div.innerHTML = "Committed Bookings: " + showState.committedBookingsList.bookedSeats.toString();
+        committed_value = showState.committedBookingsList[0].bookedSeats;
     }
-    else {
-        committed_div.innerHTML = "0";
-    }
-    first_div.append(committed_div)
+    committed_div.innerHTML = "Committed Bookings: <span id=\"des_committed_booking\">" + committed_value + "</span>";
+    first_div.append(committed_div);
+    first_div.append(document.createElement("br"));
 
     // waiting bookings
+    const waiting_div = document.createElement("div");
+    let waiting_value = committed_value;
     if (showState.waitingForCommitList != null && showState.waitingForCommitList > 0) {
-        const waiting_div = document.createElement("div");
-        waiting_div.innerHTML = "New value waiting to be committed: " + showState.waitingForCommitList.bookedSeats.toString();
-        first_div.append(waiting_div);
+        waiting_value = showState.waitingForCommitList[0].bookedSeats;
     }
+    else {
+        waiting_div.setAttribute("style", "display: none;");
+    }
+    waiting_div.innerHTML = "New value waiting to be committed: <span id=\"des_waiting_booking\">" + waiting_value + "></span>";
+    first_div.append(waiting_div);
 
     parentNode.append(first_div);
 

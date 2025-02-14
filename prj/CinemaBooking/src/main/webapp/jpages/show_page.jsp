@@ -20,7 +20,7 @@
     <body onload="connect(
                     '<%=request.getContextPath()%>',
                     '<%=this_showWithBookings.getShowID()%>',
-                    '<%=request.getSession().getAttribute("is_cinema")%>',
+                    <%=request.getSession().getAttribute("is_a_cinema")%>,
                     '<%=request.getSession().getAttribute("username")%>'
     );">
         <jsp:include page="../includes/header.jsp" />
@@ -35,25 +35,26 @@
                 </h3>
                 <div class="d-flex justify-content-center">
                     <br>
-                    <div id="des_showDate" > showDate : <%=this_showWithBookings.getShowDate()%></div>
+                    <div><%=this_showWithBookings.getShowDate()%></div>
                     <br>
-                    <div id="des_cinemaName"  > cinemaName : <%=this_showWithBookings.getCinemaName()%></div>
+                    <div>
+                        <a href="<%=request.getContextPath()%>/CinemaPageServlet?cinemaID=<%=this_showWithBookings.getCinemaID()%>">
+                            <%=this_showWithBookings.getCinemaName()%>
+                        </a>
+                    </div>
                     <br>
-                    <div id="des_cinemaLocation" > cinemaLocation : <%=this_showWithBookings.getCinemaLocation()%></div>
+                    <div><%=this_showWithBookings.getCinemaLocation()%></div>
                     <br>
-                    <div id="des_maxSeats" > maxSeats : <%=this_showWithBookings.getMaxSeats()%></div>
-                    <br>
-                    <div id="des_currAvailableSeats" > currAvailableSeats : <%=this_showWithBookings.getCurrAvailableSeats()%></div>
-                    <br>
-                    <div id="des_isEnded" > isEnded : <%=this_showWithBookings.getIsEnded()%></div>
+                    <div>
+                        Available Seats:
+                        <span id="des_currAvailableSeats"><%=this_showWithBookings.getCurrAvailableSeats()%></span>/
+                        <span id="des_maxSeats"><%=this_showWithBookings.getMaxSeats()%></span>
+                    </div>
                     <br>
                 </div>
-                <div class="p-4 d-flex flex-wrap" id="changes_form_parent">
+                <div class="p-4 d-flex flex-wrap">
                 <%
                     String is_a_cinema = (String) request.getSession().getAttribute("is_a_cinema");
-
-                    //todo : from showPage to cinemaPage ..?
-
                     if("true".equals(is_a_cinema)){
                         // page requested from a Cinema
                         List<ShowWithBookings.Triple> tripleList = this_showWithBookings.getFullOuterJoinBookings();
@@ -86,46 +87,49 @@
                         // page requested from a Customer
                         Long your_committed_booking = this_showWithBookings.getFirstCommittedBooking();
                         Long your_waiting_booking = this_showWithBookings.getFirstWaitingBooking();
+                        boolean waiting_commit = (your_waiting_booking != null);
                 %>
                     <div class="d-flex justify-content-center">
                         <br>
-                        <div id="des_committed_booking"        > Committed Bookings: <%=your_committed_booking%></div>
-                        <% if (your_waiting_booking != null) {%>
-                            <br>
-                            <div id="des_waiting_booking"      > New value waiting to be committed: <%=your_waiting_booking%></div>
-                        <% } %>
-                    </div>
-                    <form action="<%=request.getContextPath()%>/ShowPageServlet" method="post" oninput='check_valid_booking()'>
-                        <div class="d-flex justify-content-between mb-3">
-                            <div class="mb-3">
-                                <label for="new_booking_number" class="form-label">Enter your new_booking_number</label>
-                                <input type="number"
-                                    class="form-control"
-                                    name="new_booking_number"
-                                    id="new_booking_number"
-                                    aria-describedby="new_booking_number"
-                                    placeholder="0"
-                                    min="0"
-                                    max="144000000"
-                                    required>
-                            </div>
-                            <div>
-                                <button type="submit" class="btn btn-primary mx-2 px-4"> Set this as new booking </button>
-                            </div>
-                            <%
-                                String newBookingRequestStatus = (String) request.getSession().getAttribute("bookingUpdateStatus");
-                                if(newBookingRequestStatus != null && newBookingRequestStatus.equals("error")) {
-                            %>
-                                    <div id="bookingRequestAlert" class="alert alert-danger" role="alert">
-                                        Something went wrong. Retry later.
-                                    </div>
-                            <%
-                                }
-                            %>
+                        <div> Committed Bookings: <span id="des_committed_booking"><%=your_committed_booking%></span></div>
+                        <br>
+                        <div <% if (!waiting_commit) {%> style="display: none;" <%}%> > New value waiting to be committed:
+                            <span id="des_waiting_booking"><%=waiting_commit ? your_waiting_booking : your_committed_booking%></span>
                         </div>
-                    </form>
+                    </div>
+                    <% if (!this_showWithBookings.getIsEnded()) {%>
+                        <form action="<%=request.getContextPath()%>/ShowPageServlet" method="post" onsubmit='check_valid_booking()'>
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="mb-3">
+                                    <label for="new_booking_number" class="form-label">Enter your new_booking_number</label>
+                                    <input type="number"
+                                        class="form-control"
+                                        name="new_booking_number"
+                                        id="new_booking_number"
+                                        aria-describedby="new_booking_number"
+                                        placeholder="0"
+                                        min="0"
+                                        max="144000000"
+                                        required>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-primary mx-2 px-4"> Set this as new booking </button>
+                                </div>
+                                <%
+                                    String newBookingRequestStatus = (String) request.getSession().getAttribute("bookingUpdateStatus");
+                                    if(newBookingRequestStatus != null && newBookingRequestStatus.equals("error")) {
+                                %>
+                                        <div id="bookingRequestAlert" class="alert alert-danger" role="alert">
+                                            Something went wrong. Retry later.
+                                        </div>
+                                <%
+                                    }
+                                %>
+                            </div>
+                        </form>
                 <%
-                    } // end else
+                    } // end if (!this_showWithBookings.getIsEnded())
+                } // end else
                 %>
                 </div>
             </div>

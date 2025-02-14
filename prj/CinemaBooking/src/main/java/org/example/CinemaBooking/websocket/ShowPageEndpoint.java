@@ -29,6 +29,7 @@ public class ShowPageEndpoint {
             @PathParam("user_identifier") String userIdentifier
     ) throws IOException, EncodeException {
         System.out.println("[SHOW PAGE ENDPOINT] OnOpen of show: " + showIdString + ", from " + userType + ": " + userIdentifier);
+        this.session = session;
         if (!clientEndpointsOfShow.containsKey(showIdString)) {
             Set<UserEndpointTuple> userEndpointTupleSet = new CopyOnWriteArraySet<>();
             userEndpointTupleSet.add(new UserEndpointTuple(userIdentifier, userType, this));
