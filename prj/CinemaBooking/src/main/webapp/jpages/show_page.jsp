@@ -89,7 +89,7 @@
                         Long your_waiting_booking = this_showWithBookings.getFirstWaitingBooking();
                         boolean waiting_commit = (your_waiting_booking != null);
                 %>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex flex-column justify-content-center">
                         <br>
                         <div> Committed Bookings: <span id="des_committed_booking"><%=your_committed_booking%></span></div>
                         <br>
