@@ -121,7 +121,7 @@ function createElementsForCinema(showState) {
     table.append(tbody);
 
     const parentNode = document.createElement("div");
-    parentNode.classList.add("p-4", "d-flex", "flex-wrap");
+    parentNode.classList.add("p-4", "d-flex", "flex-column");
     parentNode.append(table);
     return parentNode;
 }

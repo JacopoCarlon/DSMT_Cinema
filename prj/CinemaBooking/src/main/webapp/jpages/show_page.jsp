@@ -63,9 +63,9 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>UserName</th>
-                                <th>ConfirmedBooking</th>
-                                <th>WaitingBooking</th>
+                                <th>Customer</th>
+                                <th>Booking stored in Database</th>
+                                <th>Booking stored in Show node</th>
                             </tr>
                         </thead>
                         <tbody>
