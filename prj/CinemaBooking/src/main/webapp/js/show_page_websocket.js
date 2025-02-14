@@ -59,22 +59,16 @@ function updateShowState(ctx, is_a_cinema, showState) {
     title.classList.add("d-flex", "justify-content-center", "p-3");
     title.innerHTML = showState.showName;
 
-    const br = document.createElement("br");
-
     const info_div = document.createElement("div");
-    info_div.classList.add("d-flex", "justify-content-center");
+    info_div.classList.add("p-4", "d-flex", "flex-column", "justify-content-center");
 
     const showDate = document.createElement("div");
-    showDate.innerHTML = showState.showDate;
+    showDate.innerHTML = "When:     " + showState.showDate;
 
-    const cinemaName = document.createElement("div");
-    const cinemaNameLink = document.createElement("a");
-    cinemaNameLink.href = ctx + "/CinemaPageServlet?cinemaID=" + showState.cinemaID;
-    cinemaNameLink.innerHTML = showState.cinemaName;
-    cinemaName.append(cinemaNameLink);
-
-    const cinemaLocation = document.createElement("div");
-    cinemaLocation.innerHTML = showState.cinemaLocation;
+    const cinemaDiv = document.createElement("div");
+    cinemaDiv.innerHTML = "Where:    <a href='" + ctx +
+        "/CinemaPageServlet?cinemaID=" + showState.cinemaID + "'>" +
+        showState.cinemaName + "</a> in " + showState.cinemaLocation;
 
     const seatsDiv = document.createElement("div");
     const availableSpan = "<span id=id=\"des_currAvailableSeats\">" + showState.currAvailableSeats + "</span>";
@@ -85,7 +79,7 @@ function updateShowState(ctx, is_a_cinema, showState) {
         createElementsForCinema(showState):
         createElementsForCustomer(ctx, showState);
 
-    info_div.append(br, showDate, br, cinemaName, br, cinemaLocation, br, seatsDiv, br)
+    info_div.append(showDate, cinemaDiv, seatsDiv)
     showCard.append(title, info_div, bookingDetails)
 }
 
@@ -134,34 +128,31 @@ function createElementsForCinema(showState) {
 
 function createElementsForCustomer(ctx, showState) {
     const parentNode = document.createElement("div");
-    parentNode.classList.add("p-4", "d-flex", "flex-wrap");
+    parentNode.classList.add("p-4", "d-flex", "flex-column");
 
     const first_div = document.createElement("div")
-    first_div.classList.add("d-flex","justify-content-center");
-    first_div.append(document.createElement("br"));
+    first_div.classList.add("d-flex", "flex-column", "justify-content-center");
 
     // committed bookings
     const committed_div =  document.createElement("div");
     let committed_value = 0;
-    if (showState.committedBookingsList != null && showState.committedBookingsList > 0) {
+    if (showState.committedBookingsList != null && showState.committedBookingsList.length > 0) {
         committed_value = showState.committedBookingsList[0].bookedSeats;
     }
     committed_div.innerHTML = "Committed Bookings: <span id=\"des_committed_booking\">" + committed_value + "</span>";
-    first_div.append(committed_div);
-    first_div.append(document.createElement("br"));
 
     // waiting bookings
     const waiting_div = document.createElement("div");
     let waiting_value = committed_value;
-    if (showState.waitingForCommitList != null && showState.waitingForCommitList > 0) {
+    if (showState.waitingForCommitList != null && showState.waitingForCommitList.length > 0) {
         waiting_value = showState.waitingForCommitList[0].bookedSeats;
     }
     else {
         waiting_div.setAttribute("style", "display: none;");
     }
     waiting_div.innerHTML = "New value waiting to be committed: <span id=\"des_waiting_booking\">" + waiting_value + "></span>";
-    first_div.append(waiting_div);
 
+    first_div.append(committed_div, waiting_div, document.createElement("br"));
     parentNode.append(first_div);
 
     // booking form
@@ -172,7 +163,7 @@ function createElementsForCustomer(ctx, showState) {
         form.oninput = check_valid_booking;
 
         const form_main_div = document.createElement("div");
-        form_main_div.classList.add("d-flex", "justify-content-between", "mb-3");
+        form_main_div.classList.add("d-flex", "flex-column", "justify-content-between", "mb-3");
 
         const input_div = document.createElement("div");
         input_div.classList.add("mb-3");

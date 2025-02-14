@@ -25,3 +25,7 @@ div#img_cinema img {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow */
 }
 
+
+table, th, td {
+    border: 1px solid black;
+}
