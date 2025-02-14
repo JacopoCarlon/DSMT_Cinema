@@ -189,7 +189,7 @@ function createElementsForCustomer(ctx, showState) {
         booking_input.id = "new_booking_number";
         booking_input.min = "0";
         booking_input.max = "144000000";
-        booking_input.setAttribute("aria-describedby", "bid");
+        booking_input.setAttribute("aria-describedby", "new_booking_number");
         booking_input.required = true;
 
         const button_div = document.createElement("div")
