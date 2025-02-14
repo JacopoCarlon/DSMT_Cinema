@@ -102,15 +102,22 @@ public class ShowWithBookings extends Show {
     }
 
 
-    public ShowWithBookings getPersonalizedCopy(String username) {
+    public ShowWithBookings getPersonalizedCopy(String userID, boolean cinema) {
+        if (cinema) {
+            if (userID.equals(cinemaID.toString()))
+                return this;
+            else
+                return new ShowWithBookings(this, new ArrayList<>(), new ArrayList<>());
+        }
+
         List<CustomerBooking> myCommittedBookings = null;
         List<CustomerBooking> myWaitingBookings = null;
 
         if (committedBookingsList != null)
-            myCommittedBookings = committedBookingsList.stream().filter(cb -> username.equals(cb.getCustomer())).toList();
+            myCommittedBookings = committedBookingsList.stream().filter(cb -> userID.equals(cb.getCustomer())).toList();
 
         if (waitingForCommitList != null)
-            myWaitingBookings = waitingForCommitList.stream().filter(cb -> username.equals(cb.getCustomer())).toList();
+            myWaitingBookings = waitingForCommitList.stream().filter(cb -> userID.equals(cb.getCustomer())).toList();
 
         return new ShowWithBookings(
             this,

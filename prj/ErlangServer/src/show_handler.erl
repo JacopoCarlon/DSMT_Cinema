@@ -59,7 +59,7 @@ show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings) ->
         {Client, get_data_for_cinema, CinemaId} ->
             io:format(" [SHOW HANDLER] Cinema with ID ~p asked for show data~n", [CinemaId]),
             Client ! construct_message_for_cinema(
-                StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings
+                CinemaId, StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings
             ),
             show_loop(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookings);
         
@@ -190,7 +190,11 @@ construct_msg_for_customer(ResponseCode, Username, StaticInfo, AvailableSeats, C
     end.
 
 % message for cinemas
-construct_message_for_cinema(StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingMap) ->
+construct_message_for_cinema(CinemaId, StaticInfo, AvailableSeats, CommittedBookings, WaitingBookingMap) ->
+    {CommittedList, WaitingList} = case CinemaId == maps:get(cinema_id, StaticInfo) of
+        true -> {maps:to_list(CommittedBookings), maps:to_list(WaitingBookingMap)};
+        false -> {[], []}
+    end,
     {
         self(),
         {
@@ -205,8 +209,8 @@ construct_message_for_cinema(StaticInfo, AvailableSeats, CommittedBookings, Wait
                 maps:get(max_seats, StaticInfo),
                 AvailableSeats,
                 false,
-                maps:to_list(CommittedBookings),
-                maps:to_list(WaitingBookingMap)
+                CommittedList,
+                WaitingList
             ]
         }
     }.

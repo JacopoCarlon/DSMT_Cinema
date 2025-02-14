@@ -75,9 +75,10 @@ public class ShowPageEndpoint {
         System.out.println("[SHOW PAGE ENDPOINT] Broadcasting state of show: " + showWithBookings.getShowID());
         Collection<UserEndpointTuple> userEndpointsSet = clientEndpointsOfShow.get(showWithBookings.getShowID().toString());
         userEndpointsSet.forEach(userEndpointTuple -> {
-            ShowWithBookings showToSend = userEndpointTuple.getUserType().equals("customer") ?
-                    showWithBookings.getPersonalizedCopy(userEndpointTuple.getUserID()) :
-                    showWithBookings;
+            ShowWithBookings showToSend = showWithBookings.getPersonalizedCopy(
+                    userEndpointTuple.getUserID(),
+                    userEndpointTuple.getUserType().equals("cinema")
+            );
 
             System.out.println(userEndpointTuple.getUserType() + " " + userEndpointTuple.getUserID() + " will receive a message");
             try {
