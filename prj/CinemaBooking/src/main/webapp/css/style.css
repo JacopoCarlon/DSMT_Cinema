@@ -15,6 +15,7 @@ div#img_cinema {
     margin-bottom: 10px;
 }
 
+
 /* Target the img inside the div with ID "img_cinema" */
 div#img_cinema img {
     /* Styles for the image */
@@ -29,3 +30,5 @@ div#img_cinema img {
 table, th, td {
     border: 1px solid black;
 }
+
+
