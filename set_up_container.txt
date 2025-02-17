@@ -1,0 +1,77 @@
+// needed for both
+sdk install java 23.0.2-oracle
+sdk install maven 3.8.6
+apt-get update
+apt-get install erlang
+
+mkdir $HOME/servers
+cd $HOME/servers
+wget -O $HOME/servers/apache-tomcat-10.1.35.zip https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.35/bin/apache-tomcat-10.1.35.zip
+unzip $HOME/servers/apache-tomcat-10.1.35.zip
+rm -f $HOME/servers/*.zip
+
+
+/////////// ERLANG/LISTENER (10.2.1.41) (Distributed2024-1170)
+
+//// INSTALLATION
+git clone https://github.com/JacopoCarlon/DSMT_Cinema
+
+// JAVA
+cd DSMT_Cinema/prj/CinemaBooking
+
+mvn install:install-file \
+  -Dfile=/usr/lib/erlang/lib/jinterface-1.12.1/priv/OtpErlang.jar \
+  -DgroupId=com.ericsson \
+  -DartifactId=erlang-jinterface \
+  -Dversion=1.12.1 \
+  -Dpackaging=jar \
+  -DgeneratePom=true
+  
+mvn clean install
+
+
+// ERLANG
+cd ../ErlangServer/src
+./build.sh
+
+
+//// LAUNCH LISTENER
+cd $HOME/DSMT_Cinema/prj/CinemaBooking
+mvn exec:java -Dexec.mainClass="org.example.CinemaBooking.listener.Main"
+
+//// LAUNCH LISTENER
+cd $HOME/DSMT_Cinema/prj/ErlangServer/src
+./run_remote.sh
+
+
+/////////// TOMCAT (10.2.1.42) (Distributed2024-1171)
+
+//// INSTALLATION
+// from where configuration is stored in local host
+scp tomcat-conf/tomcat-users.xml root@10.2.1.42:/tmp/tomcat-users.xml
+scp tomcat-conf/server.xml root@10.2.1.42:/tmp/server.xml
+scp tomcat-conf/context.xml root@10.2.1.42:/tmp/context.xml
+
+// in remote machine
+chmod +x $HOME/servers/apache-tomcat-10.1.35/bin/*.sh
+
+ENV JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
+ENV PATH="$JAVA_HOME/bin:$PATH"
+
+cp /tmp/tomcat-users.xml $HOME/servers/apache-tomcat-10.1.35/conf/tomcat-users.xml \
+    && cp /tmp/server.xml $HOME/servers/apache-tomcat-10.1.35/conf/server.xml \
+    && mv /tmp/context.xml $HOME/servers/apache-tomcat-10.1.35/webapps/manager/META-INF/context.xml
+
+//// LAUNCH
+$HOME/servers/apache-tomcat-10.1.35/bin/catalina.sh start
+erl -sname whatever
+(exit erlang)
+
+//// DEPLOY
+Go to http://10.2.1.42:8080/manager/html/ and upload .war
+
+
+
+
+
+
