@@ -19,7 +19,7 @@ http://docenti.ing.unipi.it/a.bechini/distr/
 https://github.com/jlcorcuera/unipi-dsmt-2023-2024
 
 
-### DSMT Course Description : :
+### DSMT Course Description :
 https://esami.unipi.it/esami2/programma.php?pg=ects&c=60127
 
 
